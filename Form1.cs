@@ -20,41 +20,35 @@ namespace WindowsFormsApp1
         Graphics graph;
         Pen pen;
         List<Point> lp = new List<Point>();//Лист с координатами маяков
+        SolidBrush Brush;//Параметр заливки маяка
         int f;//Флаг для определения маяка при переносе
         int M;//Количество маяков
         double[,] SatPos = new double[2, 100];//Массив с координатами маяков вида [x1, x2, ... , xn]
                                               //                                  [y1, y2, ... , yn]
         double[,] Grad = new double[100, 2];//Градиентная матрица
-        double[,] Z = new double[1000, 700];//Матрица со значениеми геометрического фактора в каждой точке помещения
+        double[,] Z = new double[1000, 1000];//Матрица со значениеми геометрического фактора в каждой точке помещения
         double[,] Tran = new double[2, 100];//Транспонированная матрица
         double[,] Umn = new double[100, 100];//Перемноженная матрицад для расчетов
-
-        SolidBrush Brush;//Параметр заливки маяка
-
         public Form1()
         {
             InitializeComponent();
             pictureBox1.MouseClick += pictureBox1_MouseClick;//Клики по picture box
             pictureBox1.MouseMove += pictureBox1_MouseMove;//Координаты курсора
             Drawing();//Оси
+            // Делаем обычный стиль.
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            // Убираем кнопки свернуть, развернуть, закрыть.
+            this.ControlBox = false;
+            // Убираем заголовок.
+            this.Text = "";
+            button3.Enabled = false;
+            button2.Enabled = false;
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Width = 1500;//Размеры окна по умолчанию
-            this.Height = 900;
+            this.Height = 1100;
         }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void Drawing()//Оси
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -77,31 +71,35 @@ namespace WindowsFormsApp1
             graph.DrawLine(pen, 0, 600, 5, 600);
             graph.DrawLine(pen, 0, 650, 5, 650);
             graph.DrawLine(pen, 0, 700, 5, 700);
+            graph.DrawLine(pen, 0, 750, 5, 750);
+            graph.DrawLine(pen, 0, 800, 5, 800);
+            graph.DrawLine(pen, 0, 850, 5, 850);
+            graph.DrawLine(pen, 0, 900, 5, 900);
+            graph.DrawLine(pen, 0, 950, 5, 950);
+            graph.DrawLine(pen, 0, 1000, 5, 1000);
 
-            graph.DrawLine(pen, 100, 0, 100, 5);
-            graph.DrawLine(pen, 200, 0, 200, 5);
-            graph.DrawLine(pen, 300, 0, 300, 5);
-            graph.DrawLine(pen, 400, 0, 400, 5);
-            graph.DrawLine(pen, 500, 0, 500, 5);
-            graph.DrawLine(pen, 1, 0, 1, 5);
-            graph.DrawLine(pen, 50, 0, 50, 5);
-            graph.DrawLine(pen, 150, 0, 150, 5);
-            graph.DrawLine(pen, 250, 0, 250, 5);
-            graph.DrawLine(pen, 350, 0, 350, 5);
-            graph.DrawLine(pen, 450, 0, 450, 5);
-            graph.DrawLine(pen, 550, 0, 550, 5);
-            graph.DrawLine(pen, 600, 0, 600, 5);
-            graph.DrawLine(pen, 650, 0, 650, 5);
-            graph.DrawLine(pen, 700, 0, 700, 5);
-            graph.DrawLine(pen, 750, 0, 750, 5);
-            graph.DrawLine(pen, 800, 0, 800, 5);
-            graph.DrawLine(pen, 850, 0, 850, 5);
-            graph.DrawLine(pen, 900, 0, 900, 5);
-            graph.DrawLine(pen, 950, 0, 950, 5);
-            graph.DrawLine(pen, 1000, 0, 1000, 5);
+            graph.DrawLine(pen, 100, 1000, 100, 995);
+            graph.DrawLine(pen, 200, 1000, 200, 995);
+            graph.DrawLine(pen, 300, 1000, 300, 995);
+            graph.DrawLine(pen, 400, 1000, 400, 995);
+            graph.DrawLine(pen, 500, 1000, 500, 995);
+            graph.DrawLine(pen, 1, 1000, 1, 995);
+            graph.DrawLine(pen, 50, 1000, 50, 995);
+            graph.DrawLine(pen, 150, 1000, 150, 995);
+            graph.DrawLine(pen, 250, 1000, 250, 995);
+            graph.DrawLine(pen, 350, 1000, 350, 995);
+            graph.DrawLine(pen, 450, 1000, 450, 995);
+            graph.DrawLine(pen, 550, 1000, 550, 995);
+            graph.DrawLine(pen, 600, 1000, 600, 995);
+            graph.DrawLine(pen, 650, 1000, 650, 995);
+            graph.DrawLine(pen, 700, 1000, 700, 995);
+            graph.DrawLine(pen, 750, 1000, 750, 995);
+            graph.DrawLine(pen, 800, 1000, 800, 995);
+            graph.DrawLine(pen, 850, 1000, 850, 995);
+            graph.DrawLine(pen, 900, 1000, 900, 995);
+            graph.DrawLine(pen, 950, 1000, 950, 995);
+            graph.DrawLine(pen, 1000, 1000, 1000, 995);
         }
-
-
         private void Surf()//Построение поверхности
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -110,7 +108,7 @@ namespace WindowsFormsApp1
 
             for (int j = 0; j < 1000; j++)
             {
-                for (int l = 0; l < 700; l++)
+                for (int l = 0; l < 1000; l++)
                 {
                     if (Z[j, l] < 1)
                     {
@@ -173,11 +171,11 @@ namespace WindowsFormsApp1
                         pen = new Pen(Color.Black);
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-
+                    progressBar1.Value += 1;
                 }
             }
+            button2.Enabled = true;
         }
-
         private void Transp(int N)//Транспонированная матрица
         {
             for (int i = 0; i < N; i++)
@@ -203,7 +201,6 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
         private void inversionMatrix(int N)//Обратная матрица
         {
             double temp;
@@ -283,7 +280,7 @@ namespace WindowsFormsApp1
             int i = 0;
             for (int x=0;x<1000;x++)
             {
-                for(int y=0;y<700;y++)
+                for(int y=0;y<1000;y++)
                 {
                     while (i < kol1)
                     {
@@ -297,16 +294,18 @@ namespace WindowsFormsApp1
                     inversionMatrix(2);
                     Z[x, y] = trace(2);
                     i = 0;
+                    progressBar1.Value += 1;
                 }
+                
             }
         }
 
-        private void Sort1(int kol1)//Рещение для разностно-дальномерного метода
+        private void Sort1(int kol1)//Решение для разностно-дальномерного метода
         {
             int i = 0;
             for (int x = 0; x < 1000; x++)
             {
-                for (int y = 0; y < 700; y++)
+                for (int y = 0; y < 1000; y++)
                 {
                     while (i < kol1)
                     {
@@ -319,10 +318,10 @@ namespace WindowsFormsApp1
                     inversionMatrix(2);
                     Z[x, y] = trace(2);
                     i = 0;
-                }
-            }
+                    progressBar1.Value += 1;
+                }               
+            }           
         }
-
         private void labal()//Нумерация маяков
         {
             for (int b = 0; b < M; b++)
@@ -331,14 +330,12 @@ namespace WindowsFormsApp1
                 labell[b].Location = new Point(Convert.ToInt32(SatPos[0, b]) - 6, Convert.ToInt32(SatPos[1, b]) - 20);
                 labell[b].ForeColor = Color.Black;
                 labell[b].Text = (b + 1).ToString();
-                labell[b].Size = new Size(10, 12);
+                labell[b].Size = new Size(20, 12);
                 labell[b].BackColor = this.label1.Parent.BackColor;
                 labell[b].Parent = this.pictureBox1;
                 labell[b].BackColor = Color.Transparent;
             }
         }
-
-
     Label[] labell = new Label[100];//Массив с нумерацией маяков
     int mayak = 0;//Подсчет количества маяков
     int x, y;//Координаты курсора при клике
@@ -347,18 +344,17 @@ namespace WindowsFormsApp1
             string sum = textBox1.Text;
             if (sum == "")//Проверка на пустоту
             {
-                textBox2.Text = "vvedite chislo";
+                MessageBox.Show("Input number");
             }
             else
             {
                 M = Convert.ToInt32(sum);
-                if (M == 1 || M < 0)
+                if (M == 1 || M <= 0)
                 {
-                    textBox2.Text = "Error input";
+                    MessageBox.Show("install more beacons");
                 }
                 else
                 {
-                   // textBox2.Text = mayak.ToString();
                     if (mayak < M)
                     {
                         Drawing();
@@ -375,7 +371,7 @@ namespace WindowsFormsApp1
                         int pole = 1;
                         foreach (Point l in lp)
                         {
-                            listBox1.Items.Add(pole+")"+"X:" + l.X + "," + "Y:" + l.Y);//Вывод координат маяков на экран
+                            listBox1.Items.Add(pole+")"+"X:" + l.X + "," + "Y:" + (1000 -l.Y));//Вывод координат маяков на экран
                             pole += 1;
                         }
                     }
@@ -393,29 +389,19 @@ namespace WindowsFormsApp1
                         listBox1.Items.Clear();
                         for (int i=0;i<M;i++)//Вывод координат всех маяков на экран
                         {
-                            listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + SatPos[1, i]);
+                            listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
                         }
 
                         labal();
 
                         kol = 0;
+                        textBox1.Enabled = false;
+                        button3.Enabled = true;
                     }
-
                     mayak = mayak + 1;
                 }
             }
-
         }
-    private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)//Полная очитска
         {
             string sum = textBox1.Text;
@@ -448,92 +434,46 @@ namespace WindowsFormsApp1
             deltay = 0;
             el = new Rectangle();
             M = 0;
-
+            textBox1.Enabled = true;
+            progressBar1.Value = 0;
         }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)//Вывод координат курсора на экран
         {
             textBox3.Text = e.Location.X.ToString();
-            textBox4.Text = e.Location.Y.ToString();
+            textBox4.Text = (1000 - e.Location.Y).ToString();
         }
-
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button3_Click(object sender, EventArgs e)//Построение(GO)
         {
             if (checkBox1.Checked == true && checkBox2.Checked == false)//D
             {
+                button2.PerformClick();
+                progressBar1.Value = 0;
                 Sort(M);
-                Surf();
-              
+                Surf();             
                 for (int j = 0;j < M;j++)
                 {
                     Brush = new SolidBrush(Color.Black);
                     graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0,j]) - 8, Convert.ToInt32(SatPos[1,j]) - 8, 16, 16);
                 }
-
             }
 
             if (checkBox2.Checked == true && checkBox1.Checked == false)//RD
             {
                 if (M == 2)
                 {
-                    textBox2.Text = "Error input";
+                    MessageBox.Show("install more beacons");
                 }
                 else
                 {
+                    button2.PerformClick();
+                    progressBar1.Value = 0;
                     Sort1(M);
                     Surf();
-
                     for (int j = 0; j < M; j++)
                     {
                         Brush = new SolidBrush(Color.Black);
                         graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                     }
-
                     int xM = Convert.ToInt32(SatPos[0, M - 1]);
                     int yM = Convert.ToInt32(SatPos[1, M - 1]);
                     Brush = new SolidBrush(Color.White);
@@ -543,16 +483,15 @@ namespace WindowsFormsApp1
             
             if (checkBox2.Checked == true && checkBox1.Checked == true)//Проверка на незаполнение
             {
-                textBox2.Text = "Error input";
+                MessageBox.Show("select 1 method");
             }
 
             if (checkBox2.Checked == false && checkBox1.Checked == false)//Проверка на заполнения обоих полей
             {
-                textBox2.Text = "Error input";
+                MessageBox.Show("select 1 method");
             }
 
         }
-
         private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)//Отслеживание нажатия ЛКМ
         {
             string sum = textBox1.Text;
@@ -566,10 +505,10 @@ namespace WindowsFormsApp1
                     {
                         if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
                         {
-                            textBox2.Text = "yes" + j;
                             f = j;
                             el = new Rectangle((Convert.ToInt32(SatPos[0, j]) - 8), (Convert.ToInt32(SatPos[1, j]) - 8), 16, 16);
                             IsClicked = true;
+                            progressBar1.Value = 0;
                             deltax = e.X - el.X;
                             deltay = e.Y - el.Y;
                             break;
@@ -578,10 +517,8 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
         {
-            textBox2.Text = IsClicked.ToString();
             string sum = textBox1.Text;
             if (sum != "")
             {
@@ -592,7 +529,25 @@ namespace WindowsFormsApp1
                     {
                         el.X = e.X - deltax;
                         el.Y = e.Y - deltay;
+                        if (el.X < 0) 
+                        {
+                            el.X = 0;
+                        }
+                        if (el.X > 984)
+                        {
+                            el.X = 984;
+                        }
+                        if (el.Y < 0)
+                        {
+                            el.Y = 0;
+                        }
+                        if (el.Y > 984)
+                        {
+                            el.Y = 984;
+                        }
+                        
                         pictureBox1.Invalidate();
+                        beacon();
                     }
                 }
             }
@@ -616,10 +571,11 @@ namespace WindowsFormsApp1
             listBox1.Items.Clear();
             for (int i = 0; i < M; i++)
             {
-                listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + SatPos[1, i]);
+                listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
             }
 
             labal();
+            button2.PerformClick();
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)//Отслеживание отпуска ЛКМ
         {
@@ -638,24 +594,23 @@ namespace WindowsFormsApp1
             pen = new Pen(Color.Black);
             e.Graphics.DrawEllipse(pen, el);
         }
-
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
         private void button2_Click(object sender, EventArgs e)//Очистка GDOP поверхности
         {
-            graph.Clear(Color.White);
             Drawing();
-
             for (int j = 0; j < M; j++)
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
             }
-
-            checkBox2.Checked = false;
-            checkBox1.Checked = false;
             double[,] Grad = new double[100, 2];
-            double[,] Z = new double[1000, 700];
+            double[,] Z = new double[1000, 1000];
             double[,] Tran = new double[2, 100];
             double[,] Umn = new double[100, 100];
-
+            button2.Enabled = false;
+            progressBar1.Value = 0;
         }
     }
 }
