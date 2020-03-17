@@ -329,7 +329,6 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
         private double trace(int N)//Расчет GDOP(Матрица Z)
         {
             double trac=0;
@@ -369,7 +368,6 @@ namespace WindowsFormsApp1
                 }                
             }
         }
-
         private void Sort1(int kol1)//Решение для разностно-дальномерного метода
         {
             Z = new double[1000, 1000];
@@ -473,6 +471,9 @@ namespace WindowsFormsApp1
                                     {
                                         labell[k].Dispose();
                                     }
+                                    Drawing();
+                                    el = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                                    graph.DrawRectangle(pen, el);
                                     M -= 1;
                                     textBox1.Text = M.ToString();
                                     clone = new double[2, M + 1];
@@ -516,7 +517,6 @@ namespace WindowsFormsApp1
                 SatPos[0, i] = clone[0, i];
                 SatPos[1, i] = clone[1, i];
             }
-            Drawing();
             for (int j = 0; j < M; j++)
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -695,7 +695,6 @@ namespace WindowsFormsApp1
         {
             SatPos[0, f] = el.X + 8;
             SatPos[1, f] = el.Y + 8;
-            //int kol = 0;
            for(int kol = 0; kol<M;kol++)
             {
                 Point test = new Point() { X = Convert.ToInt32(SatPos[0, kol]), Y = Convert.ToInt32(SatPos[1, kol]) };
