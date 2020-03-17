@@ -32,6 +32,7 @@ namespace WindowsFormsApp1
         Label[] labell;//Массив с нумерацией маяков
         int mayak = 0;//Подсчет количества маяков
         int x, y;//Координаты курсора при клике
+        double[,] clone;//Матрица клон для кдаления маяка
         public Form1()
         {
             InitializeComponent();
@@ -408,47 +409,125 @@ namespace WindowsFormsApp1
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-                    string sum = textBox1.Text;
-                    M = Convert.ToInt32(sum);
-                    if (mayak < M)
+            if (e.Button == MouseButtons.Left)
+            {
+                string sum = textBox1.Text;
+                M = Convert.ToInt32(sum);
+                if (mayak < M)
+                {
+                    Drawing();
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    lp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами маяков
+                    foreach (Point p in lp)
                     {
-                        Drawing();
+                        graph.DrawEllipse(pen, p.X - 8, p.Y - 8, 16, 16);//Прорисовка маяков
+                    }
+                    listBox1.Items.Clear();//Очистка листа перед новым заполненим 
+                    int pole = 1;
+                    foreach (Point l in lp)
+                    {
+                        listBox1.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат маяков на экран
+                        pole += 1;
+                    }
+                }
+                if (mayak == (M - 1))
+                {
+                    button23.Enabled = true;
+                    button1.Enabled = true;
+                    button3.Enabled = true;
+                    int kol = 0;
+                    foreach (Point lol in lp)//Создание массива с координтами маяков
+                    {
+                        SatPos[0, kol] = lol.X;
+                        SatPos[1, kol] = lol.Y;
+                        kol += 1;
+                    }
+                    listBox1.Items.Clear();
+                    for (int i = 0; i < M; i++)//Вывод координат всех маяков на экран
+                    {
+                        listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
+                    }
+                    labal();
+                    kol = 0;
+                }
+                mayak = mayak + 1;
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                string sum = textBox1.Text;
+                if (sum != "")
+                {
+                    if (mayak > (M - 1))
+                    {
                         x = e.Location.X;
                         y = e.Location.Y;
-                        lp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами маяков
-                        foreach (Point p in lp)
+                        for (int j = 0; j < M; j++)
                         {
-                            graph.DrawEllipse(pen, p.X - 8, p.Y - 8, 16, 16);//Прорисовка маяков
-                        }
-                        listBox1.Items.Clear();//Очистка листа перед новым заполненим 
-                        int pole = 1;
-                        foreach (Point l in lp)
-                        {
-                            listBox1.Items.Add(pole+")"+"X:" + l.X + "," + "Y:" + (1000 -l.Y));//Вывод координат маяков на экран
-                            pole += 1;
+                            if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                            {
+                                if (M > 2)
+                                {
+                                    f = j;
+                                    for (int k = 0; k < M; k++)
+                                    {
+                                        labell[k].Dispose();
+                                    }
+                                    M -= 1;
+                                    textBox1.Text = M.ToString();
+                                    clone = new double[2, M + 1];
+                                    Grad = new double[M + 1, 2];
+                                    Tran = new double[2, M + 1];
+                                    Umn = new double[2, 2];
+                                    labell = new Label[M + 1];
+                                    deletebeacons(f);
+                                    break;
+                                }
+                                else
+                                    MessageBox.Show("There must be at least two beacons on the map");
+                            }
                         }
                     }
-                    if (mayak == (M-1))
-                    {
-                        button23.Enabled = true;
-                        button1.Enabled = true;
-                        button3.Enabled = true;
-                        int kol = 0;
-                        foreach (Point lol in lp)//Создание массива с координтами маяков
-                        {                          
-                            SatPos[0, kol] = lol.X;
-                            SatPos[1, kol] = lol.Y;
-                            kol += 1;
-                        }
-                        listBox1.Items.Clear();
-                        for (int i=0;i<M;i++)//Вывод координат всех маяков на экран
-                        {
-                            listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
-                        }
-                        labal();
-                        kol = 0;
-                    }
-                    mayak = mayak + 1;
+                }
+            }
+
+        }
+        private void deletebeacons(int numberbeacon)
+        {
+            Point del = new Point() { X = Convert.ToInt32(SatPos[0, numberbeacon]), Y = Convert.ToInt32(SatPos[1, numberbeacon]) };
+            lp.Remove(del);
+            
+            for (int i = 0; i <=M; i++)
+            {
+                 if (i < numberbeacon)
+                 {
+                clone[0, i] = SatPos[0, i];
+                clone[1, i] = SatPos[1, i];
+                 }
+                  if (i > numberbeacon)
+                  {
+                   clone[0, i-1] = SatPos[0, i];
+                   clone[1, i-1] = SatPos[1, i];
+                  }
+            }
+            SatPos = new double[2, M + 1];
+            for(int i=0; i<M;i++)
+            {
+                SatPos[0, i] = clone[0, i];
+                SatPos[1, i] = clone[1, i];
+            }
+            Drawing();
+            for (int j = 0; j < M; j++)
+            {
+                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+            }
+            listBox1.Items.Clear();
+            for (int i = 0; i < M; i++)
+            {
+                listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
+            }
+            labal();
+            button2.PerformClick();
         }
         private void button1_Click(object sender, EventArgs e)//Полная очитска
         {
@@ -513,7 +592,7 @@ namespace WindowsFormsApp1
             {
                 if (M == 2)
                 {
-                    MessageBox.Show("install more beacons");
+                    MessageBox.Show("Install more beacons");
                 }
                 else
                 {
@@ -535,36 +614,39 @@ namespace WindowsFormsApp1
             
             if (checkBox2.Checked == true && checkBox1.Checked == true)//Проверка на незаполнение
             {
-                MessageBox.Show("select 1 method");
+                MessageBox.Show("Select 1 method");
             }
 
             if (checkBox2.Checked == false && checkBox1.Checked == false)//Проверка на заполнения обоих полей
             {
-                MessageBox.Show("select 1 method");
+                MessageBox.Show("Select 1 method");
             }
 
         }
         private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)//Отслеживание нажатия ЛКМ
         {
-            string sum = textBox1.Text;
-            if (sum != "")
+            if (e.Button == MouseButtons.Left)
             {
-                if (mayak > (M -1))
+                string sum = textBox1.Text;
+                if (sum != "")
                 {
-                    x = e.Location.X;
-                    y = e.Location.Y;
-                    for (int j = 0; j < M; j++)
+                    if (mayak > (M - 1))
                     {
-                        if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                        x = e.Location.X;
+                        y = e.Location.Y;
+                        for (int j = 0; j < M; j++)
                         {
-                            f = j;
-                            el = new Rectangle((Convert.ToInt32(SatPos[0, j]) - 8), (Convert.ToInt32(SatPos[1, j]) - 8), 16, 16);
-                            IsClicked = true;
-                            labell[f].Dispose();
-                            progressBar1.Value = 0;
-                            deltax = e.X - el.X;
-                            deltay = e.Y - el.Y;
-                            break;
+                            if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                            {
+                                f = j;
+                                el = new Rectangle((Convert.ToInt32(SatPos[0, j]) - 8), (Convert.ToInt32(SatPos[1, j]) - 8), 16, 16);
+                                IsClicked = true;
+                                labell[f].Dispose();
+                                progressBar1.Value = 0;
+                                deltax = e.X - el.X;
+                                deltay = e.Y - el.Y;
+                                break;
+                            }
                         }
                     }
                 }
@@ -671,7 +753,7 @@ namespace WindowsFormsApp1
                 checkBox1.Checked = false;
             }
         }
-        private void button22_Click(object sender, EventArgs e)
+        private void button22_Click(object sender, EventArgs e)//set
         {
             string sum = textBox1.Text;
             if (sum == "")//Проверка на пустоту
@@ -683,7 +765,7 @@ namespace WindowsFormsApp1
                 M = Convert.ToInt32(sum);
                 if (M == 1 || M <= 0)
                 {
-                    MessageBox.Show("install more beacons");
+                    MessageBox.Show("Install more beacons");
                 }
                 else
                 {
@@ -698,7 +780,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        private void button23_Click(object sender, EventArgs e)
+        private void button23_Click(object sender, EventArgs e)//add1
         {
             for (int k = 0; k < M; k++)
             {
@@ -716,6 +798,15 @@ namespace WindowsFormsApp1
             button1.Enabled = false;
             button2.Enabled = false;
             button3.Enabled = false;
+        }
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+           
         }
         private void button2_Click(object sender, EventArgs e)//Очистка GDOP поверхности
         {
