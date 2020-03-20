@@ -12,16 +12,20 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        bool IsClicked = false;//Индикатор зажатия ЛКМ
+        bool IsClicked = false;//Индикатор зажатия ЛКМ для маяка
+        bool IsClicked2 = false;//Индикатор зажатия ЛКМ для угла
         int deltax = 0;//Изменение координаты Х при переносе маяка
         int deltay = 0;//Изменение координаты У при переносе маяка
         Rectangle el;//Трафарет для маяка при переносе
+        Rectangle ek;//Трафарет для угла при переносе
         Bitmap bmp;//Настройка области рисования
         Graphics graph;
         Pen pen;
         List<Point> lp = new List<Point>();//Лист с координатами маяков
+        List<Point> Bp = new List<Point>();//Лист с координатами комнаты
         SolidBrush Brush;//Параметр заливки маяка
         int f;//Флаг для определения маяка при переносе
+        int g;//Флаг для определения угла комнаты при переносе
         int M;//Количество маяков
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
@@ -30,9 +34,17 @@ namespace WindowsFormsApp1
         double[,] Tran;//Транспонированная матрица
         double[,] Umn;//Перемноженная матрицад для расчетов
         Label[] labell;//Массив с нумерацией маяков
+        Label[] labelbox;
         int mayak = 0;//Подсчет количества маяков
         int x, y;//Координаты курсора при клике
         double[,] clone;//Матрица клон для кдаления маяка
+        double[,] BoxPos;//Массив с координатами комнаты вида [x1, x2, ... , xn]
+                         //                                   [y1, y2, ... , yn]
+        int flag = 0;//Подсчет количества углов комнаты
+        int N;//Количество углов комнаты
+        int ind = 0;//Индикатор добавления угла
+        int v = 0;//Индикатор занятого места
+        Form2 form = new Form2();
         public Form1()
         {
             InitializeComponent();
@@ -49,7 +61,10 @@ namespace WindowsFormsApp1
             button2.Enabled = false;
             pictureBox1.Enabled = false;
             button1.Enabled = false;
+            button22.Enabled = false;
             button23.Enabled = false;
+            textBox1.Enabled = false;
+            button25.Enabled = false;
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -64,6 +79,7 @@ namespace WindowsFormsApp1
             label10.BackColor = Color.Transparent;
             label11.BackColor = Color.Transparent;
             label12.BackColor = Color.Transparent;
+            label13.BackColor = Color.Transparent;
             label14.BackColor = Color.Transparent;
             label15.BackColor = Color.Transparent;
             label16.BackColor = Color.Transparent;
@@ -97,13 +113,30 @@ namespace WindowsFormsApp1
             label44.BackColor = Color.Transparent;
             label45.BackColor = Color.Transparent;
             label46.BackColor = Color.Transparent;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
+            button9.Visible = false;
+            button10.Visible = false;
+            button11.Visible = false;
+            button12.Visible = false;
+            button13.Visible = false;
+            button14.Visible = false;
+            button15.Visible = false;
+            button16.Visible = false;
+            button17.Visible = false;
+            button18.Visible = false;
+            button19.Visible = false;
+            button20.Visible = false;
+            button21.Visible = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
            // this.Width = 1500;//Размеры окна по умолчанию
           //  this.Height = 1000;
-            //this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
-            //this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
+           // this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
+           // this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
         }
         private void Drawing()//Оси
         {
@@ -168,92 +201,113 @@ namespace WindowsFormsApp1
                     if (Z[j, l] < 1)
                     {
                         pen = new Pen(Color.LimeGreen);
+                        pen = new Pen(Color.FromArgb(0, 0, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1 && Z[j, l] < 1.1)
                     {
                         pen = new Pen(Color.Green);
+                        pen = new Pen(Color.FromArgb(40, 40, 220));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.1 && Z[j, l] < 1.15)
                     {
-                        pen = new Pen(Color.RoyalBlue);;
+                        pen = new Pen(Color.RoyalBlue);
+                        pen = new Pen(Color.FromArgb(80, 80, 180));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.15 && Z[j, l] < 1.2)
                     {
                         pen = new Pen(Color.Blue);
+                        pen = new Pen(Color.FromArgb(120, 120, 150));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.2 && Z[j, l] < 1.35)
                     {
                         pen = new Pen(Color.Navy);
+                        pen = new Pen(Color.FromArgb(130, 130, 130));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.35 && Z[j, l] < 1.5)
                     {
                         pen = new Pen(Color.BlueViolet);
+                        pen = new Pen(Color.FromArgb(150, 150, 120));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.5 && Z[j, l] < 1.7)
                     {
                         pen = new Pen(Color.Yellow);
+                        pen = new Pen(Color.FromArgb(180,180, 80));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.7 && Z[j, l] < 1.9)
                     {
                         pen = new Pen(Color.Orange);
+                        pen = new Pen(Color.FromArgb(220, 220, 40));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.9 && Z[j, l] < 2.1)
                     {
                         pen = new Pen(Color.Pink);
+                        pen = new Pen(Color.FromArgb(255, 255, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.1 && Z[j, l] < 2.3)
                     {
                         pen = new Pen(Color.HotPink);
+                        pen = new Pen(Color.FromArgb(255, 220, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.3 && Z[j, l] < 2.5)
                     {
                         pen = new Pen(Color.Crimson);
+                        pen = new Pen(Color.FromArgb(255, 180, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.5 && Z[j, l] < 2.7)
                     {
                         pen = new Pen(Color.Red);
+                        pen = new Pen(Color.FromArgb(255, 150, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.7 && Z[j, l] < 3)
                     {
                         pen = new Pen(Color.DarkRed);
+                        pen = new Pen(Color.FromArgb(255, 130, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 3 && Z[j, l] < 5)
                     {
                         pen = new Pen(Color.Brown);
+                        pen = new Pen(Color.FromArgb(255, 120, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 5 && Z[j, l] < 10)
                     {
                         pen = new Pen(Color.Maroon);
+                        pen = new Pen(Color.FromArgb(255, 80, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 10 && Z[j, l] < 15)
                     {
                         pen = new Pen(Color.Gray);
+                        pen = new Pen(Color.FromArgb(255, 40, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 15)
                     {
                         pen = new Pen(Color.White);
+                        pen = new Pen(Color.FromArgb(255, 0, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-                    progressBar1.Value += 1;
+                    form.progressBar1.Value += 1;
                 }
             }
             button2.Enabled = true;
+            if (form.progressBar1.Value == 2000000)
+            {
+                form.Hide();
+            }
         }
         private void Transp(int N)//Транспонированная матрица
         {
@@ -265,7 +319,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        private void cop(int kol)//Перемножение матриц
+        private void multi(int kol)//Перемножение матриц
         {
             for (int i = 0; i < 2; i++)
             {
@@ -360,11 +414,11 @@ namespace WindowsFormsApp1
                         i += 1;
                     }
                     Transp(kol1);
-                    cop(kol1);
+                    multi(kol1);
                     inversionMatrix(2);
                     Z[x, y] = trace(2);
                     i = 0;
-                    progressBar1.Value += 1;
+                    form.progressBar1.Value += 1;
                 }                
             }
         }
@@ -383,11 +437,11 @@ namespace WindowsFormsApp1
                         i += 1;
                     }
                     Transp(kol1);
-                    cop(kol1);
+                    multi(kol1);
                     inversionMatrix(2);
                     Z[x, y] = trace(2);
                     i = 0;
-                    progressBar1.Value += 1;
+                    form.progressBar1.Value += 1;
                 }               
             }           
         }
@@ -405,93 +459,336 @@ namespace WindowsFormsApp1
                 labell[b].BackColor = Color.Transparent;
             }
         }
+        private void labalbox()//Нумерация маяков
+        {
+            for (int b = 0; b < N; b++)
+            {
+                labelbox[b] = new Label();
+                labelbox[b].Location = new Point(Convert.ToInt32(BoxPos[0, b]) - 6, Convert.ToInt32(BoxPos[1, b]) - 20);
+                labelbox[b].ForeColor = Color.Black;
+                labelbox[b].Text = (b + 1).ToString();
+                labelbox[b].Size = new Size(30, 12);
+                labelbox[b].BackColor = this.label1.Parent.BackColor;
+                labelbox[b].Parent = this.pictureBox1;
+                labelbox[b].BackColor = Color.Transparent;
+            }
+        }
+        private void roompaint()
+        {
+            for (int j = 0; j < N; j++)
+            {
+                graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+            }
+            for (int i = 0; i < N - 1; i++)
+            {
+                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+            }
+                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+        }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
+            string sum = textBox1.Text;
+            string ugl = textBox2.Text;
+            //Маяки
             if (e.Button == MouseButtons.Left)
             {
-                string sum = textBox1.Text;
-                M = Convert.ToInt32(sum);
                 if (mayak < M)
                 {
-                    Drawing();
                     x = e.Location.X;
                     y = e.Location.Y;
-                    lp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами маяков
-                    foreach (Point p in lp)
+                    if (mayak > 0)
                     {
-                        graph.DrawEllipse(pen, p.X - 8, p.Y - 8, 16, 16);//Прорисовка маяков
+                        foreach (Point p in lp)
+                        {
+                            if (x > p.X - 16 && x < p.X + 16 && y < p.Y + 16 && y > p.Y - 16)
+                            {
+                                v = 1;
+                            }
+                        }
+                        foreach(Point pp in Bp)
+                        {
+                            if (x > pp.X - 12 && x < pp.X + 12 && y < pp.Y + 12 && y > pp.Y - 12)
+                                v = 1;
+                        }
+                        if (v == 1)
+                        {
+                            v = 0;
+                            MessageBox.Show("Is this place taken");
+                        }
+                        else
+                        {
+                            Drawing();
+                            lp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами маяков
+                            foreach (Point pp in lp)
+                            {
+                                graph.DrawEllipse(pen, pp.X - 8, pp.Y - 8, 16, 16);//Прорисовка маяков
+                            }
+                            roompaint();
+                            listBox1.Items.Clear();//Очистка листа перед новым заполненим 
+                            int pole1 = 1;
+                            foreach (Point l in lp)
+                            {
+                                listBox1.Items.Add(pole1 + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат маяков на экран
+                                pole1 += 1;
+                            }
+                            mayak = mayak + 1;
+                        }
                     }
-                    listBox1.Items.Clear();//Очистка листа перед новым заполненим 
-                    int pole = 1;
-                    foreach (Point l in lp)
+                    if (mayak == 0)
                     {
-                        listBox1.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат маяков на экран
-                        pole += 1;
+                        Drawing();
+                        lp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами маяков
+                        foreach (Point p in lp)
+                        {
+                            graph.DrawEllipse(pen, p.X - 8, p.Y - 8, 16, 16);//Прорисовка маяков
+                        }
+                        roompaint();
+                        listBox1.Items.Clear();//Очистка листа перед новым заполненим 
+                        int pole = 1;
+                        foreach (Point l in lp)
+                        {
+                            listBox1.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат маяков на экран
+                            pole += 1;
+                        }
+                        mayak = mayak + 1;
+                    }
+                    if (mayak == M)
+                    {
+                        button23.Enabled = true;
+                        button1.Enabled = true;
+                        button3.Enabled = true;
+                        button25.Enabled = true;
+                        int kol = 0;
+                        foreach (Point lol in lp)//Создание массива с координтами маяков
+                        {
+                            SatPos[0, kol] = lol.X;
+                            SatPos[1, kol] = lol.Y;
+                            kol += 1;
+                        }
+                        labal();
+                        labalbox();
+                        kol = 0;
                     }
                 }
-                if (mayak == (M - 1))
-                {
-                    button23.Enabled = true;
-                    button1.Enabled = true;
-                    button3.Enabled = true;
-                    int kol = 0;
-                    foreach (Point lol in lp)//Создание массива с координтами маяков
-                    {
-                        SatPos[0, kol] = lol.X;
-                        SatPos[1, kol] = lol.Y;
-                        kol += 1;
-                    }
-                    listBox1.Items.Clear();
-                    for (int i = 0; i < M; i++)//Вывод координат всех маяков на экран
-                    {
-                        listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
-                    }
-                    labal();
-                    kol = 0;
-                }
-                mayak = mayak + 1;
             }
+            //Маяки
             if (e.Button == MouseButtons.Right)
             {
-                string sum = textBox1.Text;
-                if (sum != "")
+                if (mayak >= M)
                 {
-                    if (mayak > (M - 1))
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    for (int j = 0; j < M; j++)
+                    {
+                        if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                        {
+                            if (M > 2)
+                            {
+                                f = j;
+                                for (int k = 0; k < M; k++)
+                                {
+                                    labell[k].Dispose();
+                                }
+                                Drawing();
+                                el = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                                graph.DrawRectangle(pen, el);
+                                M -= 1;
+                                textBox1.Text = M.ToString();
+                                clone = new double[2, M + 1];
+                                Grad = new double[M + 1, 2];
+                                Tran = new double[2, M + 1];
+                                Umn = new double[2, 2];
+                                labell = new Label[M + 1];
+                                deletebeacons(f);
+                                break;
+                            }
+                            else
+                                MessageBox.Show("There must be at least two beacons on the map");
+                        }
+
+                    }
+                }
+            }
+            //Комната
+            if (e.Button == MouseButtons.Left)
+            {
+                if (flag < N)
+                {
+                    if (ind == 0)
                     {
                         x = e.Location.X;
                         y = e.Location.Y;
-                        for (int j = 0; j < M; j++)
+                        if (flag > 0)
                         {
-                            if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                            foreach (Point p in Bp)
                             {
-                                if (M > 2)
+                                if (x > p.X - 12 && x < p.X + 12 && y < p.Y + 12 && y > p.Y - 12)
                                 {
-                                    f = j;
-                                    for (int k = 0; k < M; k++)
-                                    {
-                                        labell[k].Dispose();
-                                    }
+                                    v = 1;
+                                }
+                            }
+                            if (v == 1)
+                            {
+                                v = 0;
+                                MessageBox.Show("Is this place taken");
+                            }
+                            else
+                            {
+                                Drawing();
+                                Bp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
+                                foreach (Point p in Bp)
+                                {
+                                    graph.DrawRectangle(pen, p.X - 6, p.Y - 6, 12, 12);//Прорисовка углов
+                                }
+                                BoxPos[0, flag] = x;
+                                BoxPos[1, flag] = y;
+
+                                for (int i = 0; i < flag; i++)
+                                {
+                                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                                }
+
+                                if (flag == N - 1)
+                                {
+                                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                    button22.Enabled = true;
+                                    textBox1.Enabled = true;
+                                    pictureBox1.Enabled = false;
+                                    labalbox();
+                                }
+                                listBox2.Items.Clear();//Очистка листа перед новым заполненим 
+                                int pole = 1;
+                                foreach (Point l in Bp)
+                                {
+                                    listBox2.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат комнаты на экран
+                                    pole += 1;
+                                }
+                                flag +=1;
+                            }
+                        }
+                        if (flag == 0)
+                        {
+                            Drawing();
+                            Bp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
+                            foreach (Point p in Bp)
+                            {
+                                graph.DrawRectangle(pen, p.X - 6, p.Y - 6, 12, 12);//Прорисовка углов
+                            }
+                            BoxPos[0, flag] = x;
+                            BoxPos[1, flag] = y;
+                            listBox2.Items.Clear();//Очистка листа перед новым заполненим 
+                            int pole = 1;
+                            foreach (Point l in Bp)
+                            {
+                                listBox2.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат комнаты на экран
+                                pole += 1;
+                            }
+                            flag += 1;
+                        }
+                    }
+                }
+                if (flag < N)
+                {
+                    if (ind != 0)
+                    {
+                        x = e.Location.X;
+                        y = e.Location.Y;
+                        foreach (Point p in Bp)
+                        {
+                            if (x > p.X - 12 && x < p.X + 12 && y < p.Y + 12 && y > p.Y - 12)
+                            {
+                                v = 1;
+                            }
+                        }
+                        foreach (Point p in lp)
+                        {
+                            if (x > p.X - 16 && x < p.X + 16 && y < p.Y + 16 && y > p.Y - 16)
+                            {
+                                v = 1;
+                            }
+                        }
+                        if (v == 1)
+                        {
+                            v = 0;
+                            MessageBox.Show("Is this place taken");
+                        }
+                        else
+                        {
+                            Drawing();
+                            button23.Enabled = true;
+                            button22.Enabled = false;
+                            pictureBox1.Enabled = true;
+                            button25.Enabled = true;
+                            button3.Enabled = true;
+                            button1.Enabled = true;
+                            for (int j = 0; j < M; j++)
+                            {
+                                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                            }
+                            Bp.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
+                            foreach (Point p in Bp)
+                            {
+                                graph.DrawRectangle(pen, p.X - 6, p.Y - 6, 12, 12);//Прорисовка углов
+                            }
+                            listBox2.Items.Clear();//Очистка листа перед новым заполненим 
+                            int pole1 = 1;
+                            foreach (Point l in Bp)
+                            {
+                                listBox2.Items.Add(pole1 + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат комнаты на экран
+                                pole1 += 1;
+                            }
+                            int kol1 = 0;
+                            foreach (Point lol in Bp)//Создание массива с координтами маяков
+                            {
+                                BoxPos[0, kol1] = lol.X;
+                                BoxPos[1, kol1] = lol.Y;
+                                kol1 += 1;
+                            }
+                            labal();
+                            labalbox();
+                            roompaint();
+                            flag +=1;
+                        }
+                    }
+                }
+            }
+            //Комната
+            if (e.Button == MouseButtons.Right)
+            {
+                if (ugl != "")
+                {
+                    if (flag >= N)
+                    {
+                        x = e.Location.X;
+                        y = e.Location.Y;
+                        for (int j = 0; j < N; j++)
+                        {
+                            if (x > (BoxPos[0, j] - 6) && x < (BoxPos[0, j] + 6) && y < (BoxPos[1, j] + 6) && y > (BoxPos[1, j] - 6))//Проверка тучка в область маяка
+                            {
+                                if (N > 3)
+                                {
+                                    g = j;
                                     Drawing();
-                                    el = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
-                                    graph.DrawRectangle(pen, el);
-                                    M -= 1;
-                                    textBox1.Text = M.ToString();
-                                    clone = new double[2, M + 1];
-                                    Grad = new double[M + 1, 2];
-                                    Tran = new double[2, M + 1];
-                                    Umn = new double[2, 2];
-                                    labell = new Label[M + 1];
-                                    deletebeacons(f);
+                                    for (int k = 0; k < N; k++)
+                                    {
+                                        labelbox[k].Dispose();
+                                    }
+                                    ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                                    graph.DrawRectangle(pen, ek);
+                                    N -= 1;
+                                    textBox2.Text = N.ToString();
+                                    clone = new double[2, N + 1];
+                                    labelbox = new Label[N + 1];
+                                    deleteugl();
                                     break;
                                 }
                                 else
-                                    MessageBox.Show("There must be at least two beacons on the map");
+                                    MessageBox.Show("There must be at least three corner on the map");
                             }
                         }
                     }
                 }
             }
-
         }
         private void deletebeacons(int numberbeacon)
         {
@@ -521,6 +818,7 @@ namespace WindowsFormsApp1
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
             }
+            roompaint();
             listBox1.Items.Clear();
             for (int i = 0; i < M; i++)
             {
@@ -529,44 +827,42 @@ namespace WindowsFormsApp1
             labal();
             button2.PerformClick();
         }
-        private void button1_Click(object sender, EventArgs e)//Полная очитска
+        private void deleteugl()
         {
-            string sum = textBox1.Text;
-            if (sum != "")
+            Point del = new Point() { X = Convert.ToInt32(BoxPos[0, g]), Y = Convert.ToInt32(BoxPos[1, g]) };
+            Bp.Remove(del);
+
+            for (int i = 0; i <= N; i++)
             {
-                for (int k = 0; k < M; k++)
+                if (i < g)
                 {
-                    labell[k].Dispose();
+                    clone[0, i] = BoxPos[0, i];
+                    clone[1, i] = BoxPos[1, i];
+                }
+                if (i > g)
+                {
+                    clone[0, i - 1] = BoxPos[0, i];
+                    clone[1, i - 1] = BoxPos[1, i];
                 }
             }
-            graph.Clear(Color.White);
-            mayak = 0;
-            lp.Clear();
-            listBox1.Items.Clear();
-            textBox1.Text = "";
-            textBox2.Text = "";
-            Drawing();
-
-            checkBox2.Checked = false;
-            checkBox1.Checked = false;
-
-            double[,] SatPos;
-            double[,] Grad;
-            double[,] Z;
-            double[,] Tran;
-            double[,] Umn;
-            f = 0;
-            deltax = 0;
-            deltay = 0;
-            el = new Rectangle();
-            M = 0;
-            textBox1.Enabled = true;
-            progressBar1.Value = 0;
-            button3.Enabled = false;
-            button2.Enabled = false;
-            button22.Enabled = true;
-            button1.Enabled = false;
-            button23.Enabled = false;
+            BoxPos = new double[2, N + 1];
+            for (int i = 0; i < N; i++)
+            {
+                BoxPos[0, i] = clone[0, i];
+                BoxPos[1, i] = clone[1, i];
+            }
+            for (int j = 0; j < M; j++)
+            {
+                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+            }
+            roompaint();
+            listBox2.Items.Clear();
+            for (int i = 0; i < N; i++)
+            {
+                listBox2.Items.Add((i + 1) + ")" + "X:" + BoxPos[0, i] + "," + "Y:" + (1000 - BoxPos[1, i]));
+            }
+            labalbox();
+            button2.PerformClick();
         }
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)//Вывод координат курсора на экран
         {
@@ -577,17 +873,24 @@ namespace WindowsFormsApp1
         {
             if (checkBox1.Checked == true && checkBox2.Checked == false)//D
             {
+                form.Show();
                 button2.PerformClick();
-                progressBar1.Value = 0;
+                form.progressBar1.Value = 0;
                 Sort(M);
-                Surf();             
+                Surf();
+                pen = new Pen(Color.Black);
                 for (int j = 0;j < M;j++)
                 {
                     Brush = new SolidBrush(Color.Black);
                     graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0,j]) - 8, Convert.ToInt32(SatPos[1,j]) - 8, 16, 16);
                 }
+                for (int j = 0; j < N; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                roompaint();
             }
-
             if (checkBox2.Checked == true && checkBox1.Checked == false)//RD
             {
                 if (M == 2)
@@ -596,15 +899,23 @@ namespace WindowsFormsApp1
                 }
                 else
                 {
+                    form.Show();
                     button2.PerformClick();
-                    progressBar1.Value = 0;
+                    form.progressBar1.Value = 0;
                     Sort1(M);
                     Surf();
+                    pen = new Pen(Color.Black);
                     for (int j = 0; j < M; j++)
                     {
                         Brush = new SolidBrush(Color.Black);
                         graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                     }
+                    for (int j = 0; j < N; j++)
+                    {
+                        Brush = new SolidBrush(Color.Black);
+                        graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                    }
+                    roompaint();
                     int xM = Convert.ToInt32(SatPos[0, M - 1]);
                     int yM = Convert.ToInt32(SatPos[1, M - 1]);
                     Brush = new SolidBrush(Color.White);
@@ -625,71 +936,432 @@ namespace WindowsFormsApp1
         }
         private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)//Отслеживание нажатия ЛКМ
         {
+            //Маяки
             if (e.Button == MouseButtons.Left)
             {
-                string sum = textBox1.Text;
-                if (sum != "")
+                if (mayak >= M && flag >= N)
                 {
-                    if (mayak > (M - 1))
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    for (int j = 0; j < M; j++)
                     {
-                        x = e.Location.X;
-                        y = e.Location.Y;
-                        for (int j = 0; j < M; j++)
+                        if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тычка в область маяка
                         {
-                            if (x > (SatPos[0, j] - 8) && x < (SatPos[0, j] + 8) && y < (SatPos[1, j] + 8) && y > (SatPos[1, j] - 8))//Проверка тучка в область маяка
+                            f = j;
+                            el = new Rectangle((Convert.ToInt32(SatPos[0, j]) - 8), (Convert.ToInt32(SatPos[1, j]) - 8), 16, 16);
+                            IsClicked = true;
+                            for (int k = 0; k < M; k++)
                             {
-                                f = j;
-                                el = new Rectangle((Convert.ToInt32(SatPos[0, j]) - 8), (Convert.ToInt32(SatPos[1, j]) - 8), 16, 16);
-                                IsClicked = true;
-                                labell[f].Dispose();
-                                progressBar1.Value = 0;
-                                deltax = e.X - el.X;
-                                deltay = e.Y - el.Y;
-                                break;
+                                labell[k].Dispose();
                             }
+
+                            for (int k = 0; k < N; k++)
+                            {
+                                labelbox[k].Dispose();
+                            }
+                            form.progressBar1.Value = 0;
+                            deltax = e.X - el.X;
+                            deltay = e.Y - el.Y;
+                            break;
                         }
                     }
                 }
+                
+            }
+            //Комната
+            if (e.Button == MouseButtons.Left)
+            {
+                if (flag >= N && mayak >= M)
+                {
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    for (int j = 0; j < N; j++)
+                    {
+                        if (x > (BoxPos[0, j] - 6) && x < (BoxPos[0, j] + 6) && y < (BoxPos[1, j] + 6) && y > (BoxPos[1, j] - 6))//Проверка тучка в область маяка
+                        {
+                            g = j;
+                            ek = new Rectangle((Convert.ToInt32(BoxPos[0, j]) - 6), (Convert.ToInt32(BoxPos[1, j]) - 6), 12, 12);
+                            IsClicked2 = true;
+                            for (int k = 0; k < M; k++)
+                            {
+                                labell[k].Dispose();
+                            }
+                            for (int k = 0; k < N; k++)
+                            {
+                                labelbox[k].Dispose();
+                            }
+                            form.progressBar1.Value = 0;
+                            deltax = e.X - ek.X;
+                            deltay = e.Y - ek.Y;
+                            break;
+                        }
+                    }
+                }               
             }
         }
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
         {
-            string sum = textBox1.Text;
-            if (sum != "")
+            //Маяки
+            if (mayak >= M)
             {
-                if (mayak > (M - 1))
+                if (IsClicked)
                 {
-                    if (IsClicked)
+                    el.X = e.X - deltax;
+                    el.Y = e.Y - deltay;
+                    if (el.X < 0)
                     {
-                        el.X = e.X - deltax;
-                        el.Y = e.Y - deltay;
-                        if (el.X < 0) 
+                        el.X = 0;
+                    }
+                    if (el.X > 984)
+                    {
+                        el.X = 984;
+                    }
+                    if (el.Y < 0)
+                    {
+                        el.Y = 0;
+                    }
+                    if (el.Y > 984)
+                    {
+                        el.Y = 984;
+                    }
+                    for (int i = 0; i < N; i++)
+                    {
+                        if (el.X > (BoxPos[0, i] - 10) && el.X < (BoxPos[0, i] + 10) && el.Y < (BoxPos[1, i] + 10) && el.Y > (BoxPos[1, i] - 10))
                         {
-                            el.X = 0;
+                            if (el.Y < (BoxPos[1, i] + 10))
+                            {
+                                el.Y = Convert.ToInt32(BoxPos[1, i] + 4);
+                            }
+                            if (el.X < (BoxPos[0, i] + 10))
+                            {
+                                el.X = Convert.ToInt32(BoxPos[0, i] + 4);
+                            }
                         }
-                        if (el.X > 984)
+                        if (el.X + 16 > (BoxPos[0, i] - 10) && el.X + 16 < (BoxPos[0, i] + 10) && el.Y < (BoxPos[1, i] + 10) && el.Y > (BoxPos[1, i] - 10))
                         {
-                            el.X = 984;
+                            if (el.Y < (BoxPos[1, i] + 10))
+                            {
+                                el.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                            }
+                            if (el.X + 16 > (BoxPos[0, i] - 10))
+                            {
+                                el.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                            }
                         }
-                        if (el.Y < 0)
+                        if (el.X > (BoxPos[0, i] - 10) && el.X < (BoxPos[0, i] + 10) && el.Y + 16 < (BoxPos[1, i] + 10) && el.Y + 16 > (BoxPos[1, i] - 10))
                         {
-                            el.Y = 0;
+                            if (el.Y + 16 > (BoxPos[1, i] - 10))
+                            {
+                                el.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                            }
+                            if (el.X < (BoxPos[0, i] + 10))
+                            {
+                                el.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                            }
                         }
-                        if (el.Y > 984)
+                        if (el.X + 16 > (BoxPos[0, i] - 10) && el.X + 16 < (BoxPos[0, i] + 10) && el.Y + 16 < (BoxPos[1, i] + 10) && el.Y + 16 > (BoxPos[1, i] - 10))
                         {
-                            el.Y = 984;
-                        }                        
-                        pictureBox1.Invalidate();
-                        SatPos[0, f] = el.X + 8;
-                        SatPos[1, f] = el.Y + 8;
-                        Drawing();
-                        for (int j = 0; j < M; j++)
+                            if (el.Y + 16 > (BoxPos[1, i] - 10))
+                            {
+                                el.Y = Convert.ToInt32(BoxPos[1, i] - 20);
+                            }
+                            if (el.X + 16 > (BoxPos[0, i] - 10))
+                            {
+                                el.X = Convert.ToInt32(BoxPos[0, i] - 20);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < f; i++)
+                    {
+                        if (el.X > (SatPos[0, i] - 12) && el.X < (SatPos[0, i] + 12) && el.Y < (SatPos[1, i] + 12) && el.Y > (SatPos[1, i] - 12))
                         {
-                            graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
-                        }                       
+                            if (el.Y < (SatPos[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] + 4);
+                            }
+                            if (el.X < (SatPos[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] + 4);
+                            }
+                        }
+                        if (el.X + 12 > (SatPos[0, i] - 12) && el.X + 12 < (SatPos[0, i] + 12) && el.Y < (SatPos[1, i] + 12) && el.Y > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y < (SatPos[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] + 8);
+                            }
+                            if (el.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] - 16);
+                            }
+                        }
+                        if (el.X > (SatPos[0, i] - 12) && el.X < (SatPos[0, i] + 12) && el.Y + 12 < (SatPos[1, i] + 12) && el.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] - 16);
+                            }
+                            if (el.X < (SatPos[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] + 8);
+                            }
+                        }
+                        if (el.X + 12 > (SatPos[0, i] - 12) && el.X + 12 < (SatPos[0, i] + 12) && el.Y + 12 < (SatPos[1, i] + 12) && el.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] - 20);
+                            }
+                            if (el.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] - 20);
+                            }
+                        }
+                    }
+                    for (int i = f + 1; i < M; i++)
+                    {
+                        if (el.X > (SatPos[0, i] - 12) && el.X < (SatPos[0, i] + 12) && el.Y < (SatPos[1, i] + 12) && el.Y > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y < (SatPos[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] + 4);
+                            }
+                            if (el.X < (SatPos[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] + 4);
+                            }
+                        }
+                        if (el.X + 12 > (SatPos[0, i] - 12) && el.X + 12 < (SatPos[0, i] + 12) && el.Y < (SatPos[1, i] + 12) && el.Y > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y < (SatPos[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] + 8);
+                            }
+                            if (el.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] - 16);
+                            }
+                        }
+                        if (el.X > (SatPos[0, i] - 12) && el.X < (SatPos[0, i] + 12) && el.Y + 12 < (SatPos[1, i] + 12) && el.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] - 16);
+                            }
+                            if (el.X < (SatPos[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] + 8);
+                            }
+                        }
+                        if (el.X + 12 > (SatPos[0, i] - 12) && el.X + 12 < (SatPos[0, i] + 12) && el.Y + 12 < (SatPos[1, i] + 12) && el.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(SatPos[1, i] - 20);
+                            }
+                            if (el.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(SatPos[0, i] - 20);
+                            }
+                        }
+                    }
+                    pictureBox1.Invalidate();
+                    SatPos[0, f] = el.X + 8;
+                    SatPos[1, f] = el.Y + 8;
+                    Drawing();
+                    for (int j = 0; j < M; j++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                    }
+                    roompaint();
+                    listBox1.Items.Clear();
+                    for (int i = 0; i < M; i++)
+                    {
+                        listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
                     }
                 }
+
             }
+            //Комната
+            if (flag >= N)
+            {
+                if (IsClicked2)
+                {
+                    ek.X = e.X - deltax;
+                    ek.Y = e.Y - deltay;
+                    if (ek.X < 0)
+                    {
+                        ek.X = 0;
+                    }
+                    if (ek.X > 988)
+                    {
+                        ek.X = 988;
+                    }
+                    if (ek.Y < 0)
+                    {
+                        ek.Y = 0;
+                    }
+                    if (ek.Y > 988)
+                    {
+                        ek.Y = 988;
+                    }
+                    for (int i = 0; i < M; i++)
+                    {
+                        if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y < (SatPos[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] + 6);
+                            }
+                            if (ek.X < (SatPos[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y < (SatPos[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] - 16);
+                            }
+                            if (ek.X < (SatPos[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] - 18);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < g; i++)
+                    {
+                        if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 6);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (BoxPos[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (BoxPos[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 18);
+                            }
+                        }
+                    }
+                    for (int i = g+1; i < N; i++)
+                    {
+                        if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 6);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (BoxPos[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (BoxPos[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 18);
+                            }
+                        }
+                    }
+                    pictureBox1.Invalidate();
+                    BoxPos[0, g] = ek.X + 6;
+                    BoxPos[1, g] = ek.Y + 6;
+                    Drawing();
+                    for (int j = 0; j < M; j++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                    }
+                    roompaint();
+                    listBox2.Items.Clear();
+                    for (int i = 0; i < N; i++)
+                    {
+                        listBox2.Items.Add((i + 1) + ")" + "X:" + BoxPos[0, i] + "," + "Y:" + (1000 - BoxPos[1, i]));
+                    }
+                }
+            }          
         }
         private void beacon()//Прорисовка новых маяков
         {
@@ -700,39 +1372,78 @@ namespace WindowsFormsApp1
                 Point test = new Point() { X = Convert.ToInt32(SatPos[0, kol]), Y = Convert.ToInt32(SatPos[1, kol]) };
                 lp[kol] = test;
             }
-            Drawing();
-            for (int k = 0; k < M; k++)
-            {
-                labell[k].Dispose();
-            }  
+            Drawing();  
             for (int j = 0; j < M; j++)
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
             }
+            roompaint();
             listBox1.Items.Clear();
             for (int i = 0; i < M; i++)
             {
                 listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
             }
             labal();
+            labalbox();
+            ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+            graph.DrawRectangle(pen, ek);
+            button2.PerformClick();
+        }
+        private void Box()
+        {
+            BoxPos[0, g] = ek.X + 6;
+            BoxPos[1, g] = ek.Y + 6;
+            for (int kol = 0; kol < N; kol++)
+            {
+                Point test = new Point() { X = Convert.ToInt32(BoxPos[0, kol]), Y = Convert.ToInt32(BoxPos[1, kol]) };
+                Bp[kol] = test;
+            }
+            Drawing();
+            for (int j = 0; j < M; j++)
+            {
+                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+            }
+            roompaint();
+            listBox2.Items.Clear();
+            for (int i = 0; i < N; i++)
+            {
+                listBox2.Items.Add((i + 1) + ")" + "X:" + BoxPos[0, i] + "," + "Y:" + (1000 - BoxPos[1, i]));
+            }
+            labal();
+            labalbox();
+            ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+            graph.DrawRectangle(pen, ek);
             button2.PerformClick();
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)//Отслеживание отпуска ЛКМ
         {
-            string sum = textBox1.Text;
-            if (sum != "")
+            //Маяки
+            if (mayak >= M && IsClicked == true)
             {
-                if (mayak > M && IsClicked==true)
-                {
-                    IsClicked = false;
-                    beacon();
-                }
+                IsClicked = false;
+                beacon();
             }
+
+            //Комната
+            if (flag >= N && IsClicked2 == true)
+            {
+                IsClicked2 = false;
+                Box();
+            }
+            
         }
         private void pictureBox1_Paint(object sender, PaintEventArgs e)//Отрисока маяка при перетаскивании
         {
-            pen = new Pen(Color.Black);
-            e.Graphics.DrawEllipse(pen, el);
+            if (IsClicked == true)
+            {
+                pen = new Pen(Color.Black);
+                e.Graphics.DrawEllipse(pen, el);
+            }
+            if (IsClicked2 == true)
+            {
+                pen = new Pen(Color.Black);
+                e.Graphics.DrawRectangle(pen, ek);
+            }
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -761,29 +1472,43 @@ namespace WindowsFormsApp1
             }
             else
             {
-                M = Convert.ToInt32(sum);
-                if (M == 1 || M <= 0)
+                int n;
+                if (int.TryParse(textBox1.Text, out n))
                 {
-                    MessageBox.Show("Install more beacons");
+                    M = Convert.ToInt32(sum);
+                    if (M == 1 || M <= 0)
+                    {
+                        MessageBox.Show("Install more beacons");
+                    }
+                    else
+                    {
+                        for (int k = 0; k < N; k++)
+                        {
+                            labelbox[k].Dispose();
+                        }
+                        pictureBox1.Enabled = true;
+                        textBox1.Enabled = false;
+                        SatPos = new double[2, M + 1];
+                        Grad = new double[M + 1, 2];
+                        Tran = new double[2, M + 1];
+                        Umn = new double[2, 2];
+                        labell = new Label[M + 1];
+                        button22.Enabled = false;
+                    }
                 }
                 else
-                {
-                    pictureBox1.Enabled = true;
-                    textBox1.Enabled = false;
-                    SatPos = new double[2, M+1];
-                    Grad = new double[M+1, 2];
-                    Tran = new double[2, M+1];
-                    Umn = new double[2, 2];
-                    labell = new Label[M+1];
-                    button22.Enabled = false;
-                }
+                    MessageBox.Show("Input correct number");
             }
         }
-        private void button23_Click(object sender, EventArgs e)//add1
+        private void button23_Click(object sender, EventArgs e)//add1 beacon
         {
             for (int k = 0; k < M; k++)
             {
                 labell[k].Dispose();
+            }
+            for (int k = 0; k < N; k++)
+            {
+                labelbox[k].Dispose();
             }
             textBox1.Text = (M + 1).ToString();
             M += 1;
@@ -797,16 +1522,58 @@ namespace WindowsFormsApp1
             button1.Enabled = false;
             button2.Enabled = false;
             button3.Enabled = false;
+            button25.Enabled = false;
         }
-        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        private void button25_Click(object sender, EventArgs e)//add1 room
         {
-           
+            for (int k = 0; k < M; k++)
+            {
+                labell[k].Dispose();
+            }
+            for (int k = 0; k < N; k++)
+            {
+                labelbox[k].Dispose();
+            }
+            textBox2.Text = (N + 1).ToString();
+            N += 1;
+            flag = N - 1;
+            button25.Enabled = false;
+            BoxPos = new double[2, N + 1];
+            labelbox = new Label[N + 1];
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button3.Enabled = false;
+            button23.Enabled = false;
+            pictureBox1.Enabled = true;
+            ind = 1;
+        }
+        private void button24_Click(object sender, EventArgs e)//build
+        {
+            string ugl = textBox2.Text;
+            if (ugl != "")
+            {
+                int n;
+                if (int.TryParse(textBox2.Text, out n))
+                {
+                    N = Convert.ToInt32(ugl);
+                    if (N > 2)
+                    {
+                        BoxPos = new double[2, N + 1];
+                        labelbox = new Label[N + 1];
+                        pictureBox1.Enabled = true;
+                        button24.Enabled = false;
+                        textBox2.Enabled = false;
+                    }
+                    else
+                        MessageBox.Show("Input more");
+                }
+                else
+                    MessageBox.Show("Input correct number");
+            }
+            else
+                MessageBox.Show("Input number");
         }
 
-        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-           
-        }
         private void button2_Click(object sender, EventArgs e)//Очистка GDOP поверхности
         {
             Drawing();
@@ -814,12 +1581,61 @@ namespace WindowsFormsApp1
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
             }
+            roompaint();
             double[,] Grad;
             double[,] Z;
             double[,] Tran;
             double[,] Umn;
             button2.Enabled = false;
-            progressBar1.Value = 0;
+            form.progressBar1.Value = 0;
+        }
+        private void button1_Click(object sender, EventArgs e)//Полная очитска
+        {
+            for (int k = 0; k < M; k++)
+            {
+                labell[k].Dispose();
+            }
+            
+            graph.Clear(Color.White);
+            mayak = 0;
+            flag = 0;
+            lp.Clear();
+            Bp.Clear();
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
+            textBox1.Text = "";
+            textBox2.Text = "";
+            Drawing();
+
+            checkBox2.Checked = false;
+            checkBox1.Checked = false;
+
+            double[,] SatPos;
+            double[,] Grad;
+            double[,] Z;
+            double[,] Tran;
+            double[,] Umn;
+            double[,] BoxPos;
+            f = 0;
+            g = 0;
+            deltax = 0;
+            deltay = 0;
+            el = new Rectangle();
+            ek = new Rectangle();
+            M = 0;
+            N = 0;
+            ind = 0;
+            textBox1.Enabled = false;
+            textBox2.Enabled = true;
+            form.progressBar1.Value = 0;
+            button3.Enabled = false;
+            button2.Enabled = false;
+            button22.Enabled = true;
+            button1.Enabled = false;
+            button23.Enabled = false;
+            button24.Enabled = true;
+            button22.Enabled = false;
+            button25.Enabled = false;
         }
     }
 }
