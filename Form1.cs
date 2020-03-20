@@ -44,6 +44,7 @@ namespace WindowsFormsApp1
         int N;//Количество углов комнаты
         int ind = 0;//Индикатор добавления угла
         int v = 0;//Индикатор занятого места
+        int press = 0;//Индикатор стерания комнаты
         Form2 form = new Form2();
         public Form1()
         {
@@ -65,6 +66,8 @@ namespace WindowsFormsApp1
             button23.Enabled = false;
             textBox1.Enabled = false;
             button25.Enabled = false;
+            button26.Enabled = false;
+            button27.Enabled = false;
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -558,6 +561,7 @@ namespace WindowsFormsApp1
                         button1.Enabled = true;
                         button3.Enabled = true;
                         button25.Enabled = true;
+                        button27.Enabled = true;
                         int kol = 0;
                         foreach (Point lol in lp)//Создание массива с координтами маяков
                         {
@@ -568,6 +572,7 @@ namespace WindowsFormsApp1
                         labal();
                         labalbox();
                         kol = 0;
+                        button26.Enabled = true;
                     }
                 }
             }
@@ -647,13 +652,29 @@ namespace WindowsFormsApp1
                                 {
                                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                                 }
-
+                                if(press==1)
+                                {
+                                    foreach (Point pp in lp)
+                                    {
+                                        graph.DrawEllipse(pen, pp.X - 8, pp.Y - 8, 16, 16);//Прорисовка маяков
+                                    }
+                                }
                                 if (flag == N - 1)
                                 {
                                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
-                                    button22.Enabled = true;
-                                    textBox1.Enabled = true;
-                                    pictureBox1.Enabled = false;
+                                    if (press == 0)
+                                    {
+                                        button22.Enabled = true;
+                                        textBox1.Enabled = true;
+                                        pictureBox1.Enabled = false;
+                                        button1.Enabled = true;
+                                    }
+                                    if(press==1)
+                                    {
+                                        button23.Enabled = true;
+                                        button25.Enabled = true;
+                                    }
+                                    button27.Enabled = true;
                                     labalbox();
                                 }
                                 listBox2.Items.Clear();//Очистка листа перед новым заполненим 
@@ -663,7 +684,7 @@ namespace WindowsFormsApp1
                                     listBox2.Items.Add(pole + ")" + "X:" + l.X + "," + "Y:" + (1000 - l.Y));//Вывод координат комнаты на экран
                                     pole += 1;
                                 }
-                                flag +=1;
+                                flag += 1;
                             }
                         }
                         if (flag == 0)
@@ -673,6 +694,13 @@ namespace WindowsFormsApp1
                             foreach (Point p in Bp)
                             {
                                 graph.DrawRectangle(pen, p.X - 6, p.Y - 6, 12, 12);//Прорисовка углов
+                            }
+                            if (press == 1)
+                            {
+                                foreach (Point pp in lp)
+                                {
+                                    graph.DrawEllipse(pen, pp.X - 8, pp.Y - 8, 16, 16);//Прорисовка маяков
+                                }
                             }
                             BoxPos[0, flag] = x;
                             BoxPos[1, flag] = y;
@@ -721,6 +749,8 @@ namespace WindowsFormsApp1
                             button25.Enabled = true;
                             button3.Enabled = true;
                             button1.Enabled = true;
+                            button26.Enabled = true;
+                            button27.Enabled = true;
                             for (int j = 0; j < M; j++)
                             {
                                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -747,10 +777,11 @@ namespace WindowsFormsApp1
                             labal();
                             labalbox();
                             roompaint();
-                            flag +=1;
+                            flag += 1;
                         }
                     }
-                }
+                } 
+                
             }
             //Комната
             if (e.Button == MouseButtons.Right)
@@ -1174,11 +1205,6 @@ namespace WindowsFormsApp1
                         graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                     }
                     roompaint();
-                    listBox1.Items.Clear();
-                    for (int i = 0; i < M; i++)
-                    {
-                        listBox1.Items.Add((i + 1) + ")" + "X:" + SatPos[0, i] + "," + "Y:" + (1000 - SatPos[1, i]));
-                    }
                 }
 
             }
@@ -1355,11 +1381,6 @@ namespace WindowsFormsApp1
                         graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                     }
                     roompaint();
-                    listBox2.Items.Clear();
-                    for (int i = 0; i < N; i++)
-                    {
-                        listBox2.Items.Add((i + 1) + ")" + "X:" + BoxPos[0, i] + "," + "Y:" + (1000 - BoxPos[1, i]));
-                    }
                 }
             }          
         }
@@ -1494,6 +1515,7 @@ namespace WindowsFormsApp1
                         Umn = new double[2, 2];
                         labell = new Label[M + 1];
                         button22.Enabled = false;
+                        button1.Enabled = false;
                     }
                 }
                 else
@@ -1523,6 +1545,8 @@ namespace WindowsFormsApp1
             button2.Enabled = false;
             button3.Enabled = false;
             button25.Enabled = false;
+            button26.Enabled = false;
+            button27.Enabled = false;
         }
         private void button25_Click(object sender, EventArgs e)//add1 room
         {
@@ -1545,6 +1569,8 @@ namespace WindowsFormsApp1
             button3.Enabled = false;
             button23.Enabled = false;
             pictureBox1.Enabled = true;
+            button26.Enabled = false;
+            button27.Enabled = false;
             ind = 1;
         }
         private void button24_Click(object sender, EventArgs e)//build
@@ -1589,13 +1615,98 @@ namespace WindowsFormsApp1
             button2.Enabled = false;
             form.progressBar1.Value = 0;
         }
+
+        private void button26_Click(object sender, EventArgs e)//clear beacons
+        {
+            if (N == 0)
+            {
+                button1.PerformClick();
+            }
+            else
+            {
+                for (int k = 0; k < M; k++)
+                {
+                    labell[k].Dispose();
+                }
+                mayak = 0;
+                lp.Clear();
+                listBox1.Items.Clear();
+                textBox1.Text = "";
+                Drawing();
+                roompaint();
+                double[,] SatPos;
+                double[,] Grad;
+                double[,] Z;
+                double[,] Tran;
+                double[,] Umn;
+                f = 0;
+                el = new Rectangle();
+                M = 0;
+
+                button23.Enabled = false;
+                button22.Enabled = true;
+                textBox1.Enabled = true;
+                pictureBox1.Enabled = false;
+                button25.Enabled = false;
+                button3.Enabled = false;
+                button1.Enabled = true;
+                button26.Enabled = false;
+                button2.Enabled = false;
+            }
+        }
+
+        private void button27_Click(object sender, EventArgs e)//clear room
+        {
+            if (M == 0)
+            {
+                button1.PerformClick();
+            }
+            else
+            {
+                for (int k = 0; k < N; k++)
+                {
+                    labelbox[k].Dispose();
+                }
+                flag = 0;
+                Bp.Clear();
+                listBox2.Items.Clear();
+                textBox2.Text = "";
+                double[,] BoxPos;
+                g = 0;
+                N = 0;
+                ind = 0;
+                press = 1;
+                button3.Enabled = false;
+                button2.Enabled = false;
+                pictureBox1.Enabled = false;
+                button1.Enabled = false;
+                button22.Enabled = false;
+                button23.Enabled = false;
+                textBox1.Enabled = false;
+                textBox2.Enabled = true;
+                button25.Enabled = false;
+                button24.Enabled = true;
+                button27.Enabled = false;
+                ek = new Rectangle();
+                Drawing();
+                foreach (Point p in lp)
+                {
+                    graph.DrawEllipse(pen, p.X - 8, p.Y - 8, 16, 16);//Прорисовка маяков
+                }
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)//Полная очитска
         {
             for (int k = 0; k < M; k++)
             {
                 labell[k].Dispose();
             }
-            
+            for (int k = 0; k < N; k++)
+            {
+                labelbox[k].Dispose();
+            }
+
             graph.Clear(Color.White);
             mayak = 0;
             flag = 0;
@@ -1625,6 +1736,7 @@ namespace WindowsFormsApp1
             M = 0;
             N = 0;
             ind = 0;
+            press = 0;
             textBox1.Enabled = false;
             textBox2.Enabled = true;
             form.progressBar1.Value = 0;
@@ -1636,6 +1748,8 @@ namespace WindowsFormsApp1
             button24.Enabled = true;
             button22.Enabled = false;
             button25.Enabled = false;
+            button26.Enabled = false;
+            button27.Enabled = false;
         }
     }
 }
