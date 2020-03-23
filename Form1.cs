@@ -24,18 +24,20 @@ namespace WindowsFormsApp1
         Pen pen;
         List<Point> lp = new List<Point>();//Лист с координатами маяков
         List<Point> Bp = new List<Point>();//Лист с координатами комнаты
+        List<Point> Per = new List<Point>();
         SolidBrush Brush;//Параметр заливки маяка
         int f;//Флаг для определения маяка при переносе
         int g;//Флаг для определения угла комнаты при переносе
         int M;//Количество маяков
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
+        double[,] SatClone;
         double[,] Grad;//Градиентная матрица
         double[,] Z;//Матрица со значениеми геометрического фактора в каждой точке помещения
         double[,] Tran;//Транспонированная матрица вида [x1, y1]
-                                                      //[x2, y2]
-                                                      //[......]
-                                                      //[xn, yn]
+                       //[x2, y2]
+                       //[......]
+                       //[xn, yn]
         double[,] Umn;//Перемноженная матрицад для расчетов
         Label[] labell;//Массив с нумерацией маяков
         Label[] labelbox;
@@ -44,11 +46,14 @@ namespace WindowsFormsApp1
         double[,] clone;//Матрица клон для кдаления маяка
         double[,] BoxPos;//Массив с координатами комнаты вида [x1, x2, ... , xn]
                          //                                   [y1, y2, ... , yn]
+        double[,] BoxClone;
         int flag = 0;//Подсчет количества углов комнаты
         int N;//Количество углов комнаты
         int ind = 0;//Индикатор добавления угла
         int v = 0;//Индикатор занятого места
+        bool s = false;//Индикатор пересечения
         int press = 0;//Индикатор стерания комнаты
+        int kolich;//Количество маяков с учетом видимости
         Form2 form = new Form2();
         public Form1()
         {
@@ -142,10 +147,10 @@ namespace WindowsFormsApp1
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-           // this.Width = 1500;//Размеры окна по умолчанию
-          //  this.Height = 1000;
-           // this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
-           // this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
+            // this.Width = 1500;//Размеры окна по умолчанию
+            //  this.Height = 1000;
+            // this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
+            // this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
         }
         private void Drawing()//Оси
         {
@@ -207,7 +212,7 @@ namespace WindowsFormsApp1
             {
                 for (int l = 0; l < 1000; l++)
                 {
-                    if (Z[j, l] < 1)
+                    if (Z[j, l] < 1 && Z[j,l]>0)
                     {
                         pen = new Pen(Color.LimeGreen);
                         pen = new Pen(Color.FromArgb(0, 0, 255));
@@ -303,6 +308,12 @@ namespace WindowsFormsApp1
                         pen = new Pen(Color.FromArgb(255, 40, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
+                    if (Z[j,l] == 0)
+                    {
+                        pen = new Pen(Color.White);
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
                     if (Z[j, l] > 15)
                     {
                         pen = new Pen(Color.White);
@@ -334,7 +345,7 @@ namespace WindowsFormsApp1
             {
                 for (int j = 0; j < 2; j++)
                 {
-                     Umn[i,j] = 0;
+                    Umn[i, j] = 0;
                     for (int k = 0; k < kol; k++)
                     {
                         Umn[i, j] += Tran[i, k] * Grad[k, j];
@@ -345,30 +356,30 @@ namespace WindowsFormsApp1
         private void inversionMatrix(int N)//Обратная матрица
         {
             double temp;
-            double[,] B = new double[N,N];
+            double[,] B = new double[N, N];
             for (int i = 0; i < N; i++)
                 for (int j = 0; j < N; j++)
                 {
-                    B[i,j] = 0.0;
+                    B[i, j] = 0.0;
 
                     if (i == j)
-                        B[i,j] = 1.0;
+                        B[i, j] = 1.0;
                 }
             for (int k = 0; k < N; k++)
             {
-                temp = Umn[k,k];
+                temp = Umn[k, k];
                 for (int j = 0; j < N; j++)
                 {
-                    Umn[k,j] /= temp;
-                    B[k,j] /= temp;
+                    Umn[k, j] /= temp;
+                    B[k, j] /= temp;
                 }
                 for (int i = k + 1; i < N; i++)
                 {
-                    temp = Umn[i,k];
+                    temp = Umn[i, k];
                     for (int j = 0; j < N; j++)
                     {
-                        Umn[i,j] -= Umn[k,j] * temp;
-                        B[i,j] -= B[k,j] * temp;
+                        Umn[i, j] -= Umn[k, j] * temp;
+                        B[i, j] -= B[k, j] * temp;
                     }
                 }
             }
@@ -376,11 +387,11 @@ namespace WindowsFormsApp1
             {
                 for (int i = k - 1; i >= 0; i--)
                 {
-                    temp = Umn[i,k];                  
+                    temp = Umn[i, k];
                     for (int j = 0; j < N; j++)
                     {
-                        Umn[i,j] -= Umn[k,j] * temp;
-                        B[i,j] -= B[k,j] * temp;
+                        Umn[i, j] -= Umn[k, j] * temp;
+                        B[i, j] -= B[k, j] * temp;
                     }
                 }
             }
@@ -388,18 +399,18 @@ namespace WindowsFormsApp1
             {
                 for (int j = 0; j < N; j++)
                 {
-                   Umn[i, j] = B[i, j];
+                    Umn[i, j] = B[i, j];
                 }
             }
         }
         private double trace(int N)//Расчет GDOP(Матрица Z)
         {
-            double trac=0;
+            double trac = 0;
             for (int i = 0; i < N; i++)
             {
                 for (int j = 0; j < N; j++)
                 {
-                    if (i==j)
+                    if (i == j)
                     {
                         trac += Umn[i, j];
                     }
@@ -410,25 +421,54 @@ namespace WindowsFormsApp1
         }
         private void Sort(int kol1)//Решение для дальномерного метода
         {
+            SatClone = new double[2, M + 1];
+            for (int h = 0; h < M; h++)
+            {
+                SatClone[0, h] = SatPos[0, h];
+                SatClone[1, h] = SatPos[1, h];
+            }
+            BoxClone = new double[2, N + 2];
+            for (int h = 0; h < N; h++)
+            {
+                BoxClone[0, h] = BoxPos[0, h];
+                BoxClone[1, h] = BoxPos[1, h];
+            }
+            BoxClone[0, N] = BoxPos[0, 0];
+            BoxClone[1, N] = BoxPos[1, 0];
             Z = new double[1000, 1000];
             int i = 0;
-            for (int x=0;x<1000;x++)
+            for (int x = 0; x < 1000; x++)
             {
-                for(int y=0;y<1000;y++)
+                for (int y = 0; y < 1000; y++)
                 {
-                    while (i < kol1)
+                    vidimost(x, y);
+                    kol1 = kolich;
+                    if (kol1 < 2)
+                        Z[x, y] = 0;
+                    else
                     {
-                        Grad[i, 0] = (x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
-                        Grad[i, 1] = (y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));                       
-                        i += 1;
+                        while (i < kol1)
+                        {
+                            Grad[i, 0] = (x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
+                            Grad[i, 1] = (y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
+                            i += 1;
+                        }
+                        Transp(kol1);
+                        multi(kol1);
+                        inversionMatrix(2);
+                        Z[x, y] = trace(2);
                     }
-                    Transp(kol1);
-                    multi(kol1);
-                    inversionMatrix(2);
-                    Z[x, y] = trace(2);
+                    // listBox2.Items.Add(Z[x, y]);
                     i = 0;
+                    SatPos = new double[2, M + 1];
+                    for (int h = 0; h < M; h++)
+                    {
+                        SatPos[0, h] = SatClone[0, h];
+                        SatPos[1, h] = SatClone[1, h];
+                    }
+                    Per.Clear();
                     form.progressBar1.Value += 1;
-                }                
+                }
             }
         }
         private void Sort1(int kol1)//Решение для разностно-дальномерного метода
@@ -451,8 +491,8 @@ namespace WindowsFormsApp1
                     Z[x, y] = trace(2);
                     i = 0;
                     form.progressBar1.Value += 1;
-                }               
-            }           
+                }
+            }
         }
         private void labal()//Нумерация маяков
         {
@@ -492,7 +532,7 @@ namespace WindowsFormsApp1
             {
                 graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
             }
-                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+            graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)//Клики
         {
@@ -514,7 +554,7 @@ namespace WindowsFormsApp1
                                 v = 1;
                             }
                         }
-                        foreach(Point pp in Bp)
+                        foreach (Point pp in Bp)
                         {
                             if (x > pp.X - 12 && x < pp.X + 12 && y < pp.Y + 12 && y > pp.Y - 12)
                                 v = 1;
@@ -586,7 +626,7 @@ namespace WindowsFormsApp1
             //Маяки
             if (e.Button == MouseButtons.Right)
             {
-                if(IsClicked==false && IsClicked2==false)
+                if (IsClicked == false && IsClicked2 == false)
                 {
                     if (mayak >= M)
                     {
@@ -662,7 +702,7 @@ namespace WindowsFormsApp1
                                 {
                                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                                 }
-                                if(press==1)
+                                if (press == 1)
                                 {
                                     foreach (Point pp in lp)
                                     {
@@ -679,10 +719,11 @@ namespace WindowsFormsApp1
                                         pictureBox1.Enabled = false;
                                         button1.Enabled = true;
                                     }
-                                    if(press==1)
+                                    if (press == 1)
                                     {
                                         button23.Enabled = true;
                                         button25.Enabled = true;
+                                        button3.Enabled = true;
                                     }
                                     button27.Enabled = true;
                                     button29.Enabled = true;
@@ -792,14 +833,14 @@ namespace WindowsFormsApp1
                             flag += 1;
                         }
                     }
-                } 
-                
+                }
+
             }
             //Комната
             if (e.Button == MouseButtons.Right)
             {
-                if(IsClicked==false && IsClicked2==false)
-                { 
+                if (IsClicked == false && IsClicked2 == false)
+                {
                     if (flag >= N)
                     {
                         x = e.Location.X;
@@ -837,22 +878,22 @@ namespace WindowsFormsApp1
         {
             Point del = new Point() { X = Convert.ToInt32(SatPos[0, numberbeacon]), Y = Convert.ToInt32(SatPos[1, numberbeacon]) };
             lp.Remove(del);
-            
-            for (int i = 0; i <=M; i++)
+
+            for (int i = 0; i <= M; i++)
             {
-                 if (i < numberbeacon)
-                 {
-                clone[0, i] = SatPos[0, i];
-                clone[1, i] = SatPos[1, i];
-                 }
-                  if (i > numberbeacon)
-                  {
-                   clone[0, i-1] = SatPos[0, i];
-                   clone[1, i-1] = SatPos[1, i];
-                  }
+                if (i < numberbeacon)
+                {
+                    clone[0, i] = SatPos[0, i];
+                    clone[1, i] = SatPos[1, i];
+                }
+                if (i > numberbeacon)
+                {
+                    clone[0, i - 1] = SatPos[0, i];
+                    clone[1, i - 1] = SatPos[1, i];
+                }
             }
             SatPos = new double[2, M + 1];
-            for(int i=0; i<M;i++)
+            for (int i = 0; i < M; i++)
             {
                 SatPos[0, i] = clone[0, i];
                 SatPos[1, i] = clone[1, i];
@@ -922,10 +963,10 @@ namespace WindowsFormsApp1
                 Sort(M);
                 Surf();
                 pen = new Pen(Color.Black);
-                for (int j = 0;j < M;j++)
+                for (int j = 0; j < M; j++)
                 {
                     Brush = new SolidBrush(Color.Black);
-                    graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0,j]) - 8, Convert.ToInt32(SatPos[1,j]) - 8, 16, 16);
+                    graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                 }
                 for (int j = 0; j < N; j++)
                 {
@@ -965,7 +1006,7 @@ namespace WindowsFormsApp1
                     graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
                 }
             }
-            
+
             if (checkBox2.Checked == true && checkBox1.Checked == true)//Проверка на незаполнение
             {
                 MessageBox.Show("Select 1 method");
@@ -1009,7 +1050,7 @@ namespace WindowsFormsApp1
                         }
                     }
                 }
-                
+
             }
             //Комната
             if (e.Button == MouseButtons.Left)
@@ -1039,7 +1080,7 @@ namespace WindowsFormsApp1
                             break;
                         }
                     }
-                }               
+                }
             }
         }
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
@@ -1337,7 +1378,7 @@ namespace WindowsFormsApp1
                             }
                         }
                     }
-                    for (int i = g+1; i < N; i++)
+                    for (int i = g + 1; i < N; i++)
                     {
                         if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
                         {
@@ -1394,18 +1435,18 @@ namespace WindowsFormsApp1
                     }
                     roompaint();
                 }
-            }          
+            }
         }
         private void beacon()//Прорисовка новых маяков
         {
             SatPos[0, f] = el.X + 8;
             SatPos[1, f] = el.Y + 8;
-           for(int kol = 0; kol<M;kol++)
+            for (int kol = 0; kol < M; kol++)
             {
                 Point test = new Point() { X = Convert.ToInt32(SatPos[0, kol]), Y = Convert.ToInt32(SatPos[1, kol]) };
                 lp[kol] = test;
             }
-            Drawing();  
+            Drawing();
             for (int j = 0; j < M; j++)
             {
                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -1463,7 +1504,7 @@ namespace WindowsFormsApp1
                 IsClicked2 = false;
                 Box();
             }
-            
+
         }
         private void pictureBox1_Paint(object sender, PaintEventArgs e)//Отрисока маяка при перетаскивании
         {
@@ -1826,10 +1867,10 @@ namespace WindowsFormsApp1
             {
                 using (StreamWriter beacon = new StreamWriter(savebeacon.FileName, true))
                 {
-                    for(int i=0;i<M;i++)
-                    beacon.Write(SatPos[0,i]+" "+(1000-SatPos[1,i])+'\n');
+                    for (int i = 0; i < M; i++)
+                        beacon.Write(SatPos[0, i] + " " + (1000 - SatPos[1, i]) + '\n');
                 }
-            }        
+            }
         }
 
         private void button29_Click(object sender, EventArgs e)
@@ -1842,7 +1883,7 @@ namespace WindowsFormsApp1
                 using (StreamWriter beacon = new StreamWriter(saveroom.FileName, true))
                 {
                     for (int i = 0; i < N; i++)
-                        beacon.Write(BoxPos[0, i] + " " + (1000-BoxPos[1, i]) +'\n');
+                        beacon.Write(BoxPos[0, i] + " " + (1000 - BoxPos[1, i]) + '\n');
                 }
             }
         }
@@ -1903,6 +1944,48 @@ namespace WindowsFormsApp1
             button27.Enabled = false;
             button28.Enabled = false;
             button29.Enabled = false;
+        }
+
+        private void vidimost(int x, int y)
+        {
+            for (int i = 0; i < M; i++)
+            {
+                double ax1 = x;
+                double ay1 = y;
+                double ax2 = SatPos[0, i];
+                double ay2 = SatPos[1, i];
+                s = false;
+                for (int j = 0; j < N; j++)
+                {
+                    double bx1 = BoxClone[0, j];
+                    double by1 = BoxClone[1, j];
+                    double bx2 = BoxClone[0, j + 1];
+                    double by2 = BoxClone[1, j + 1];
+                    double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                    double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                    double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                    double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                    if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                    {
+                        s = true;
+                    }
+                }
+                if(s==false)
+                    Per.Add(new Point() { X = Convert.ToInt32(SatPos[0, i]), Y = Convert.ToInt32(SatPos[1, i]) });
+            }
+            kolich = 0;
+            foreach (Point pp in Per)
+            {
+                kolich += 1;
+            }
+            SatPos = new double[2, kolich + 1];
+            kolich = 0;
+            foreach (Point pp in Per)
+            {
+                SatPos[0, kolich] = pp.X;
+                SatPos[1, kolich] = pp.Y;
+                kolich += 1;
+            }
         }
     }
 }
