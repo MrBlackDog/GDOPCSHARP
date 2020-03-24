@@ -25,8 +25,8 @@ namespace WindowsFormsApp1
         Pen pen;
         List<Point> lp = new List<Point>();//Лист с координатами маяков
         List<Point> Bp = new List<Point>();//Лист с координатами комнаты
-        List<Point> Per = new List<Point>();
-        List<Point> lishn = new List<Point>();
+        List<Point> Per = new List<Point>();//Лист с массивом видимых координат
+        List<Point> lishn = new List<Point>();//Лист маяков видимых мастеру
         SolidBrush Brush;//Параметр заливки маяка
         int f;//Флаг для определения маяка при переносе
         int g;//Флаг для определения угла комнаты при переносе
@@ -42,7 +42,7 @@ namespace WindowsFormsApp1
                        //[xn, yn]
         double[,] Umn;//Перемноженная матрицад для расчетов
         Label[] labell;//Массив с нумерацией маяков
-        Label[] labelbox;
+        Label[] labelbox;//Массив с нумерацией углов
         int mayak = 0;//Подсчет количества маяков
         int x, y;//Координаты курсора при клике
         double[,] clone;//Матрица клон для кдаления маяка
@@ -56,9 +56,9 @@ namespace WindowsFormsApp1
         bool s = false;//Индикатор пересечения
         int press = 0;//Индикатор стерания комнаты
         int kolich;//Количество маяков с учетом видимости
-        int qunt;
-        Form2 form = new Form2();
-        bool photo = false;
+        int qunt;//Количество маяков видимых при RD
+        Form2 form = new Form2();//Progress Bar
+        bool photo = false;//Индикатор загрузки плана
         public Form1()
         {
             InitializeComponent();
@@ -83,6 +83,10 @@ namespace WindowsFormsApp1
             button27.Enabled = false;
             button28.Enabled = false;
             button29.Enabled = false;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -131,28 +135,9 @@ namespace WindowsFormsApp1
             label44.BackColor = Color.Transparent;
             label45.BackColor = Color.Transparent;
             label46.BackColor = Color.Transparent;
-            button5.Visible = false;
-            button6.Visible = false;
-            button7.Visible = false;
-            button8.Visible = false;
-            button9.Visible = false;
-            button10.Visible = false;
-            button11.Visible = false;
-            button12.Visible = false;
-            button13.Visible = false;
-            button14.Visible = false;
-            button15.Visible = false;
-            button16.Visible = false;
-            button17.Visible = false;
-            button18.Visible = false;
-            button19.Visible = false;
-            button20.Visible = false;
-            button21.Visible = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            // this.Width = 1500;//Размеры окна по умолчанию
-            //  this.Height = 1000;
              this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
              this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
         }
@@ -212,115 +197,101 @@ namespace WindowsFormsApp1
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             graph = Graphics.FromImage(bmp);
             pictureBox1.Image = bmp;
+            button5.Visible = true;
+            button6.Visible = true;
+            button7.Visible = true;
+            button8.Visible = true;
             for (int j = 0; j < 1000; j++)
             {
                 for (int l = 0; l < 1000; l++)
                 {
                     if (Z[j, l] < 1 && Z[j,l]>0)
                     {
-                        pen = new Pen(Color.LimeGreen);
                         pen = new Pen(Color.FromArgb(0, 0, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1 && Z[j, l] < 1.1)
                     {
-                        pen = new Pen(Color.Green);
                         pen = new Pen(Color.FromArgb(40, 40, 220));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.1 && Z[j, l] < 1.15)
                     {
-                        pen = new Pen(Color.RoyalBlue);
                         pen = new Pen(Color.FromArgb(80, 80, 180));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.15 && Z[j, l] < 1.2)
                     {
-                        pen = new Pen(Color.Blue);
                         pen = new Pen(Color.FromArgb(40, 140, 40));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.2 && Z[j, l] < 1.35)
                     {
-                        pen = new Pen(Color.Navy);
                         pen = new Pen(Color.FromArgb(50, 200, 50));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.35 && Z[j, l] < 1.5)
                     {
-                        pen = new Pen(Color.BlueViolet);
                         pen = new Pen(Color.FromArgb(0, 255, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.5 && Z[j, l] < 1.7)
                     {
-                        pen = new Pen(Color.Yellow);
                         pen = new Pen(Color.FromArgb(130, 255, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.7 && Z[j, l] < 1.9)
                     {
-                        pen = new Pen(Color.Orange);
                         pen = new Pen(Color.FromArgb(180, 255, 50));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.9 && Z[j, l] < 2.1)
                     {
-                        pen = new Pen(Color.Pink);
                         pen = new Pen(Color.FromArgb(255, 255, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.1 && Z[j, l] < 2.3)
                     {
-                        pen = new Pen(Color.HotPink);
                         pen = new Pen(Color.FromArgb(255, 220, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.3 && Z[j, l] < 2.5)
                     {
-                        pen = new Pen(Color.Crimson);
                         pen = new Pen(Color.FromArgb(255, 180, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.5 && Z[j, l] < 2.7)
                     {
-                        pen = new Pen(Color.Red);
                         pen = new Pen(Color.FromArgb(255, 150, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.7 && Z[j, l] < 3)
                     {
-                        pen = new Pen(Color.DarkRed);
                         pen = new Pen(Color.FromArgb(255, 130, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 3 && Z[j, l] < 5)
                     {
-                        pen = new Pen(Color.Brown);
                         pen = new Pen(Color.FromArgb(255, 120, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 5 && Z[j, l] < 10)
                     {
-                        pen = new Pen(Color.Maroon);
                         pen = new Pen(Color.FromArgb(255, 80, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 10 && Z[j, l] < 15)
                     {
-                        pen = new Pen(Color.Gray);
                         pen = new Pen(Color.FromArgb(255, 40, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j,l] == 0)
                     {
-                        pen = new Pen(Color.White);
                         pen = new Pen(Color.FromArgb(255, 255, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 15)
                     {
-                        pen = new Pen(Color.White);
                         pen = new Pen(Color.FromArgb(255, 0, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
@@ -1154,17 +1125,14 @@ namespace WindowsFormsApp1
                     graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
                 }
             }
-
             if (checkBox2.Checked == true && checkBox1.Checked == true)//Проверка на незаполнение
             {
                 MessageBox.Show("Select 1 method");
             }
-
             if (checkBox2.Checked == false && checkBox1.Checked == false)//Проверка на заполнения обоих полей
             {
                 MessageBox.Show("Select 1 method");
             }
-
         }
         private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)//Отслеживание нажатия ЛКМ
         {
@@ -1191,6 +1159,10 @@ namespace WindowsFormsApp1
                             {
                                 labelbox[k].Dispose();
                             }
+                            button5.Visible = false;
+                            button6.Visible = false;
+                            button7.Visible = false;
+                            button8.Visible = false;
                             form.progressBar1.Value = 0;
                             deltax = e.X - el.X;
                             deltay = e.Y - el.Y;
@@ -1198,7 +1170,6 @@ namespace WindowsFormsApp1
                         }
                     }
                 }
-
             }
             //Комната
             if (e.Button == MouseButtons.Left)
@@ -1222,6 +1193,10 @@ namespace WindowsFormsApp1
                             {
                                 labelbox[k].Dispose();
                             }
+                            button5.Visible = false;
+                            button6.Visible = false;
+                            button7.Visible = false;
+                            button8.Visible = false;
                             form.progressBar1.Value = 0;
                             deltax = e.X - ek.X;
                             deltay = e.Y - ek.Y;
@@ -1407,7 +1382,6 @@ namespace WindowsFormsApp1
                     }
                     roompaint();
                 }
-
             }
             //Комната
             if (flag >= N)
@@ -1645,14 +1619,12 @@ namespace WindowsFormsApp1
                 IsClicked = false;
                 beacon();
             }
-
             //Комната
             if (flag >= N && IsClicked2 == true)
             {
                 IsClicked2 = false;
                 Box();
             }
-
         }
         private void pictureBox1_Paint(object sender, PaintEventArgs e)//Отрисока маяка при перетаскивании
         {
@@ -1750,6 +1722,10 @@ namespace WindowsFormsApp1
             button26.Enabled = false;
             button27.Enabled = false;
             button28.Enabled = false;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
         }
         private void button25_Click(object sender, EventArgs e)//add1 room
         {
@@ -1775,6 +1751,10 @@ namespace WindowsFormsApp1
             button26.Enabled = false;
             button27.Enabled = false;
             button29.Enabled = false;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
             ind = 1;
         }
         private void button24_Click(object sender, EventArgs e)//build
@@ -1803,7 +1783,6 @@ namespace WindowsFormsApp1
             else
                 MessageBox.Show("Input number");
         }
-
         private void button2_Click(object sender, EventArgs e)//Очистка GDOP поверхности
         {
             Drawing();
@@ -1818,8 +1797,11 @@ namespace WindowsFormsApp1
             double[,] Umn;
             button2.Enabled = false;
             form.progressBar1.Value = 0;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
         }
-
         private void button26_Click(object sender, EventArgs e)//clear beacons
         {
             if (N == 0)
@@ -1877,6 +1859,10 @@ namespace WindowsFormsApp1
                 button26.Enabled = false;
                 button27.Enabled = false;
                 button28.Enabled = false;
+                button5.Visible = false;
+                button6.Visible = false;
+                button7.Visible = false;
+                button8.Visible = false;
             }
             else
             {
@@ -1909,6 +1895,10 @@ namespace WindowsFormsApp1
                 button26.Enabled = false;
                 button2.Enabled = false;
                 button28.Enabled = false;
+                button5.Visible = false;
+                button6.Visible = false;
+                button7.Visible = false;
+                button8.Visible = false;
             }
         }
 
@@ -1969,6 +1959,10 @@ namespace WindowsFormsApp1
                 button26.Enabled = false;
                 button27.Enabled = false;
                 button29.Enabled = false;
+                button5.Visible = false;
+                button6.Visible = false;
+                button7.Visible = false;
+                button8.Visible = false;
             }
             else
             {
@@ -1997,6 +1991,10 @@ namespace WindowsFormsApp1
                 button24.Enabled = true;
                 button27.Enabled = false;
                 button29.Enabled = false;
+                button5.Visible = false;
+                button6.Visible = false;
+                button7.Visible = false;
+                button8.Visible = false;
                 ek = new Rectangle();
                 Drawing();
                 foreach (Point p in lp)
@@ -2046,7 +2044,6 @@ namespace WindowsFormsApp1
             {
                 labelbox[k].Dispose();
             }
-
             graph.Clear(Color.White);
             mayak = 0;
             flag = 0;
@@ -2092,6 +2089,10 @@ namespace WindowsFormsApp1
             button27.Enabled = false;
             button28.Enabled = false;
             button29.Enabled = false;
+            button5.Visible = false;
+            button6.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
         }
 
         private void button30_Click(object sender, EventArgs e)
