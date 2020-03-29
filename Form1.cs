@@ -91,6 +91,7 @@ namespace WindowsFormsApp1
             button22.Enabled = false;
             button23.Enabled = false;
             textBox1.Enabled = false;
+            textBox7.Enabled = false;
             button25.Enabled = false;
             button26.Enabled = false;
             button27.Enabled = false;
