@@ -65,9 +65,9 @@ namespace WindowsFormsApp1
         int qunt;//Количество маяков видимых при RD
         Form2 form = new Form2();//Progress Bar
         bool photo = false;//Индикатор загрузки плана
-        int minnum = 0;
-        int nextnum = 0;
-        double StartInfoX = 0;
+        int minnum = 0;//Номер ближайшего угла
+        int nextnum = 0;//Номер 2 угла
+        double StartInfoX = 0;//Линейка
         double StartInfoY = 0;
         Label labelInfo;
         bool IsInfo = false;
@@ -2415,26 +2415,26 @@ namespace WindowsFormsApp1
             button11.Enabled = true;
             textBox5.Text = "";
             textBox6.Text = "";
-            label22.Text = Convert.ToString(0);
-            label20.Text = Convert.ToString(0);
-            label18.Text = Convert.ToString(0);
-            label16.Text = Convert.ToString(0);
-            label14.Text = Convert.ToString(0);
-            label12.Text = Convert.ToString(0);
-            label10.Text = Convert.ToString(0);
-            label8.Text = Convert.ToString(0);
-            label6.Text = Convert.ToString(0);
-            label4.Text = Convert.ToString(0);
-            label46.Text = Convert.ToString(0);
-            label44.Text = Convert.ToString(0);
-            label42.Text = Convert.ToString(0);
-            label35.Text = Convert.ToString(0);
-            label33.Text = Convert.ToString(0);
-            label31.Text = Convert.ToString(0);
-            label29.Text = Convert.ToString(0);
-            label27.Text = Convert.ToString(0);
-            label36.Text = Convert.ToString(0);
-            label24.Text = Convert.ToString(0);
+            label22.Text = Convert.ToString("");
+            label20.Text = Convert.ToString("");
+            label18.Text = Convert.ToString("");
+            label16.Text = Convert.ToString("");
+            label14.Text = Convert.ToString("");
+            label12.Text = Convert.ToString("");
+            label10.Text = Convert.ToString("");
+            label8.Text = Convert.ToString("");
+            label6.Text = Convert.ToString("");
+            label4.Text = Convert.ToString("");
+            label46.Text = Convert.ToString("");
+            label44.Text = Convert.ToString("");
+            label42.Text = Convert.ToString("");
+            label35.Text = Convert.ToString("");
+            label33.Text = Convert.ToString("");
+            label31.Text = Convert.ToString("");
+            label29.Text = Convert.ToString("");
+            label27.Text = Convert.ToString("");
+            label36.Text = Convert.ToString("");
+            label24.Text = Convert.ToString("");
             Xmax=0;
             Ymax=0;
             pxX=0;
@@ -2571,50 +2571,61 @@ namespace WindowsFormsApp1
         private void button9_Click(object sender, EventArgs e)
         {
             MessageBox.Show(@"GDOP - программа, которая помогает определить значение геометрического фактора. 
-                            Инструкция по использованию:
-1.Ввести количество углов помещения, в котором вы собираетесь определить значение геометрического фактора;
-2.После нажатия на кпоку build установить углы на местности(для удобства имеется координатная ось, а также слева отображаются координаты курсора на поле в данный момент;
-3.Ввести количество маяков;
-4.После нажатия на кнопку set утановить маяки на местности.
-5.После этого вы уже можете расчитать значение геометричесукого фактора по дальномерному методу или разностно - дальномерному методу(главный маяк(мастер) будет последним поставленным на местности), для этого выберите метод и нажмите кнопку GO;
-6.Также у вас есть возможность добавлять по 1 маяку на местность и 1 углу комнаты. Для этого необходимо нажать на кнопку add 1 рядом с введенным значением маяков или углов комнаты.
-7.Еще одна особенность данный программы заключается в том, что у вас есть возможность перемещать маяки по местности или углы комнаты, при этом все расчеты будут проводится относительно новых параметров.
-8.При нажатии правой кнопки мыши на маяк или угол команты данный маяк(угол) удалится с местности.
-9.Вы не можете ставить несколько маяков или углов комнаты в 1 точку.
-10.Также при переносе маяков или углов комнаты вы не можете перетащить их в другой маяк или угол.
-11.Вы можете полностью удалить комнату с местности, нажав кнопку clear room;
-12.Вы можете полностью удалить маяки с местности, нажав кнопку clear beacons;
-13.Очистить все полностью -кнопка clear.
+1.Изначально Вам доступна стандартная комната. Вы можете использовать ее или стереть(кнопка clear room) и нарисоват/загрузить свою.
+2.Если используете стандартную комнату следущий шаг - ввести количество маяков и поставить их на местность;
+3.Если используете свою комнату - ввести количество углов помещения, в котором вы собираетесь определить значение геометрического фактора;
+4.После нажатия на кпоку build установить углы на местности(для удобства имеется координатная ось, а также слева отображаются координаты курсора на поле в данный момент);
+5.Ввести количество маяков;
+6.После нажатия на кнопку set утановить маяки на местности.
+7.После этого вы уже можете расчитать значение геометричесукого фактора по дальномерному методу или разностно - дальномерному методу(главный маяк(мастер) будет последним поставленным на местности), для этого выберите метод и нажмите кнопку GO;
+8.Также у вас есть возможность добавлять по 1 маяку на местность и 1 углу комнаты. Для этого необходимо нажать на кнопку add 1 рядом с введенным значением маяков или углов комнаты(Красные линии подскажут будущее расположение стен команты);
+9.У вас есть возможность перемещать маяки по местности или углы комнаты, при этом все расчеты будут проводится относительно новых параметров.
+10.При нажатии правой кнопки мыши на маяк или угол команты данный маяк(угол) удалится с местности.
+11.Вы не можете ставить несколько маяков или углов комнаты в 1 точку.
+12.Также при переносе маяков или углов комнаты вы не можете перетащить их в другой маяк или угол.
+13.Вы можете полностью удалить комнату с местности, нажав кнопку clear room;
+14.Вы можете полностью удалить маяки с местности, нажав кнопку clear beacons;
+15.Очистить все полностью - кнопка clear.
+16.При нажатии кнопки clear увас есть возможность указать размер местности(в саниметрах);
+17.У Вас есть воможность сохранять координаты маяков и углов комнаты(кнопки SAVE ROOM, SAVE BEACONS);
+18.У Вас есть возможность загружать координты комнаты и маяков(кнопки LOAD ROOM, LOAD BEACONS).Проследите за тем,чтобы координты были записаны в 2 столбика без пробелом в конце строки;
+19.У Вас есть возможность приближать или отдать картинку с нарисованным градиентом.Для этого прокрутите колесиком мыши по картинке;
+20.Картинка будет не активна пока вы не вернете ее к прежнему размеру;
+21.У Вас есть возможесть сохранять картинку(кнопка SAVE IMAGE);
+22.При наведении мыши на область градиента, Вы можеет посмотреть значение геометрического фактора в данной точке в специальном окне слева от градинта;
+23.При нажатии левой кнопки мыши на точку местности и ведя мышь в произвольном направлении, Вы можете измерить расстояние от точки нажатие до настощей точки курсора;
+24.У вас есть возможность загрузить план помещения. Для этого нажмите кнопку LOAD PLAN и выберите нужный файл. Далее введите количество углов этого помещения и постройте стены,используя план в качестве трафарета;
+25.При возникновении ошибки рекомендовано перезагрузить программу.
 О значениях градиента геометрического фактора:
-1.Синий цвет - хорошая видимость;
-2.Зеленый цвет - средняя видимость;
-3.Красный цвет - плохая видимость;
-4.Белый цвет - видимости нет;
-Резкий переход цвета обозначает, то что за чертой перехода цвета в силу вступает(отступает) еще 1 или несколько маяков.
-
+Синий цвет - хорошая видимость;Зеленый цвет - средняя видимость;Красный цвет - плохая видимость;Белый цвет - видимости нет;
 GDOP is a program that helps determine the value of a geometric factor.
-Instructions for use:
-1. Enter the number of corners of the room in which you are going to determine the value of the geometric factor;
-2. After clicking on the build button, set the angles on the ground (for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left;
-3. Enter the number of beacons;
-4. After pressing the set button, set the beacons on the ground.
-5. After that, you can already calculate the value of the geometric factor by the rangefinder method or the difference-rangefinder method (the main beacon (master) will be the last set on the ground), to do this, select the method and press the GO button;
-6. Also you have the opportunity to add 1 lighthouse to the terrain and 1 corner of the room. To do this, click on the add 1 button next to the entered value of the beacons or corners of the room.
-7. Another feature of this program is that you have the ability to move the beacons in the area or the corners of the room, while all the calculations will be carried out with respect to the new parameters.
-8. When you right-click on the lighthouse or the corner of the team, this lighthouse (corner) will be removed from the terrain.
-9. You cannot set several beacons or corners of a room at 1 point.
-10. Also, when moving lighthouses or room corners, you cannot drag them to another lighthouse or corner.
-11. You can completely remove the room from the area by clicking the clear room button;
-12. You can completely remove the beacons from the area by clicking the clear beacons button;
-13. Clear everything completely - clear button.
+1. Initially, a standard room is available to you. You can use it or erase (clear room button) and draw / load your own.
+2. If you are using a standard room, the next step is to enter the number of beacons and put them on the ground;
+3. If you use your room - enter the number of corners of the room in which you are going to determine the value of the geometric factor;
+4. After clicking on the build button, set the angles on the ground (for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left);
+5. Enter the number of beacons;
+6. After pressing the set button, set the beacons on the ground.
+7. After this, you can already calculate the value of the geometric factor by the rangefinder method or the difference - rangefinder method (the main beacon (master) will be the last set on the ground), to do this, select the method and press the GO button;
+8. Also you have the opportunity to add 1 beacons to the terrain and 1 corner of the room. To do this, click on the add 1 button next to the entered value of the beacons or the corners of the room (Red lines tell you the future location of the walls of the room)
+9. You have the opportunity to move the beacons in the area or the corners of the room, while all the calculations will be carried out with respect to the new parameters.
+10. When you right-click on a beacon or commando corner, this beacon (corner) will be removed from the terrain.
+11. You cannot set several beacons or corners of a room at 1 point.
+12. Also, when moving beacons or corners of a room, you cannot drag them to another beacon or corner.
+13. You can completely remove the room from the area by pressing the clear room button;
+14. You can completely remove the beacons from the area by clicking the clear beacons button;
+15. Clear everything completely - the clear button.
+16. When you press the clear uvs button, it is possible to indicate the size of the terrain (in centimeters);
+17. You have the ability to save the coordinates of the beacons and the corners of the room (SAVE ROOM, SAVE BEACONS buttons);
+18. You have the ability to load the coordinates of the room and beacons (LOAD ROOM, LOAD BEACONS buttons). Make sure that the coordinates are written in 2 columns with no space at the end of the line;
+19. You have the opportunity to zoom in or render the picture with a drawn gradient. To do this, scroll the mouse wheel over the picture;
+20. The picture will not be active until you return it to its previous size;
+21. You have the opportunity to save the picture (SAVE IMAGE button);
+22. When you hover over the gradient area, you can see the value of the geometric factor at a given point in a special window to the left of the gradient;
+23. When you click the left mouse button on a terrain point and moving the mouse in an arbitrary direction, you can measure the distance from the point by pressing to the current cursor point;
+24. You have the opportunity to download the floor plan. To do this, press the LOAD PLAN button and select the desired file. Next, enter the number of corners of this room and build the walls using the plan as a stencil;
+25. If an error occurs, it is recommended to restart the program.
 About the values ​​of the gradient of the geometric factor:
-1. Blue color - good visibility;
-2. Green color - average visibility;
-3. Red color - poor visibility;
-4. White color - no visibility;
-A sharp color transition means that beyond the line of color transition one more or several lighthouses come into force (recede).
-
-Created by x4SVxx");
+Blue color - good visibility;Green color - medium visibility;Red - poor visibility;White color - no visibility");
         }
         private void pictureBox1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
