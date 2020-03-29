@@ -106,7 +106,6 @@ namespace WindowsFormsApp1
             textBox7.Visible = false;
             label7.BackColor = Color.Transparent;
             label7.Visible = false;
-
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -142,6 +141,7 @@ namespace WindowsFormsApp1
         {
              this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
              this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
+            this.DoubleBuffered = true;
         }
 
         private void startroom()
@@ -1342,23 +1342,31 @@ namespace WindowsFormsApp1
                     }
                 }
             }
-            if (mayak >= M && flag >= N && IsClicked == false && IsClicked2 == false)
+            if (e.Button == MouseButtons.Left)
             {
-                IsInfo = true;
-                labelInfo = new Label();
-                labelInfo.Location = new Point(e.Location.X, e.Location.Y-10);
-                labelInfo.ForeColor = Color.Black;
-                labelInfo.Text = (0).ToString();
-                labelInfo.Size = new Size(50, 12);
-                labelInfo.BackColor = this.label1.Parent.BackColor;
-                labelInfo.Parent = this.pictureBox1;
-                labelInfo.BackColor = Color.Transparent;
-                StartInfoX = e.Location.X;
-                StartInfoY = e.Location.Y;
-                bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-                graph = Graphics.FromImage(bmp);
-                pen = new Pen(Color.Black);
-                pictureBox1.Image = bmp;
+                if (mayak >= M && flag >= N && IsClicked == false && IsClicked2 == false)
+                {
+                    IsInfo = true;
+                    labelInfo = new Label();
+                    labelInfo.Location = new Point(e.Location.X, e.Location.Y - 10);
+                    labelInfo.ForeColor = Color.Black;
+                    labelInfo.Text = (0).ToString();
+                    labelInfo.Size = new Size(50, 12);
+                    labelInfo.BackColor = this.label1.Parent.BackColor;
+                    labelInfo.Parent = this.pictureBox1;
+                    labelInfo.BackColor = Color.Transparent;
+                    StartInfoX = e.Location.X;
+                    StartInfoY = e.Location.Y;
+                    if (textBox7.Visible == false)
+                    {
+                        bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                        graph = Graphics.FromImage(bmp);
+                        pen = new Pen(Color.Black);
+                        pictureBox1.Image = bmp;
+                    }
+                    else
+                        pictureBox1.Image = bmp;
+                }
             }
         }
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
@@ -1368,34 +1376,41 @@ namespace WindowsFormsApp1
 
             if (IsInfo == true) 
             {
-                if (e.Location.X < 0 || e.Location.Y < 0 || e.Location.X > 1000 || e.Location.Y > 1000)
+                if (textBox7.Visible == true)
                 {
-                    labelInfo.Dispose();
-                    IsInfo = false;
-                    bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-                    graph = Graphics.FromImage(bmp);
-                    pen = new Pen(Color.Black);
-                    pictureBox1.Image = bmp;
-                    Drawing();
-                    roompaint();
-                    for (int j = 0; j < M; j++)
-                    {
-                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
-                    }
-
+                    labelInfo.Text = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(e.Location.X - StartInfoX)) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(e.Location.Y - StartInfoY) / Convert.ToDouble(pxY))), 2)).ToString();
                 }
                 else
                 {
-                    labelInfo.Text = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(e.Location.X - StartInfoX)) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(e.Location.Y - StartInfoY) / Convert.ToDouble(pxY))), 2)).ToString();
-                    Drawing();
-                    roompaint();
-                    for (int j = 0; j < M; j++)
+                    if (e.Location.X < 0 || e.Location.Y < 0 || e.Location.X > 1000 || e.Location.Y > 1000)
                     {
-                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                        labelInfo.Dispose();
+                        IsInfo = false;
+                        bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                        graph = Graphics.FromImage(bmp);
+                        pen = new Pen(Color.Black);
+                        pictureBox1.Image = bmp;
+                        Drawing();
+                        roompaint();
+                        for (int j = 0; j < M; j++)
+                        {
+                            graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                        }
+
                     }
-                    pen = new Pen(Color.Red);
-                    graph.DrawLine(pen, Convert.ToSingle(StartInfoX), Convert.ToSingle(StartInfoY), e.Location.X, e.Location.Y);
-                    pen = new Pen(Color.Black);
+                    else
+                    {
+                        labelInfo.Text = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(e.Location.X - StartInfoX)) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(e.Location.Y - StartInfoY) / Convert.ToDouble(pxY))), 2)).ToString();
+                        Drawing();
+                        roompaint();
+                        for (int j = 0; j < M; j++)
+                        {
+                            graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                        }
+                        pen = new Pen(Color.Red);
+                        graph.DrawLine(pen, Convert.ToSingle(StartInfoX), Convert.ToSingle(StartInfoY), e.Location.X, e.Location.Y);
+                        pen = new Pen(Color.Black);
+                    }
                 }
             }
                 //Маяки
@@ -1878,16 +1893,19 @@ namespace WindowsFormsApp1
             if (IsInfo == true)
             {
                 labelInfo.Dispose();
-                IsInfo = false;              
-                bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-                graph = Graphics.FromImage(bmp);
-                pen = new Pen(Color.Black);
-                pictureBox1.Image = bmp;
-                Drawing();
-                roompaint();
-                for (int j = 0; j < M; j++)
+                IsInfo = false;
+                if (textBox7.Visible == false)
                 {
-                    graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                    bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                    graph = Graphics.FromImage(bmp);
+                    pen = new Pen(Color.Black);
+                    pictureBox1.Image = bmp;
+                    Drawing();
+                    roompaint();
+                    for (int j = 0; j < M; j++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                    }
                 }
             }
         }
@@ -2597,38 +2615,92 @@ A sharp color transition means that beyond the line of color transition one more
 
 Created by x4SVxx");
         }
-
-
-        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-        }
-
-
         private void pictureBox1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Delta > 0)
-            { 
-            }
-            else
+            if (textBox7.Visible == true)
             {
-
+                if (e.X < 1178 && e.X > 178 && e.Y < 1011 && e.Y > 11)
+                {
+                    PictureBox org = new PictureBox();
+                    org.Image = pictureBox1.Image;
+                    pictureBox1.Enabled = false;
+                    for (int k = 0; k < M; k++)
+                    {
+                        labell[k].Dispose();
+                    }
+                    for (int k = 0; k < N; k++)
+                    {
+                        labelbox[k].Dispose();
+                    }
+                    button23.Enabled = false;
+                    button25.Enabled = false;
+                    button3.Enabled = false;
+                    button13.Enabled = false;
+                    button1.Enabled = false;
+                    button2.Enabled = false;
+                    button26.Enabled = false;
+                    button27.Enabled = false;
+                    button28.Enabled = false;
+                    button29.Enabled = false;
+                    if (e.Delta > 0)
+                    {
+                        if (pictureBox1.Image.Width < 1500)
+                        {
+                            pictureBox1.Image = Zoom(org.Image, 50, 50);
+                        }
+                        if (pictureBox1.Image.Width == 1001)
+                        {
+                            labal();
+                            labalbox();
+                            pictureBox1.Image = bmp;
+                            pictureBox1.Enabled = true;
+                            button23.Enabled = true;
+                            button25.Enabled = true;
+                            button3.Enabled = true;
+                            button13.Enabled = true;
+                            button1.Enabled = true;
+                            button2.Enabled = true;
+                            button26.Enabled = true;
+                            button27.Enabled = true;
+                            button28.Enabled = true;
+                            button29.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (pictureBox1.Image.Width > 500)
+                        {
+                            pictureBox1.Image = Zoom(org.Image, -50, -50);
+                        }
+                        if (pictureBox1.Image.Width == 1001)
+                        {
+                            pictureBox1.Image = bmp;
+                            labal();
+                            labalbox();
+                            pictureBox1.Enabled = true;
+                            button23.Enabled = true;
+                            button25.Enabled = true;
+                            button3.Enabled = true;
+                            button13.Enabled = true;
+                            button1.Enabled = true;
+                            button2.Enabled = true;
+                            button26.Enabled = true;
+                            button27.Enabled = true;
+                            button28.Enabled = true;
+                            button29.Enabled = true;
+                        }
+                    }
+                }
             }
         }
-        Image Zoom(Image img, Size size)
+        Image Zoom(Image img, double x,double y)
         {
-            Bitmap bmp = new Bitmap(img, img.Width + (img.Width * size.Width / 100), img.Height + (img.Height * size.Height / 100));
-            Graphics graph = Graphics.FromImage(bmp);
+            Bitmap bmpf = new Bitmap(img, Convert.ToInt32(img.Width + x),
+                Convert.ToInt32(img.Height + y));
+            Graphics grg = Graphics.FromImage(bmpf);
             graph.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            return bmp;
+            return bmpf;
         }
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-            Image imgOriginal;
-            imgOriginal = pictureBox1.Image;
-            if (trackBar1.Value > 0)
-                pictureBox1.Image = Zoom(imgOriginal, new Size(trackBar1.Value,trackBar1.Value));
-        }
-
         private void button10_Click(object sender, EventArgs e)
         {
             string xMax = textBox5.Text;
@@ -2920,6 +2992,37 @@ Created by x4SVxx");
                 {
                     DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            Bitmap bmpe = new Bitmap(pictureBox1.Image);
+            if (pictureBox1.Image != null) //если в pictureBox есть изображение
+            {
+                //создание диалогового окна "Сохранить как..", для сохранения изображения
+                SaveFileDialog savedialog = new SaveFileDialog();
+                savedialog.Title = "Сохранить картинку как...";
+                //отображать ли предупреждение, если пользователь указывает имя уже существующего файла
+                savedialog.OverwritePrompt = true;
+                //отображать ли предупреждение, если пользователь указывает несуществующий путь
+                savedialog.CheckPathExists = true;
+                //список форматов файла, отображаемый в поле "Тип файла"
+                savedialog.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
+                //отображается ли кнопка "Справка" в диалоговом окне
+                savedialog.ShowHelp = true;
+                if (savedialog.ShowDialog() == DialogResult.OK) //если в диалоговом окне нажата кнопка "ОК"
+                {
+                    try
+                    {
+                        bmpe.Save(savedialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Невозможно сохранить изображение", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
