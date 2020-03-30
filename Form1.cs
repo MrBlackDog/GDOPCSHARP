@@ -116,6 +116,7 @@ namespace WindowsFormsApp1
             label5.BackColor = Color.Transparent;
             label6.BackColor = Color.Transparent;
             label8.BackColor = Color.Transparent;
+            label9.BackColor = Color.Transparent;
             label10.BackColor = Color.Transparent;
             label12.BackColor = Color.Transparent;
             label13.BackColor = Color.Transparent;
