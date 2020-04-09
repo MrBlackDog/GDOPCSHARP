@@ -22,6 +22,7 @@ namespace WindowsFormsApp1
         Bitmap image;//План помещения
         bool IsClicked = false;//Индикатор зажатия ЛКМ для маяка
         bool IsClicked2 = false;//Индикатор зажатия ЛКМ для угла
+        bool IsClicked3 = false;//Индикатор зажатия ЛКМ на стене
         int deltax = 0;//Изменение координаты Х при переносе маяка
         int deltay = 0;//Изменение координаты У при переносе маяка
         Rectangle el;//Трафарет для маяка при переносе
@@ -33,9 +34,12 @@ namespace WindowsFormsApp1
         List<Point> Bp = new List<Point>();//Лист с координатами комнаты
         List<Point> Per = new List<Point>();//Лист с массивом видимых координат
         List<Point> lishn = new List<Point>();//Лист маяков видимых мастеру
+        List<int> wwall = new List<int>();
+        List<int> wallin = new List<int>();
         SolidBrush Brush;//Параметр заливки маяка
         int f;//Флаг для определения маяка при переносе
         int g;//Флаг для определения угла комнаты при переносе
+        int c;//Флаг для определения стороны стены при переносе
         int M;//Количество маяков
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
@@ -71,6 +75,14 @@ namespace WindowsFormsApp1
         double StartInfoY = 0;
         Label labelInfo;
         bool IsInfo = false;
+        double[,] Block = new double[0, 0];//Wall
+        int B;
+        int blag = 0;
+        bool Bin = false;
+        int[] wallqunt = new int[0];
+        int schet=0;
+        double[,] BlockClone = new double[0, 0];
+        bool inlist = false;
         public Form1()
         {
             InitializeComponent();
@@ -105,6 +117,7 @@ namespace WindowsFormsApp1
             button24.Enabled = false;
             button12.Enabled = false;
             textBox7.Visible = false;
+            button14.Enabled = false;
             label7.BackColor = Color.Transparent;
             label7.Visible = false;
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
@@ -505,7 +518,10 @@ namespace WindowsFormsApp1
             {
                 for (int y = 0; y < 1000; y++)
                 {
-                    vidimost(x, y);
+                    if (B == 0)
+                        vidimost(x, y);
+                    else
+                        vidimostwall(x, y);
                     kol1 = kolich;
                     if (kol1 < 2)
                         Z[x, y] = 0;
@@ -557,8 +573,14 @@ namespace WindowsFormsApp1
             {
                 for (int y = 0; y < 1000; y++)
                 {
-                    lish();
-                    vidimost1(x, y);
+                    if (B == 0)
+                        lish();
+                    else
+                        lishwall();
+                    if (B == 0)
+                        vidimost1(x, y);
+                    else
+                        vidimost1wall(x, y);
                     kol1 = kolich+1;
                       if (kol1 < 3)
                       {
@@ -605,6 +627,7 @@ namespace WindowsFormsApp1
                 labell[b].Parent = this.pictureBox1;
                 labell[b].BackColor = Color.Transparent;
             }
+            pictureBox1.BringToFront();
         }
         private void labalbox()//Нумерация маяков
         {
@@ -619,6 +642,7 @@ namespace WindowsFormsApp1
                 labelbox[b].Parent = this.pictureBox1;
                 labelbox[b].BackColor = Color.Transparent;
             }
+            pictureBox1.BringToFront();
         }
         private void roompaint()//Отрисовка комнаты
         {
@@ -631,6 +655,15 @@ namespace WindowsFormsApp1
                 graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
             }
             graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+            if (B!=0)
+            {
+                for(int i=0;i<B;i++)
+                {
+                    graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i] - 6), Convert.ToInt32(Block[1, i] - 6), 12, 12);
+                }
+                    for(int u=0;u<B;u+=2)
+                    graph.DrawLine(pen, Convert.ToInt32(Block[0, u]), Convert.ToInt32(Block[1, u]), Convert.ToInt32(Block[0, u + 1]), Convert.ToInt32(Block[1, u + 1])); 
+            }
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)//Клики
         {
@@ -707,6 +740,7 @@ namespace WindowsFormsApp1
                         button25.Enabled = true;
                         button27.Enabled = true;
                         button28.Enabled = true;
+                        button14.Enabled = true;
                         int kol = 0;
                         foreach (Point lol in lp)//Создание массива с координтами маяков
                         {
@@ -724,7 +758,7 @@ namespace WindowsFormsApp1
             //Маяки
             if (e.Button == MouseButtons.Right)
             {
-                if (IsClicked == false && IsClicked2 == false)
+                if (IsClicked == false && IsClicked2 == false && IsClicked3 == false)
                 {
                     if (mayak >= M)
                     {
@@ -825,9 +859,12 @@ namespace WindowsFormsApp1
                                             button23.Enabled = true;
                                             button25.Enabled = true;
                                             button3.Enabled = true;
+                                            button14.Enabled = true;
+                                            button1.Enabled = true;
                                         }
                                         button27.Enabled = true;
                                         button29.Enabled = true;
+                                        button1.Enabled = true;
                                         labalbox();
                                     }
                                     listBox2.Items.Clear();//Очистка листа перед новым заполненим 
@@ -887,9 +924,12 @@ namespace WindowsFormsApp1
                                             button23.Enabled = true;
                                             button25.Enabled = true;
                                             button3.Enabled = true;
+                                            button14.Enabled = false;
+                                            button1.Enabled = true;
                                         }
                                         button27.Enabled = true;
                                         button29.Enabled = true;
+                                        button1.Enabled = true;
                                         labalbox();
                                     }
                                     listBox2.Items.Clear();//Очистка листа перед новым заполненим 
@@ -999,6 +1039,7 @@ namespace WindowsFormsApp1
                             button26.Enabled = true;
                             button27.Enabled = true;
                             button29.Enabled = true;
+                            button14.Enabled = true;
                             for (int j = 0; j < M; j++)
                             {
                                 graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -1078,7 +1119,7 @@ namespace WindowsFormsApp1
             //Комната
             if (e.Button == MouseButtons.Right)
             {
-                if (IsClicked == false && IsClicked2 == false)
+                if (IsClicked == false && IsClicked2 == false && IsClicked3 == false)
                 {
                     if (flag >= N)
                     {
@@ -1112,6 +1153,226 @@ namespace WindowsFormsApp1
                     }
                 }
             }
+            if(e.Button==MouseButtons.Left)//Wall
+            {
+                if (blag<B)
+                {
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    if (blag == B-1 || blag == B-2)
+                    {
+                        foreach (Point p in lp)
+                        {
+                            if (x > p.X - 16 && x < p.X + 16 && y < p.Y + 16 && y > p.Y - 16)
+                            {
+                                v = 1;
+                            }
+                        }
+                        if (v == 1)
+                        {
+                            v = 0;
+                            MessageBox.Show("Is this place taken");
+                        }
+                        else
+                        {
+                            foreach (Point p in Bp)
+                            {
+                                if (x > p.X - 12 && x < p.X + 12 && y < p.Y + 12 && y > p.Y - 12)
+                                {
+                                    Block[0, blag] = p.X;
+                                    Block[1, blag] = p.Y;
+                                    bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                                    graph = Graphics.FromImage(bmp);
+                                    pen = new Pen(Color.Black);
+                                    pictureBox1.Image = bmp;
+                                    graph.DrawRectangle(pen, Convert.ToInt32(Block[0, blag] - 6), Convert.ToInt32(Block[1, blag] - 6), 12, 12);
+                                    for (int j = 0; j < M; j++)
+                                    {
+                                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                                    }
+                                    for (int j = 0; j < N; j++)
+                                    {
+                                        graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                                    }
+                                    for (int i = 0; i < N - 1; i++)
+                                    {
+                                        graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                                    }
+                                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                    for(int i=0;i<B-2;i+=2)
+                                    {
+                                        graph.DrawLine(pen, Convert.ToInt32(Block[0, i]), Convert.ToInt32(Block[1, i]), Convert.ToInt32(Block[0, i + 1]), Convert.ToInt32(Block[1, i+1]));
+                                    }
+                                    for (int i = 0; i < B-1; i++)
+                                    {
+                                        graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i] - 6), Convert.ToInt32(Block[1, i] - 6), 12, 12);
+                                    }
+                                    Bin = true;
+                                }
+                                for (int i = 0; i < B - 2; i++)
+                                {
+                                    if (x > Block[0, i] - 12 && x < Block[0, i] + 12 && y < Block[1, i] + 12 && y > Block[1, i] - 12)
+                                    {
+                                        Bin = true;
+                                        Block[0, blag] = Block[0, i];
+                                        Block[1, blag] = Block[1, i];
+                                    }
+                                }
+                            }
+                            if (Bin == true)
+                            {
+                                blag += 1;
+                                Bin = false;
+                            }
+                            else
+                            {
+                                Block[0, blag] = x;
+                                Block[1, blag] = y;
+                                bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                                graph = Graphics.FromImage(bmp);
+                                pen = new Pen(Color.Black);
+                                pictureBox1.Image = bmp;
+                                graph.DrawRectangle(pen, Convert.ToInt32(Block[0, blag] - 6), Convert.ToInt32(Block[1, blag] - 6), 12, 12);
+                                for (int j = 0; j < M; j++)
+                                {
+                                    graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                                }
+                                for (int j = 0; j < N; j++)
+                                {
+                                    graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                                }
+                                for (int i = 0; i < N - 1; i++)
+                                {
+                                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                                }
+                                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                for (int i = 0; i < B - 2; i += 2)
+                                {
+                                    graph.DrawLine(pen, Convert.ToInt32(Block[0, i]), Convert.ToInt32(Block[1, i]), Convert.ToInt32(Block[0, i + 1]), Convert.ToInt32(Block[1, i+1]));
+                                }
+                                for (int i = 0; i < B-1; i++)
+                                {
+                                    graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i] - 6), Convert.ToInt32(Block[1, i] - 6), 12, 12);
+                                }
+                                blag += 1;
+                            }
+                        }
+                    }
+                    if (blag == B)
+                    {
+                        bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                        graph = Graphics.FromImage(bmp);
+                        pen = new Pen(Color.Black);
+                        pictureBox1.Image = bmp;
+                        for(int i=0;i<B;i++)
+                        {
+                            graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i]-6), Convert.ToInt32(Block[1, i]-6), 12, 12);
+                        }
+                        for (int j = 0; j < M; j++)
+                        {
+                            graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                        }
+                        roompaint();
+                        button14.Enabled = true;
+                        button23.Enabled = true;
+                        button25.Enabled = true;
+                        button3.Enabled = true;
+                        button27.Enabled = true;
+                        button26.Enabled = true;
+                        button1.Enabled = true;
+                    }
+                }
+            }
+            //wall
+            if (e.Button == MouseButtons.Right)
+            {
+                if (IsClicked == false && IsClicked2 == false && IsClicked3 == false)
+                {
+                    if (blag >= B)
+                    {
+                        bool east = false;
+                        x = e.Location.X;
+                        y = e.Location.Y;
+                        for (int i = 0; i < B; i++)
+                        {
+                            if (x > Block[0, i] - 6 && x < Block[0, i] + 6 && y < Block[1, i] + 6 && y > Block[1, i] - 6)
+                            {
+                                east = true;
+                                wwall.Add(i);
+                                Drawing();
+                                ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                                graph.DrawRectangle(pen, ek);
+                            }
+                        }
+                        if (east)
+                        {
+                            east = false;
+                            deletewall();
+                        }
+                    }
+                }
+            }
+        }
+        private void deletewall()
+        {
+            List<int> inl = new List<int>();
+            foreach (int p in wwall)
+            {
+                if(p%2==0)
+                {
+                    inl.Add(p+1);
+                }
+                if(p%2!=0)
+                {
+                    inl.Add(p - 1);
+                }
+            }
+            foreach(int p in inl)
+            {
+                wwall.Add(p);
+            }
+            schet = 0;
+            for (int i = 0; i < B; i++)
+            {
+                inlist = false;
+                foreach (int p in wwall)
+                {
+                    if (i == p)
+                        inlist = true;
+                }
+                if (inlist == false)
+                {
+                    wallin.Add(i);
+                    schet += 1;
+                }
+                else
+                    inlist = false;
+            }
+            BlockClone = new double[2, schet];
+            int z = 0;
+            foreach (int p in wallin)
+            {
+                BlockClone[0, z] = Block[0, p];
+                BlockClone[1, z] = Block[1, p];
+                z += 1;
+            }
+            Block = new double[2, schet];
+            for(int i=0;i<schet;i++)
+            {
+                Block[0, i] = BlockClone[0, i];
+                Block[1, i] = BlockClone[1, i];
+            }
+            B = schet;
+            blag = B;
+            schet = 0;
+            wallin.Clear();
+            wwall.Clear();
+            inl.Clear();
+            for (int j = 0; j < M; j++)
+            {
+                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+            }
+            roompaint();
         }
         private void deletebeacons(int numberbeacon)
         {
@@ -1213,14 +1474,34 @@ namespace WindowsFormsApp1
                     Brush = new SolidBrush(Color.Black);
                     graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
                 }
-                roompaint();
+                for (int j = 0; j < B; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(Block[0, j]) - 6, Convert.ToInt32(Block[1, j]) - 6, 12, 12);
+                }
                 pen.Width = 5;
                 for (int i = 0; i < N - 1; i++)
                 {
                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                 }
                 graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                if (B != 0)
+                {
+                    for (int u = 0; u < B; u += 2)
+                        graph.DrawLine(pen, Convert.ToInt32(Block[0, u]), Convert.ToInt32(Block[1, u]), Convert.ToInt32(Block[0, u + 1]), Convert.ToInt32(Block[1, u + 1]));
+                }
                 pen.Width = 1;
+                for (int j = 0; j < N; j++)
+                {
+                    graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                if (B != 0)
+                {
+                    for (int i = 0; i < B; i++)
+                    {
+                        graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i] - 6), Convert.ToInt32(Block[1, i] - 6), 12, 12);
+                    }
+                }
             }
             if (checkBox2.Checked == true && checkBox1.Checked == false)//RD
             {
@@ -1246,14 +1527,34 @@ namespace WindowsFormsApp1
                         Brush = new SolidBrush(Color.Black);
                         graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
                     }
-                    roompaint();
+                    for (int j = 0; j < B; j++)
+                    {
+                        Brush = new SolidBrush(Color.Black);
+                        graph.FillRectangle(Brush, Convert.ToInt32(Block[0, j]) - 6, Convert.ToInt32(Block[1, j]) - 6, 12, 12);
+                    }
                     pen.Width = 5;
                     for (int i = 0; i < N - 1; i++)
                     {
                         graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                     }
                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                    if (B != 0)
+                    {
+                        for (int u = 0; u < B; u += 2)
+                            graph.DrawLine(pen, Convert.ToInt32(Block[0, u]), Convert.ToInt32(Block[1, u]), Convert.ToInt32(Block[0, u + 1]), Convert.ToInt32(Block[1, u + 1]));
+                    }
                     pen.Width = 1;
+                    for (int j = 0; j < N; j++)
+                    {
+                        graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                    }
+                    if (B != 0)
+                    {
+                        for (int i = 0; i < B; i++)
+                        {
+                            graph.DrawRectangle(pen, Convert.ToInt32(Block[0, i] - 6), Convert.ToInt32(Block[1, i] - 6), 12, 12);
+                        }
+                    }
                     int xM = Convert.ToInt32(SatPos[0, M - 1]);
                     int yM = Convert.ToInt32(SatPos[1, M - 1]);
                     Brush = new SolidBrush(Color.White);
@@ -1274,7 +1575,7 @@ namespace WindowsFormsApp1
             //Маяки
             if (e.Button == MouseButtons.Left)
             {
-                if (mayak >= M && flag >= N)
+                if (mayak >= M && flag >= N && blag>=B)
                 {
                     x = e.Location.X;
                     y = e.Location.Y;
@@ -1289,7 +1590,6 @@ namespace WindowsFormsApp1
                             {
                                 labell[k].Dispose();
                             }
-
                             for (int k = 0; k < N; k++)
                             {
                                 labelbox[k].Dispose();
@@ -1311,7 +1611,7 @@ namespace WindowsFormsApp1
             //Комната
             if (e.Button == MouseButtons.Left)
             {
-                if (flag >= N && mayak >= M)
+                if (flag >= N && mayak >= M && blag >= B)
                 {
                     x = e.Location.X;
                     y = e.Location.Y;
@@ -1344,9 +1644,63 @@ namespace WindowsFormsApp1
                     }
                 }
             }
+            if (e.Button == MouseButtons.Left)//Wall
+            {
+                if (flag >= N && mayak >= M && blag >= B)
+                {
+                    x = e.Location.X;
+                    y = e.Location.Y;
+                    for (int i = 0; i < B; i++)
+                    {
+                        if (x > Block[0, i] - 6 && x < Block[0, i] + 6 && y < Block[1, i] + 6 && y > Block[1, i] - 6)
+                        {
+                            wwall.Add(i);
+                            c = i;
+                            ek = new Rectangle((Convert.ToInt32(Block[0, i]) - 6), (Convert.ToInt32(Block[1, i]) - 6), 12, 12);
+                            IsClicked3 = true;
+                            button5.Visible = false;
+                            button6.Visible = false;
+                            button7.Visible = false;
+                            button8.Visible = false;
+                            textBox7.Visible = false;
+                            label7.Visible = false;
+                            form.progressBar1.Value = 0;
+                            deltax = e.X - ek.X;
+                            deltay = e.Y - ek.Y;
+                        }
+                    }
+                }
+            }
+            if (IsClicked3 == true)
+            {
+                for (int i = 0; i < B; i++)
+                {
+                    foreach(int p in wwall)
+                    {
+                        if (i == p)
+                            inlist = true;
+                    }
+                    if (inlist == false)
+                    {
+                        wallin.Add(i);
+                        schet += 1;
+                    }
+                    else
+                        inlist = false;
+                }
+                BlockClone = new double[2, schet];
+                int z = 0;
+                foreach (int p in wallin)
+                {
+                    BlockClone[0, z] = Block[0, p];
+                    BlockClone[1, z] = Block[1, p];
+                    z += 1;
+                }
+            }
+
             if (e.Button == MouseButtons.Left)
             {
-                if (mayak >= M && flag >= N && IsClicked == false && IsClicked2 == false)
+                if (mayak >= M && flag >= N && IsClicked == false && IsClicked2 == false && blag >= B && IsClicked3 == false)
                 {
                     IsInfo = true;
                     labelInfo = new Label();
@@ -1369,7 +1723,7 @@ namespace WindowsFormsApp1
                     else
                         pictureBox1.Image = bmp;
                 }
-            }
+            }         
         }
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
         {
@@ -1418,7 +1772,7 @@ namespace WindowsFormsApp1
                 //Маяки
                 if (mayak >= M)
             {
-                if (IsClicked)
+                if (IsClicked == true && IsClicked2 == false && IsClicked3 == false )
                 {
                     el.X = e.X - deltax;
                     el.Y = e.Y - deltay;
@@ -1482,6 +1836,53 @@ namespace WindowsFormsApp1
                             if (el.X + 16 > (BoxPos[0, i] - 10))
                             {
                                 el.X = Convert.ToInt32(BoxPos[0, i] - 20);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < B; i++)
+                    {
+                        if (el.X > (Block[0, i] - 12) && el.X < (Block[0, i] + 12) && el.Y < (Block[1, i] + 12) && el.Y > (Block[1, i] - 12))
+                        {
+                            if (el.Y < (Block[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(Block[1, i] + 6);
+                            }
+                            if (el.X < (Block[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(Block[0, i] + 6);
+                            }
+                        }
+                        if (el.X + 12 > (Block[0, i] - 12) && el.X + 12 < (Block[0, i] + 12) && el.Y < (Block[1, i] + 12) && el.Y > (Block[1, i] - 12))
+                        {
+                            if (el.Y < (Block[1, i] + 12))
+                            {
+                                el.Y = Convert.ToInt32(Block[1, i] + 8);
+                            }
+                            if (el.X + 12 > (Block[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(Block[0, i] - 16);
+                            }
+                        }
+                        if (el.X > (Block[0, i] - 12) && el.X < (Block[0, i] + 12) && el.Y + 12 < (Block[1, i] + 12) && el.Y + 12 > (Block[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (Block[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(Block[1, i] - 16);
+                            }
+                            if (el.X < (Block[0, i] + 12))
+                            {
+                                el.X = Convert.ToInt32(Block[0, i] + 8);
+                            }
+                        }
+                        if (el.X + 12 > (Block[0, i] - 12) && el.X + 12 < (Block[0, i] + 12) && el.Y + 12 < (Block[1, i] + 12) && el.Y + 12 > (Block[1, i] - 12))
+                        {
+                            if (el.Y + 12 > (Block[1, i] - 12))
+                            {
+                                el.Y = Convert.ToInt32(Block[1, i] - 18);
+                            }
+                            if (el.X + 12 > (Block[0, i] - 12))
+                            {
+                                el.X = Convert.ToInt32(Block[0, i] - 18);
                             }
                         }
                     }
@@ -1592,8 +1993,8 @@ namespace WindowsFormsApp1
             }
             //Комната
             if (flag >= N)
-            {
-                if (IsClicked2)
+            { 
+                if (IsClicked2 == true && IsClicked == false && IsClicked3 == false)
                 {
                     ek.X = e.X - deltax;
                     ek.Y = e.Y - deltay;
@@ -1657,6 +2058,53 @@ namespace WindowsFormsApp1
                             if (ek.X + 12 > (SatPos[0, i] - 12))
                             {
                                 ek.X = Convert.ToInt32(SatPos[0, i] - 18);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < B; i++)
+                    {
+                        if (ek.X > (Block[0, i] - 12) && ek.X < (Block[0, i] + 12) && ek.Y < (Block[1, i] + 12) && ek.Y > (Block[1, i] - 12))
+                        {
+                            if (ek.Y < (Block[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(Block[1, i] + 6);
+                            }
+                            if (ek.X < (Block[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(Block[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (Block[0, i] - 12) && ek.X + 12 < (Block[0, i] + 12) && ek.Y < (Block[1, i] + 12) && ek.Y > (Block[1, i] - 12))
+                        {
+                            if (ek.Y < (Block[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(Block[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (Block[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(Block[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (Block[0, i] - 12) && ek.X < (Block[0, i] + 12) && ek.Y + 12 < (Block[1, i] + 12) && ek.Y + 12 > (Block[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (Block[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(Block[1, i] - 16);
+                            }
+                            if (ek.X < (Block[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(Block[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (Block[0, i] - 12) && ek.X + 12 < (Block[0, i] + 12) && ek.Y + 12 < (Block[1, i] + 12) && ek.Y + 12 > (Block[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (Block[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(Block[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (Block[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(Block[0, i] - 18);
                             }
                         }
                     }
@@ -1764,6 +2212,408 @@ namespace WindowsFormsApp1
                     }
                     roompaint();
                 }
+            }
+            if (blag >= B)
+            {
+                if (IsClicked3 == true && IsClicked == false && IsClicked2 == false)
+                {
+                    ek.X = e.X - deltax;
+                    ek.Y = e.Y - deltay;
+                    if (ek.X < 0)
+                    {
+                        ek.X = 0;
+                    }
+                    if (ek.X > 988)
+                    {
+                        ek.X = 988;
+                    }
+                    if (ek.Y < 0)
+                    {
+                        ek.Y = 0;
+                    }
+                    if (ek.Y > 988)
+                    {
+                        ek.Y = 988;
+                    }
+                    for (int i = 0; i < M; i++)
+                    {
+                        if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y < (SatPos[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] + 6);
+                            }
+                            if (ek.X < (SatPos[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y < (SatPos[1, i] + 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] - 16);
+                            }
+                            if (ek.X < (SatPos[0, i] + 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            if (ek.Y + 12 > (SatPos[1, i] - 12))
+                            {
+                                ek.Y = Convert.ToInt32(SatPos[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (SatPos[0, i] - 12))
+                            {
+                                ek.X = Convert.ToInt32(SatPos[0, i] - 18);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < N; i++)
+                    {
+                        if (ek.X > (BoxPos[0, i] - 10) && ek.X < (BoxPos[0, i] + 10) && ek.Y < (BoxPos[1, i] + 10) && ek.Y > (BoxPos[1, i] - 10))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 10))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 4);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 10))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 4);
+                            }
+                        }
+                        if (ek.X + 16 > (BoxPos[0, i] - 10) && ek.X + 16 < (BoxPos[0, i] + 10) && ek.Y < (BoxPos[1, i] + 10) && ek.Y > (BoxPos[1, i] - 10))
+                        {
+                            if (ek.Y < (BoxPos[1, i] + 10))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                            }
+                            if (ek.X + 16 > (BoxPos[0, i] - 10))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (BoxPos[0, i] - 10) && ek.X < (BoxPos[0, i] + 10) && ek.Y + 16 < (BoxPos[1, i] + 10) && ek.Y + 16 > (BoxPos[1, i] - 10))
+                        {
+                            if (ek.Y + 16 > (BoxPos[1, i] - 10))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                            }
+                            if (ek.X < (BoxPos[0, i] + 10))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 16 > (BoxPos[0, i] - 10) && ek.X + 16 < (BoxPos[0, i] + 10) && ek.Y + 16 < (BoxPos[1, i] + 10) && ek.Y + 16 > (BoxPos[1, i] - 10))
+                        {
+                            if (ek.Y + 16 > (BoxPos[1, i] - 10))
+                            {
+                                ek.Y = Convert.ToInt32(BoxPos[1, i] - 20);
+                            }
+                            if (ek.X + 16 > (BoxPos[0, i] - 10))
+                            {
+                                ek.X = Convert.ToInt32(BoxPos[0, i] - 20);
+                            }
+                        }
+                    }
+                    //wall
+                    for (int i = 0; i < schet; i++)
+                    {
+                        if (ek.X > (BlockClone[0, i] - 8) && ek.X < (BlockClone[0, i] + 8) && ek.Y < (BlockClone[1, i] + 8) && ek.Y > (BlockClone[1, i] - 8))
+                        {
+                            if (ek.Y < (BlockClone[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BlockClone[1, i] + 6);
+                            }
+                            if (ek.X < (BlockClone[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BlockClone[0, i] + 6);
+                            }
+                        }
+                        if (ek.X + 12 > (BlockClone[0, i] - 8) && ek.X + 12 < (BlockClone[0, i] + 8) && ek.Y < (BlockClone[1, i] + 8) && ek.Y > (BlockClone[1, i] - 8))
+                        {
+                            if (ek.Y < (BlockClone[1, i] + 8))
+                            {
+                                ek.Y = Convert.ToInt32(BlockClone[1, i] + 8);
+                            }
+                            if (ek.X + 12 > (BlockClone[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BlockClone[0, i] - 16);
+                            }
+                        }
+                        if (ek.X > (BlockClone[0, i] - 8) && ek.X < (BlockClone[0, i] + 8) && ek.Y + 12 < (BlockClone[1, i] + 8) && ek.Y + 12 > (BlockClone[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BlockClone[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BlockClone[1, i] - 16);
+                            }
+                            if (ek.X < (BlockClone[0, i] + 8))
+                            {
+                                ek.X = Convert.ToInt32(BlockClone[0, i] + 8);
+                            }
+                        }
+                        if (ek.X + 12 > (BlockClone[0, i] - 8) && ek.X + 12 < (BlockClone[0, i] + 8) && ek.Y + 12 < (BlockClone[1, i] + 8) && ek.Y + 12 > (BlockClone[1, i] - 8))
+                        {
+                            if (ek.Y + 12 > (BlockClone[1, i] - 8))
+                            {
+                                ek.Y = Convert.ToInt32(BlockClone[1, i] - 18);
+                            }
+                            if (ek.X + 12 > (BlockClone[0, i] - 8))
+                            {
+                                ek.X = Convert.ToInt32(BlockClone[0, i] - 18);
+                            }
+                        }
+                    }
+                    pictureBox1.Invalidate();
+                    foreach (int p in wwall)
+                    {
+                        Block[0, p] = ek.X + 6;
+                        Block[1, p] = ek.Y + 6;
+                    }
+                    Drawing();
+                    for (int j = 0; j < M; j++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                    }
+                    roompaint();
+                }
+            }
+            if (IsClicked == false && IsClicked2 == true && IsClicked3 == true)
+            {
+                ek.X = e.X - deltax;
+                ek.Y = e.Y - deltay;
+                if (ek.X < 0)
+                {
+                    ek.X = 0;
+                }
+                if (ek.X > 988)
+                {
+                    ek.X = 988;
+                }
+                if (ek.Y < 0)
+                {
+                    ek.Y = 0;
+                }
+                if (ek.Y > 988)
+                {
+                    ek.Y = 988;
+                }
+                for (int i = 0; i < M; i++)
+                {
+                    if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                    {
+                        if (ek.Y < (SatPos[1, i] + 12))
+                        {
+                            ek.Y = Convert.ToInt32(SatPos[1, i] + 6);
+                        }
+                        if (ek.X < (SatPos[0, i] + 12))
+                        {
+                            ek.X = Convert.ToInt32(SatPos[0, i] + 6);
+                        }
+                    }
+                    if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y < (SatPos[1, i] + 12) && ek.Y > (SatPos[1, i] - 12))
+                    {
+                        if (ek.Y < (SatPos[1, i] + 12))
+                        {
+                            ek.Y = Convert.ToInt32(SatPos[1, i] + 8);
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12))
+                        {
+                            ek.X = Convert.ToInt32(SatPos[0, i] - 16);
+                        }
+                    }
+                    if (ek.X > (SatPos[0, i] - 12) && ek.X < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                    {
+                        if (ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            ek.Y = Convert.ToInt32(SatPos[1, i] - 16);
+                        }
+                        if (ek.X < (SatPos[0, i] + 12))
+                        {
+                            ek.X = Convert.ToInt32(SatPos[0, i] + 8);
+                        }
+                    }
+                    if (ek.X + 12 > (SatPos[0, i] - 12) && ek.X + 12 < (SatPos[0, i] + 12) && ek.Y + 12 < (SatPos[1, i] + 12) && ek.Y + 12 > (SatPos[1, i] - 12))
+                    {
+                        if (ek.Y + 12 > (SatPos[1, i] - 12))
+                        {
+                            ek.Y = Convert.ToInt32(SatPos[1, i] - 18);
+                        }
+                        if (ek.X + 12 > (SatPos[0, i] - 12))
+                        {
+                            ek.X = Convert.ToInt32(SatPos[0, i] - 18);
+                        }
+                    }
+                }
+                for (int i = 0; i < g; i++)
+                {
+                    if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y < (BoxPos[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] + 6);
+                        }
+                        if (ek.X < (BoxPos[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] + 6);
+                        }
+                    }
+                    if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y < (BoxPos[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                        }
+                    }
+                    if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                        }
+                        if (ek.X < (BoxPos[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                        }
+                    }
+                    if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] - 18);
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] - 18);
+                        }
+                    }
+                }
+                for (int i = g + 1; i < N; i++)
+                {
+                    if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y < (BoxPos[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] + 6);
+                        }
+                        if (ek.X < (BoxPos[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] + 6);
+                        }
+                    }
+                    if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y < (BoxPos[1, i] + 8) && ek.Y > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y < (BoxPos[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] + 8);
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] - 16);
+                        }
+                    }
+                    if (ek.X > (BoxPos[0, i] - 8) && ek.X < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] - 16);
+                        }
+                        if (ek.X < (BoxPos[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] + 8);
+                        }
+                    }
+                    if (ek.X + 12 > (BoxPos[0, i] - 8) && ek.X + 12 < (BoxPos[0, i] + 8) && ek.Y + 12 < (BoxPos[1, i] + 8) && ek.Y + 12 > (BoxPos[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BoxPos[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BoxPos[1, i] - 18);
+                        }
+                        if (ek.X + 12 > (BoxPos[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BoxPos[0, i] - 18);
+                        }
+                    }
+                }
+                //wall
+                for (int i = 0; i < schet; i++)
+                {
+                    if (ek.X > (BlockClone[0, i] - 8) && ek.X < (BlockClone[0, i] + 8) && ek.Y < (BlockClone[1, i] + 8) && ek.Y > (BlockClone[1, i] - 8))
+                    {
+                        if (ek.Y < (BlockClone[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BlockClone[1, i] + 6);
+                        }
+                        if (ek.X < (BlockClone[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BlockClone[0, i] + 6);
+                        }
+                    }
+                    if (ek.X + 12 > (BlockClone[0, i] - 8) && ek.X + 12 < (BlockClone[0, i] + 8) && ek.Y < (BlockClone[1, i] + 8) && ek.Y > (BlockClone[1, i] - 8))
+                    {
+                        if (ek.Y < (BlockClone[1, i] + 8))
+                        {
+                            ek.Y = Convert.ToInt32(BlockClone[1, i] + 8);
+                        }
+                        if (ek.X + 12 > (BlockClone[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BlockClone[0, i] - 16);
+                        }
+                    }
+                    if (ek.X > (BlockClone[0, i] - 8) && ek.X < (BlockClone[0, i] + 8) && ek.Y + 12 < (BlockClone[1, i] + 8) && ek.Y + 12 > (BlockClone[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BlockClone[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BlockClone[1, i] - 16);
+                        }
+                        if (ek.X < (BlockClone[0, i] + 8))
+                        {
+                            ek.X = Convert.ToInt32(BlockClone[0, i] + 8);
+                        }
+                    }
+                    if (ek.X + 12 > (BlockClone[0, i] - 8) && ek.X + 12 < (BlockClone[0, i] + 8) && ek.Y + 12 < (BlockClone[1, i] + 8) && ek.Y + 12 > (BlockClone[1, i] - 8))
+                    {
+                        if (ek.Y + 12 > (BlockClone[1, i] - 8))
+                        {
+                            ek.Y = Convert.ToInt32(BlockClone[1, i] - 18);
+                        }
+                        if (ek.X + 12 > (BlockClone[0, i] - 8))
+                        {
+                            ek.X = Convert.ToInt32(BlockClone[0, i] - 18);
+                        }
+                    }
+                }          
+                pictureBox1.Invalidate();
+                BoxPos[0, g] = ek.X + 6;
+                BoxPos[1, g] = ek.Y + 6;
+                Drawing();
+                for (int j = 0; j < M; j++)
+                {
+                    graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                }
+                foreach (int p in wwall)
+                {
+                    Block[0, p] = ek.X + 6;
+                    Block[1, p] = ek.Y + 6;
+                }
+                roompaint();
             }
             if (ind!=0)
             {
@@ -1874,23 +2724,52 @@ namespace WindowsFormsApp1
             }
             labal();
             labalbox();
-            ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
-            graph.DrawRectangle(pen, ek);
+            button2.PerformClick();
+        }
+        private void WallBox()
+        {
+            //  Block[0, c] = ek.X + 6;
+            // Block[1, c] = ek.Y + 6;
+            foreach (int p in wwall)
+            {
+                Block[0, p] = ek.X + 6;
+                Block[1, p] = ek.Y + 6;
+            }
+            //  for (int kol = 0; kol < N; kol++)
+            //  {
+            //       Point test = new Point() { X = Convert.ToInt32(BoxPos[0, kol]), Y = Convert.ToInt32(BoxPos[1, kol]) };
+            //       Bp[kol] = test;
+            //   }
+            Drawing();
+            for (int j = 0; j < M; j++)
+            {
+                graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+            }
+            roompaint();
+          //  listBox2.Items.Clear();
+         //   for (int i = 0; i < N; i++)
+          //  {
+         //       listBox2.Items.Add((i + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, i]) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - BoxPos[1, i]) / Convert.ToDouble(pxY));
+          //  }
+           // labal();
+           // labalbox();
             button2.PerformClick();
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)//Отслеживание отпуска ЛКМ
         {
             //Маяки
-            if (mayak >= M && IsClicked == true)
+            if (mayak >= M && IsClicked == true && IsClicked2 == false && IsClicked3 == false)
             {
                 IsClicked = false;
                 beacon();
             }
             //Комната
-            if (flag >= N && IsClicked2 == true)
+            if (flag >= N && IsClicked2 == true && IsClicked == false && IsClicked3 == false)
             {
                 IsClicked2 = false;
                 Box();
+                ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                graph.DrawRectangle(pen, ek);
             }
             if (IsInfo == true)
             {
@@ -1910,6 +2789,26 @@ namespace WindowsFormsApp1
                     }
                 }
             }
+            if (blag >= B && IsClicked3 == true && IsClicked2 == false && IsClicked == false)
+            {
+                IsClicked3 = false;
+                WallBox();
+                ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                graph.DrawRectangle(pen, ek);
+                wwall.Clear();
+                wallin.Clear();
+            }
+            if (blag >= B && IsClicked3 == true && IsClicked2 == true && IsClicked == false && flag >= N)
+            {
+                IsClicked3 = false;
+                WallBox();
+                IsClicked2 = false;
+                Box();
+                ek = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
+                graph.DrawRectangle(pen, ek);
+                wwall.Clear();
+                wallin.Clear();
+            }
         }
         private void pictureBox1_Paint(object sender, PaintEventArgs e)//Отрисока маяка при перетаскивании
         {
@@ -1919,6 +2818,11 @@ namespace WindowsFormsApp1
                 e.Graphics.DrawEllipse(pen, el);
             }
             if (IsClicked2 == true)
+            {
+                pen = new Pen(Color.Black);
+                e.Graphics.DrawRectangle(pen, ek);
+            }
+            if (IsClicked3 == true)
             {
                 pen = new Pen(Color.Black);
                 e.Graphics.DrawRectangle(pen, ek);
@@ -2014,6 +2918,7 @@ namespace WindowsFormsApp1
             button8.Visible = false;
             textBox7.Visible = false;
             label7.Visible = false;
+            button14.Enabled = false;
         }
         private void button25_Click(object sender, EventArgs e)//add1 room
         {
@@ -2044,6 +2949,7 @@ namespace WindowsFormsApp1
             button8.Visible = false;
             textBox7.Visible = false;
             label7.Visible = false;
+            button14.Enabled = false;
             ind = 1;
         }
         private void button24_Click(object sender, EventArgs e)//build
@@ -2162,6 +3068,10 @@ namespace WindowsFormsApp1
                 button12.Enabled = false;
                 textBox7.Visible = false;
                 label7.Visible = false;
+                button14.Enabled = false;
+                double[,] Block;
+                B = 0;
+                blag = 0;
             }
             else
             {
@@ -2202,6 +3112,7 @@ namespace WindowsFormsApp1
                 button12.Enabled = true;
                 textBox7.Visible = false;
                 label7.Visible = false;
+                button14.Enabled = false;
             }
         }
 
@@ -2273,6 +3184,10 @@ namespace WindowsFormsApp1
                 button12.Enabled = false;
                 textBox7.Visible = false;
                 label7.Visible = false;
+                button14.Enabled = false;
+                double[,] Block;
+                B = 0;
+                blag = 0;
             }
             else
             {
@@ -2309,6 +3224,10 @@ namespace WindowsFormsApp1
                 button12.Enabled = false;
                 textBox7.Visible = false;
                 label7.Visible = false;
+                button14.Enabled = false;
+                double[,] Block;
+                B = 0;
+                blag = 0;
                 ek = new Rectangle();
                 Drawing();
                 foreach (Point p in lp)
@@ -2444,6 +3363,10 @@ namespace WindowsFormsApp1
             button12.Enabled = false;
             textBox7.Visible = false;
             label7.Visible = false;
+            button14.Enabled = false;
+            double[,] Block;
+            B = 0;
+            blag = 0;
         }
 
         private void button30_Click(object sender, EventArgs e)
@@ -2512,6 +3435,64 @@ namespace WindowsFormsApp1
             s = false;
         }
 
+        private void vidimostwall(int x, int y)
+        {
+            s = false;
+            for (int i = 0; i < M; i++)
+            {
+                double ax1 = x;
+                double ay1 = y;
+                double ax2 = SatPos[0, i];
+                double ay2 = SatPos[1, i];
+                s = false;
+                for (int j = 0; j < N; j++)
+                {
+                    double bx1 = BoxClone[0, j];
+                    double by1 = BoxClone[1, j];
+                    double bx2 = BoxClone[0, j + 1];
+                    double by2 = BoxClone[1, j + 1];
+                    double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                    double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                    double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                    double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                    if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                    {
+                        s = true;
+                    }
+                }
+                for(int j = 0;j<B;j+=2)
+                {
+                    double bx1 = Block[0, j];
+                    double by1 = Block[1, j];
+                    double bx2 = Block[0, j + 1];
+                    double by2 = Block[1, j + 1];
+                    double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                    double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                    double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                    double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                    if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                    {
+                        s = true;
+                    }
+                }
+                if (s == false)
+                    Per.Add(new Point() { X = Convert.ToInt32(SatPos[0, i]), Y = Convert.ToInt32(SatPos[1, i]) });
+            }
+            kolich = 0;
+            foreach (Point pp in Per)
+            {
+                kolich += 1;
+            }
+            SatPos = new double[2, kolich + 1];
+            kolich = 0;
+            foreach (Point pp in Per)
+            {
+                SatPos[0, kolich] = pp.X;
+                SatPos[1, kolich] = pp.Y;
+                kolich += 1;
+            }
+            s = false;
+        }
         private void lish()
         {
             SatClone = new double[2, M + 1];
@@ -2547,6 +3528,82 @@ namespace WindowsFormsApp1
                     }
                 }
                 if (s==false)
+                {
+                    lishn.Add(new Point() { X = Convert.ToInt32(SatPos[0, i]), Y = Convert.ToInt32(SatPos[1, i]) });
+                }
+
+            }
+            qunt = 0;
+            foreach (Point pp in lishn)
+            {
+                qunt += 1;
+            }
+            SatPos = new double[2, qunt + 1];
+            qunt = 0;
+            foreach (Point pp in lishn)
+            {
+                SatPos[0, qunt] = pp.X;
+                SatPos[1, qunt] = pp.Y;
+                qunt += 1;
+            }
+            SatPos[0, qunt] = SatClone[0, M - 1];
+            SatPos[1, qunt] = SatClone[1, M - 1];
+        }
+        private void lishwall()
+        {
+            SatClone = new double[2, M + 1];
+            for (int h = 0; h < M; h++)
+            {
+                SatClone[0, h] = SatPos[0, h];
+                SatClone[1, h] = SatPos[1, h];
+            }
+
+            for (int i = 0; i < M - 1; i++)
+            {
+
+
+                s = false;
+                for (int j = 0; j < N; j++)
+                {
+                    double ax1 = SatPos[0, i];
+                    double ay1 = SatPos[1, i];
+                    double ax2 = SatPos[0, M - 1];
+                    double ay2 = SatPos[1, M - 1];
+                    double bx1 = BoxClone[0, j];
+                    double by1 = BoxClone[1, j];
+                    double bx2 = BoxClone[0, j + 1];
+                    double by2 = BoxClone[1, j + 1];
+
+                    double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                    double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                    double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                    double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                    if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                    {
+                        s = true;
+                    }
+                }
+                for (int j = 0; j < B; j+=2)
+                {
+                    double ax1 = SatPos[0, i];
+                    double ay1 = SatPos[1, i];
+                    double ax2 = SatPos[0, M - 1];
+                    double ay2 = SatPos[1, M - 1];
+                    double bx1 = Block[0, j];
+                    double by1 = Block[1, j];
+                    double bx2 = Block[0, j + 1];
+                    double by2 = Block[1, j + 1];
+
+                    double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                    double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                    double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                    double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                    if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                    {
+                        s = true;
+                    }
+                }
+                if (s == false)
                 {
                     lishn.Add(new Point() { X = Convert.ToInt32(SatPos[0, i]), Y = Convert.ToInt32(SatPos[1, i]) });
                 }
@@ -2630,11 +3687,12 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
         }
         private void pictureBox1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (textBox7.Visible == true)
+
+            if (pictureBox1.Enabled==true)
             {
                 if (e.X < 1178 && e.X > 178 && e.Y < 1011 && e.Y > 11)
                 {
-                    PictureBox org = new PictureBox();
+                  /*  PictureBox org = new PictureBox();
                     org.Image = pictureBox1.Image;
                     pictureBox1.Enabled = false;
                     for (int k = 0; k < M; k++)
@@ -2655,31 +3713,73 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     button27.Enabled = false;
                     button28.Enabled = false;
                     button29.Enabled = false;
-                    if (e.Delta > 0)
+                  */  if (e.Delta > 0)
                     {
-                        if (pictureBox1.Image.Width < 1500)
+                        // if (pictureBox1.Image.Width < 1500)
+                        // {
+                        //  pictureBox1.Image = Zoom(org.Image, 50, 50);
+                        for (int k = 0; k < M; k++)
                         {
-                            pictureBox1.Image = Zoom(org.Image, 50, 50);
+                            labell[k].Dispose();
                         }
-                        if (pictureBox1.Image.Width == 1001)
+                        for (int k = 0; k < N; k++)
                         {
-                            labal();
-                            labalbox();
-                            pictureBox1.Image = bmp;
-                            pictureBox1.Enabled = true;
-                            button23.Enabled = true;
-                            button25.Enabled = true;
-                            button3.Enabled = true;
-                            button13.Enabled = true;
-                            button1.Enabled = true;
-                            button2.Enabled = true;
-                            button26.Enabled = true;
-                            button27.Enabled = true;
-                            button28.Enabled = true;
-                            button29.Enabled = true;
+                            labelbox[k].Dispose();
                         }
+                        int sizerectX = 490;
+                            int sizerectY = 490;
+                            int sizerectX1 = 490;
+                            int sizerectY1 = 490;
+                            Bitmap myBitmap = bmp;
+                            if (e.Location.X < 490)
+                            {
+                                sizerectX = e.Location.X;
+                                sizerectX1 = 490- e.Location.X+490;
+                            }
+                            if (e.Location.Y < 490)
+                            {
+                                sizerectY = e.Location.Y;
+                                sizerectY1 = 490- e.Location.Y+490;
+                            }
+                            if (e.Location.X > 510)
+                            {
+                                sizerectX1 = 1000 - e.Location.X;
+                                sizerectX = 490-sizerectX1+490;
+                            }
+                            if (e.Location.Y > 510)
+                            {
+                                sizerectY1 = 1000 - e.Location.Y;
+                                sizerectY = 490-sizerectY1+490;
+                            }
+                            Rectangle sourceRectangle = new Rectangle(e.Location.X-sizerectX,e.Location.Y-sizerectY, sizerectX+sizerectX1, sizerectY+sizerectY1);
+                            Rectangle destRectangle1 = new Rectangle(0, 0, 1000, 1000);
+
+                        bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                        graph = Graphics.FromImage(bmp);
+                        pictureBox1.Image = bmp;
+                        graph.DrawImage(myBitmap, destRectangle1, sourceRectangle, GraphicsUnit.Pixel);
+                        pictureBox1.Image = myBitmap;
+                        //}
+                        /*    if (pictureBox1.Image.Width == 1001)
+                            {
+                                labal();
+                                labalbox();
+                                pictureBox1.Image = bmp;
+                                pictureBox1.Enabled = true;
+                                button23.Enabled = true;
+                                button25.Enabled = true;
+                                button3.Enabled = true;
+                                button13.Enabled = true;
+                                button1.Enabled = true;
+                                button2.Enabled = true;
+                                button26.Enabled = true;
+                                button27.Enabled = true;
+                                button28.Enabled = true;
+                                button29.Enabled = true;
+                            }
+                      */
                     }
-                    else
+                  /*  else
                     {
                         if (pictureBox1.Image.Width > 500)
                         {
@@ -2703,7 +3803,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                             button29.Enabled = true;
                         }
                     }
-                }
+                */}
             }
         }
         Image Zoom(Image img, double x,double y)
@@ -2883,6 +3983,8 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                 for (int i = 0; i < count; i++)
                 {
                     var line = reader.ReadLine();
+                    line = line.Trim();
+                    line = string.Join(" ", line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
                     var values = line.Split(' ').Select(double.Parse).ToArray();
 
                     for (int j = 0; j < 2; j++)
@@ -2914,6 +4016,8 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                 for (int i = 0; i < count; i++)
                 {
                     var line = reader.ReadLine();
+                    line = line.Trim();
+                    line = string.Join(" ", line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
                     var values = line.Split(' ').Select(double.Parse).ToArray();
 
                     for (int j = 0; j < 2; j++)
@@ -3040,6 +4144,30 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
             }
         }
 
+        private void button14_Click(object sender, EventArgs e)//Wall
+        {
+            B += 2;
+            double[,] BlockClone = new double[2, B - 2];
+            for(int i=0;i<B-2;i++)
+            {
+                BlockClone[0, i] = Block[0, i];
+                BlockClone[1, i] = Block[1, i];
+            }
+            Block = new double[2, B];
+            for(int i=0;i<B-2;i++)
+            {
+                Block[0, i] = BlockClone[0, i];
+                Block[1, i] = BlockClone[1, i];
+            }
+            button14.Enabled = false;
+            button23.Enabled = false;
+            button25.Enabled = false;
+            button3.Enabled = false;
+            button27.Enabled = false;
+            button26.Enabled = false;
+            button1.Enabled = false;
+        }
+
         private void vidimost1(int x, int y)
         {
             s = false;
@@ -3112,6 +4240,117 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                 }
                 SatPos[0, kolich] = SatClone[0,M-1];
                 SatPos[1, kolich] = SatClone[1,M-1];
+                s = false;
+            }
+        }
+
+        private void vidimost1wall(int x, int y)
+        {
+            s = false;
+            for (int j = 0; j < N; j++)
+            {
+                double ax1 = x;
+                double ay1 = y;
+                double ax2 = SatClone[0, M - 1];
+                double ay2 = SatClone[1, M - 1];
+
+                double bx1 = BoxClone[0, j];
+                double by1 = BoxClone[1, j];
+                double bx2 = BoxClone[0, j + 1];
+                double by2 = BoxClone[1, j + 1];
+                double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                {
+                    s = true;
+                }
+            }
+            for (int j = 0; j < B; j+=2)
+            {
+                double ax1 = x;
+                double ay1 = y;
+                double ax2 = SatClone[0, M - 1];
+                double ay2 = SatClone[1, M - 1];
+
+                double bx1 = Block[0, j];
+                double by1 = Block[1, j];
+                double bx2 = Block[0, j + 1];
+                double by2 = Block[1, j + 1];
+                double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                {
+                    s = true;
+                }
+            }
+            if (s == true)
+                kolich = 0;
+            else
+            {
+                s = false;
+                for (int i = 0; i < qunt; i++)
+                {
+                    s = false;
+                    double ax1 = x;
+                    double ay1 = y;
+                    double ax2 = SatPos[0, i];
+                    double ay2 = SatPos[1, i];
+                    s = false;
+                    for (int j = 0; j < N; j++)
+                    {
+                        double bx1 = BoxClone[0, j];
+                        double by1 = BoxClone[1, j];
+                        double bx2 = BoxClone[0, j + 1];
+                        double by2 = BoxClone[1, j + 1];
+                        double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                        double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                        double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                        double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                        if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                        {
+                            s = true;
+                        }
+                    }
+                    for (int j = 0; j < B; j+=2)
+                    {
+                        double bx1 = Block[0, j];
+                        double by1 = Block[1, j];
+                        double bx2 = Block[0, j + 1];
+                        double by2 = Block[1, j + 1];
+                        double v1 = (bx2 - bx1) * (ay1 - by1) - (by2 - by1) * (ax1 - bx1);
+                        double v2 = (bx2 - bx1) * (ay2 - by1) - (by2 - by1) * (ax2 - bx1);
+                        double v3 = (ax2 - ax1) * (by1 - ay1) - (ay2 - ay1) * (bx1 - ax1);
+                        double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
+                        if ((v1 * v2 < 0) && (v3 * v4 < 0))
+                        {
+                            s = true;
+                        }
+                    }
+                    if (s == false)
+                    {
+                        Per.Add(new Point() { X = Convert.ToInt32(SatPos[0, i]), Y = Convert.ToInt32(SatPos[1, i]) });
+                    }
+
+                }
+                kolich = 0;
+                foreach (Point pp in Per)
+                {
+                    kolich += 1;
+                }
+                SatPos = new double[2, kolich + 2];
+                kolich = 0;
+                foreach (Point pp in Per)
+                {
+                    SatPos[0, kolich] = pp.X;
+                    SatPos[1, kolich] = pp.Y;
+                    kolich += 1;
+                }
+                SatPos[0, kolich] = SatClone[0, M - 1];
+                SatPos[1, kolich] = SatClone[1, M - 1];
                 s = false;
             }
         }
