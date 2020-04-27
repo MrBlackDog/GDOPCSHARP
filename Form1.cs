@@ -41,6 +41,8 @@ namespace WindowsFormsApp1
         int g;//Флаг для определения угла комнаты при переносе
         int c;//Флаг для определения стороны стены при переносе
         int M;//Количество маяков
+        int mm;
+        int nn;
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
         double[,] SatClone;
@@ -161,17 +163,21 @@ namespace WindowsFormsApp1
 
         private void startroom()
         {
-            N = 4;
+            N = 6;
             pictureBox1.Enabled = false;
-            BoxPos = new double[2, 4];
-            BoxPos[0, 0] = 100;
+            BoxPos = new double[2, 6];
+            BoxPos[0, 0] = 400;
             BoxPos[0, 1] = 100;
-            BoxPos[0, 2] = 900;
+            BoxPos[0, 2] = 100;
             BoxPos[0, 3] = 900;
             BoxPos[1, 0] = 100;
-            BoxPos[1, 1] = 900;
+            BoxPos[1, 1] = 100;
             BoxPos[1, 2] = 900;
-            BoxPos[1, 3] = 100;
+            BoxPos[1, 3] = 900;
+            BoxPos[0, 4] = 900;
+            BoxPos[1, 4] = 100;
+            BoxPos[0, 5] = 600;
+            BoxPos[1, 5] = 100;
             Xmax = 1000;
             Ymax = 1000;
             pxX = 1;
@@ -201,7 +207,7 @@ namespace WindowsFormsApp1
                 listBox2.Items.Add((j + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX) + "," + "Y:" + (Convert.ToDouble(1000 - BoxPos[1, j]) / Convert.ToDouble(pxY)));
                 Bp.Add(new Point() { X = Convert.ToInt32(BoxPos[0, j]), Y = Convert.ToInt32(BoxPos[1, j]) });
             }
-            labelbox = new Label[4];
+            labelbox = new Label[N];
             roompaint();
             labalbox();
             textBox5.Enabled = false;
@@ -219,7 +225,7 @@ namespace WindowsFormsApp1
             button29.Enabled = true;
             button1.Enabled = true;
             button27.Enabled = true;
-            flag = 4;
+            flag = 6;
         }
         private void Drawing()//Оси
         {
@@ -504,14 +510,14 @@ namespace WindowsFormsApp1
                 SatClone[0, h] = SatPos[0, h];
                 SatClone[1, h] = SatPos[1, h];
             }
-            BoxClone = new double[2, N + 2];
+            BoxClone = new double[2, N + 1];
             for (int h = 0; h < N; h++)
             {
                 BoxClone[0, h] = BoxPos[0, h];
                 BoxClone[1, h] = BoxPos[1, h];
             }
-            BoxClone[0, N] = BoxPos[0, 0];
-            BoxClone[1, N] = BoxPos[1, 0];
+            //BoxClone[0, N] = BoxPos[0, 0];
+           // BoxClone[1, N] = BoxPos[1, 0];
             Z = new double[1000, 1000];
             int i = 0;
             for (int x = 0; x < 1000; x++)
@@ -559,14 +565,14 @@ namespace WindowsFormsApp1
                 SatClone[0, h] = SatPos[0, h];
                 SatClone[1, h] = SatPos[1, h];
             }
-            BoxClone = new double[2, N + 2];
+            BoxClone = new double[2, N + 1];
             for (int h = 0; h < N; h++)
             {
                 BoxClone[0, h] = BoxPos[0, h];
                 BoxClone[1, h] = BoxPos[1, h];
             }
-            BoxClone[0, N] = BoxPos[0, 0];
-            BoxClone[1, N] = BoxPos[1, 0];
+           // BoxClone[0, N] = BoxPos[0, 0];
+           // BoxClone[1, N] = BoxPos[1, 0];
             Z = new double[1000, 1000];
             int i = 0;
             for (int x = 0; x < 1000; x++)
@@ -654,7 +660,7 @@ namespace WindowsFormsApp1
             {
                 graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
             }
-            graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+           // graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
             if (B!=0)
             {
                 for(int i=0;i<B;i++)
@@ -845,7 +851,7 @@ namespace WindowsFormsApp1
                                     }
                                     if (flag == N - 1)
                                     {
-                                        graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                     //   graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                                         if (press == 0)
                                         {
                                             button22.Enabled = true;
@@ -911,7 +917,7 @@ namespace WindowsFormsApp1
                                         {
                                             graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                                         }
-                                        graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                     //   graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, flag]), Convert.ToInt32(BoxPos[1, flag]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                                         if (press == 0)
                                         {
                                             button22.Enabled = true;
@@ -1053,13 +1059,26 @@ namespace WindowsFormsApp1
                             BoxPos = new double[2, N + 1];
                             if ((minnum == 0 && nextnum == N - 2) || (minnum == N - 2 && nextnum == 0))
                             {
-                                for (int i = 0; i < N-1; i++)
+                                if (nextnum == 0)
                                 {
-                                    BoxPos[0, i] = BoxPoint[0, i];
-                                    BoxPos[1, i] = BoxPoint[1, i];
+                                    for (int i = 0; i < N - 1; i++)
+                                    {
+                                        BoxPos[0, i] = BoxPoint[0, i];
+                                        BoxPos[1, i] = BoxPoint[1, i];
+                                    }
+                                    BoxPos[0, N - 1] = x;
+                                    BoxPos[1, N - 1] = y;
                                 }
-                                BoxPos[0, N-1] = x;
-                                BoxPos[1, N-1] = y;
+                                else
+                                {
+                                    BoxPos[0, 0] = x;
+                                    BoxPos[1, 0] = y;
+                                    for (int i = 1; i < N; i++)
+                                    {
+                                        BoxPos[0, i] = BoxPoint[0, i-1];
+                                        BoxPos[1, i] = BoxPoint[1, i-1];
+                                    }
+                                }
                             }
                             else
                             {
@@ -1198,7 +1217,7 @@ namespace WindowsFormsApp1
                                     {
                                         graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                                     }
-                                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                                  //  graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                                     for(int i=0;i<B-2;i+=2)
                                     {
                                         graph.DrawLine(pen, Convert.ToInt32(Block[0, i]), Convert.ToInt32(Block[1, i]), Convert.ToInt32(Block[0, i + 1]), Convert.ToInt32(Block[1, i+1]));
@@ -1245,7 +1264,7 @@ namespace WindowsFormsApp1
                                 {
                                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                                 }
-                                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                              //  graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                                 for (int i = 0; i < B - 2; i += 2)
                                 {
                                     graph.DrawLine(pen, Convert.ToInt32(Block[0, i]), Convert.ToInt32(Block[1, i]), Convert.ToInt32(Block[0, i + 1]), Convert.ToInt32(Block[1, i+1]));
@@ -1484,7 +1503,7 @@ namespace WindowsFormsApp1
                 {
                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                 }
-                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+             //   graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                 if (B != 0)
                 {
                     for (int u = 0; u < B; u += 2)
@@ -1537,7 +1556,7 @@ namespace WindowsFormsApp1
                     {
                         graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                     }
-                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+                   // graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 1]), Convert.ToInt32(BoxPos[1, N - 1]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                     if (B != 0)
                     {
                         for (int u = 0; u < B; u += 2)
@@ -2623,6 +2642,7 @@ namespace WindowsFormsApp1
                     kord[i] = Math.Sqrt(Math.Pow(Math.Abs(e.Location.X - BoxPos[0, i]), 2) + Math.Pow(Math.Abs(e.Location.Y - BoxPos[1, i]), 2));
                 }
                 double minkord = kord[0];
+                minnum = 0;
                  for(int i=0;i<N-1;i++)
                 {
                     if (kord[i] < minkord)
@@ -2665,14 +2685,31 @@ namespace WindowsFormsApp1
                 {
                     graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
                 }
-                graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 2]), Convert.ToInt32(BoxPos[1, N - 2]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
+              //  graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, N - 2]), Convert.ToInt32(BoxPos[1, N - 2]), Convert.ToInt32(BoxPos[0, 0]), Convert.ToInt32(BoxPos[1, 0]));
                 for (int j = 0; j < M; j++)
                 {
                     graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                 }
                 pen = new Pen(Color.Red);
-                graph.DrawLine(pen,Convert.ToSingle(e.Location.X),Convert.ToSingle(e.Location.Y),Convert.ToSingle(BoxPos[0,minnum]),Convert.ToSingle(BoxPos[1,minnum]));
-                graph.DrawLine(pen, Convert.ToSingle(e.Location.X), Convert.ToSingle(e.Location.Y), Convert.ToSingle(BoxPos[0, nextnum]), Convert.ToSingle(BoxPos[1, nextnum]));
+                mm = Convert.ToInt32(Math.Sqrt(Math.Pow(Math.Abs(e.Location.X - BoxPos[0, minnum]), 2) + Math.Pow(Math.Abs(e.Location.Y - BoxPos[1, minnum]), 2)));
+                nn = Convert.ToInt32(Math.Sqrt(Math.Pow(Math.Abs(e.Location.X - BoxPos[0, nextnum]), 2) + Math.Pow(Math.Abs(e.Location.Y - BoxPos[1, nextnum]), 2)));
+                if ((minnum == 0 && nextnum == N - 2) || (minnum == N-2 && nextnum == 0))
+                {
+                    
+                    if ( mm > nn)
+                    {
+                        graph.DrawLine(pen, Convert.ToSingle(e.Location.X), Convert.ToSingle(e.Location.Y), Convert.ToSingle(BoxPos[0, nextnum]), Convert.ToSingle(BoxPos[1, nextnum]));
+                    }
+                    else
+                    {
+                        graph.DrawLine(pen, Convert.ToSingle(e.Location.X), Convert.ToSingle(e.Location.Y), Convert.ToSingle(BoxPos[0, minnum]), Convert.ToSingle(BoxPos[1, minnum]));
+                    }
+                }
+                else
+                {
+                    graph.DrawLine(pen, Convert.ToSingle(e.Location.X), Convert.ToSingle(e.Location.Y), Convert.ToSingle(BoxPos[0, minnum]), Convert.ToSingle(BoxPos[1, minnum]));
+                    graph.DrawLine(pen, Convert.ToSingle(e.Location.X), Convert.ToSingle(e.Location.Y), Convert.ToSingle(BoxPos[0, nextnum]), Convert.ToSingle(BoxPos[1, nextnum]));
+                }
                 pen = new Pen(Color.Black);
             }
         }
@@ -3401,7 +3438,7 @@ namespace WindowsFormsApp1
                 double ax2 = SatPos[0, i];
                 double ay2 = SatPos[1, i];
                 s = false;
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < N-1; j++)
                 {
                     double bx1 = BoxClone[0, j];
                     double by1 = BoxClone[1, j];
@@ -3445,7 +3482,7 @@ namespace WindowsFormsApp1
                 double ax2 = SatPos[0, i];
                 double ay2 = SatPos[1, i];
                 s = false;
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < N-1; j++)
                 {
                     double bx1 = BoxClone[0, j];
                     double by1 = BoxClone[1, j];
@@ -3507,7 +3544,7 @@ namespace WindowsFormsApp1
 
              
                 s = false;
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < N-1; j++)
                 {
                     double ax1 = SatPos[0, i];
                     double ay1 = SatPos[1, i];
@@ -3563,7 +3600,7 @@ namespace WindowsFormsApp1
 
 
                 s = false;
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < N-1; j++)
                 {
                     double ax1 = SatPos[0, i];
                     double ay1 = SatPos[1, i];
@@ -4171,7 +4208,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
         private void vidimost1(int x, int y)
         {
             s = false;
-            for (int j = 0; j < N; j++)
+            for (int j = 0; j < N-1; j++)
             {
                 double ax1 = x;
                 double ay1 = y;
@@ -4204,7 +4241,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     double ax2 = SatPos[0, i];
                     double ay2 = SatPos[1, i];
                     s = false;
-                    for (int j = 0; j < N; j++)
+                    for (int j = 0; j < N-1; j++)
                     {
                         double bx1 = BoxClone[0, j];
                         double by1 = BoxClone[1, j];
@@ -4247,7 +4284,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
         private void vidimost1wall(int x, int y)
         {
             s = false;
-            for (int j = 0; j < N; j++)
+            for (int j = 0; j < N-1; j++)
             {
                 double ax1 = x;
                 double ay1 = y;
@@ -4300,7 +4337,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     double ax2 = SatPos[0, i];
                     double ay2 = SatPos[1, i];
                     s = false;
-                    for (int j = 0; j < N; j++)
+                    for (int j = 0; j < N-1; j++)
                     {
                         double bx1 = BoxClone[0, j];
                         double by1 = BoxClone[1, j];
