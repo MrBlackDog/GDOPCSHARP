@@ -616,6 +616,8 @@ namespace WindowsFormsApp1
                 BoxClone[1, h] = BoxPos[1, h];
             }
             Z = new double[1000, 1000];
+            DeltaX = new double[1000, 1000];
+            DeltaY = new double[1000, 1000];
             int i = 0;
             for (int x = 0; x < 1000; x++)
             {
@@ -1541,6 +1543,7 @@ namespace WindowsFormsApp1
             if(trackBar1.Enabled==false)
             {
                 trackBar1.Value = 100;
+                label21.Text = 100.ToString();
             }
         }
 
@@ -3096,6 +3099,8 @@ namespace WindowsFormsApp1
             roompaint();
             double[,] Grad;
             double[,] Z;
+            double[,] DeltaX;
+            double[,] DeltaY;
             double[,] Tran;
             double[,] Umn;
             button2.Enabled = false;
@@ -3138,6 +3143,8 @@ namespace WindowsFormsApp1
                 SatPos = null;
                 double[,] Grad;
                 double[,] Z;
+                double[,] DeltaX;
+                double[,] DeltaY;
                 double[,] Tran;
                 double[,] Umn;
                 double[,] BoxPos;
@@ -3196,6 +3203,8 @@ namespace WindowsFormsApp1
                 SatPos = null;
                 double[,] Grad;
                 double[,] Z;
+                double[,] DeltaX;
+                double[,] DeltaY;
                 double[,] Tran;
                 double[,] Umn;
                 beaconflag = 0;
@@ -3254,6 +3263,8 @@ namespace WindowsFormsApp1
                 SatPos = null;
                 double[,] Grad;
                 double[,] Z;
+                double[,] DeltaX;
+                double[,] DeltaY;
                 double[,] Tran;
                 double[,] Umn;
                 double[,] BoxPos;
@@ -3402,6 +3413,8 @@ namespace WindowsFormsApp1
             SatPos = null;
             double[,] Grad;
             double[,] Z;
+            double[,] DeltaX;
+            double[,] DeltaY;
             double[,] Tran;
             double[,] Umn;
             double[,] BoxPos;
