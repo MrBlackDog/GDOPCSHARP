@@ -17,50 +17,66 @@ namespace WindowsFormsApp1
     {
         int Xmax;//Максимальное значение по оси X см
         int Ymax;//Максимальное значение по оси Y см
+
         double pxX;//Пикселей в сантиметре по оси X
         double pxY;//Пикселей в сантиметре по оси Y
+
         Bitmap image;//План помещения
+
         bool IsClicked = false;//Индикатор зажатия ЛКМ для маяка
         bool IsClicked2 = false;//Индикатор зажатия ЛКМ для угла
         bool IsClicked3 = false;//Индикатор зажатия ЛКМ на стене
+
         int deltax = 0;//Изменение координаты Х при переносе маяка
         int deltay = 0;//Изменение координаты У при переносе маяка
+
         Rectangle beacontraf;//Трафарет для маяка при переносе
         Rectangle boxtraf;//Трафарет для угла при переносе
+
         Bitmap bmp;//Настройка области рисования
         Graphics graph;
         Pen pen;//Перо
+
         List<Point> beaconlist = new List<Point>();//Лист с координатами маяков
         List<Point> boxlist = new List<Point>();//Лист с координатами комнаты
         List<Point> rightpoint = new List<Point>();//Лист с массивом видимых координат
         List<Point> needpoint = new List<Point>();//Лист маяков видимых мастеру
         List<int> wallreplace = new List<int>();
         List<int> wallin = new List<int>();
+
         SolidBrush Brush;//Параметр заливки маяка
+
         int beaconflag;//Флаг для определения маяка при переносе
         int boxflag;//Флаг для определения угла комнаты при переносе
         int wallflag;//Флаг для определения стороны стены при переносе
         int beaconqunt;//Количество маяков
         int minway;
         int nextway;
+
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
         double[,] SatClone;
         double[,] Grad;//Градиентная матрица
         double[,] Z;//Матрица со значениеми геометрического фактора в каждой точке помещения
+        double[,] DeltaX;
+        double[,] DeltaY;
         double[,] Tran;//Транспонированная матрица вида [x1, y1]
                        //[x2, y2]
                        //[......]
                        //[xn, yn]
         double[,] Multi;//Перемноженная матрицад для расчетов
+
         Label[] labelbeacon;//Массив с нумерацией маяков
         Label[] labelbox;//Массив с нумерацией углов
+
         int beaconnumbers = 0;//Подсчет количества маяков
         int x, y;//Координаты курсора при клике
+
         double[,] clone;//Матрица клон для кдаления маяка
         double[,] BoxPos;//Массив с координатами комнаты вида [x1, x2, ... , xn]
                          //                                   [y1, y2, ... , yn]
         double[,] BoxClone;
+
         int uglnumbers = 0;//Подсчет количества углов комнаты
         int uglqunt;//Количество углов комнаты
         int addugl = 0;//Индикатор добавления угла
@@ -69,14 +85,19 @@ namespace WindowsFormsApp1
         int indclearroom = 0;//Индикатор стерания комнаты
         int kolich;//Количество маяков с учетом видимости
         int qunt;//Количество маяков видимых при D
+
         Form2 form = new Form2();//Progress Bar
+
         bool indphoto = false;//Индикатор загрузки плана
         int minnum = 0;//Номер ближайшего угла
         int nextnum = 0;//Номер 2 угла
+
         double StartInfoX = 0;//Линейка
         double StartInfoY = 0;
+
         Label labelInfo;
         bool IsInfo = false;
+
         double[,] WallPos = new double[0, 0];//Wall
         int walluqnt;//Количество углов стен при удалении и переносе
         int wallnumbers = 0;
@@ -106,6 +127,8 @@ namespace WindowsFormsApp1
             button23.Enabled = false;
             textBox1.Enabled = false;
             textBox7.Enabled = false;
+            textBox9.Enabled = false;
+            textBox10.Enabled = false;
             button25.Enabled = false;
             button26.Enabled = false;
             button27.Enabled = false;
@@ -119,9 +142,17 @@ namespace WindowsFormsApp1
             button24.Enabled = false;
             button12.Enabled = false;
             textBox7.Visible = false;
+            textBox9.Visible = false;
+            textBox8.Visible = false;
+            textBox10.Visible = false;
             button14.Enabled = false;
-            label7.BackColor = Color.Transparent;
             label7.Visible = false;
+            label23.Visible = false;
+            label25.Visible = false;
+            label26.Visible = false;
+            button16.Enabled = false;
+            trackBar1.Enabled = false;
+            label7.BackColor = Color.Transparent;
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -159,10 +190,9 @@ namespace WindowsFormsApp1
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            //  this.Height = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height;
-            // this.Width = System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.CenterToScreen();
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         }
         private void startroom()
         {
@@ -294,7 +324,7 @@ namespace WindowsFormsApp1
             {
                 for (int l = 0; l < 1000; l++)
                 {
-                    if (Z[j, l] <= 1 && Z[j,l]>0)
+                    if (Z[j, l] <= 1 && Z[j, l] > 0)
                     {
                         pen = new Pen(Color.FromArgb(0, 0, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
@@ -389,7 +419,7 @@ namespace WindowsFormsApp1
                         pen = new Pen(Color.FromArgb(255, 40, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-                    if (Z[j,l] == 0)
+                    if (Z[j, l] == 0)
                     {
                         pen = new Pen(Color.FromArgb(255, 255, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
@@ -407,7 +437,7 @@ namespace WindowsFormsApp1
                     form.progressBar1.Value += 1;
                 }
             }
-            button2.Enabled = true;
+                    button2.Enabled = true;
             if (form.progressBar1.Value == 2000000)
             {
                 textBox7.Visible = true;
@@ -489,6 +519,15 @@ namespace WindowsFormsApp1
                 }
             }
         }
+        private double pogreshnostX()
+        {
+            return Multi[0,0];
+        }
+
+        private double pogreshnostY()
+        {
+            return Multi[1, 1];
+        }
         private double trace(int N)//Расчет GDOP(Матрица Z)
         {
             double trac = 0;
@@ -520,6 +559,8 @@ namespace WindowsFormsApp1
                 BoxClone[1, h] = BoxPos[1, h];
             }
             Z = new double[1000, 1000];
+            DeltaX = new double[1000, 1000];
+            DeltaY = new double[1000, 1000];
             int i = 0;
             for (int x = 0; x < 1000; x++)
             {
@@ -543,6 +584,8 @@ namespace WindowsFormsApp1
                         Transp(kol1);
                         multi(kol1);
                         inversionMatrix(2);
+                        DeltaX[x, y] = pogreshnostX();
+                        DeltaY[x, y] = pogreshnostY();
                         Z[x, y] = trace(2);
                     }
                     i = 0;
@@ -603,7 +646,9 @@ namespace WindowsFormsApp1
                           Transp(kol1);
                           multi(kol1);
                           inversionMatrix(2);
-                          Z[x, y] = trace(2);
+                        DeltaX[x, y] = pogreshnostX();
+                        DeltaY[x, y] = pogreshnostY();
+                        Z[x, y] = trace(2);
                       }                   
                     i = 0;
                     kol1 = beaconqunt;
@@ -1461,14 +1506,48 @@ namespace WindowsFormsApp1
             labalbox();
             button2.PerformClick();
         }
+
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)//Вывод координат курсора на экран
         {
-
             textBox3.Text = (Convert.ToDouble(e.Location.X) / Convert.ToDouble(pxX)).ToString(); 
-            textBox4.Text = (Convert.ToDouble(1000 - e.Location.Y) / Convert.ToDouble(pxY)).ToString();
+            textBox4.Text = (Convert.ToDouble(1000 - e.Location.Y) / Convert.ToDouble(pxY)).ToString();     
         }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (textBox7.Visible == true)
+            {
+                button16.Enabled = true;
+                trackBar1.Enabled = true;
+                textBox10.Visible = true;
+                textBox8.Visible = true;
+                textBox9.Visible = true;
+                label23.Visible = true;
+                label25.Visible = true;
+                label26.Visible = true;
+
+            }
+            if (textBox7.Visible == false)
+            {
+                button16.Enabled = false;
+                trackBar1.Enabled = false;
+                textBox10.Visible = false;
+                textBox8.Visible = false;
+                textBox9.Visible = false;
+                label23.Visible = false;
+                label25.Visible = false;
+                label26.Visible = false;
+            }
+            if(trackBar1.Enabled==false)
+            {
+                trackBar1.Value = 100;
+            }
+        }
+
         private void button3_Click(object sender, EventArgs e)//Построение(GO)
         {
+            timer1.Start();
+
             if (checkBox1.Checked == true && checkBox2.Checked == false)//D
             {
                 form.Show();
@@ -1515,7 +1594,7 @@ namespace WindowsFormsApp1
                     }
                 }
             }
-            if (checkBox2.Checked == true && checkBox1.Checked == false)//D
+            if (checkBox2.Checked == true && checkBox1.Checked == false)//RD
             {
                 if (beaconqunt == 2)
                 {
@@ -1740,6 +1819,20 @@ namespace WindowsFormsApp1
         {
             if (textBox7.Visible == true && e.Location.X>=0 && e.Location.X<1000 && e.Location.Y>=0 && e.Location.Y<1000)
                 textBox7.Text = Z[e.Location.X, e.Location.Y].ToString();
+            if (textBox7.Visible == true && e.Location.X >= 0 && e.Location.X < 1000 && e.Location.Y >= 0 && e.Location.Y < 1000)
+            {
+                string delt = textBox8.Text;
+                if (delt != "")
+                {
+                    int n;
+                    if (int.TryParse(textBox8.Text, out n))
+                    {
+                            int deltainfo = Convert.ToInt32(delt);
+                        textBox9.Text = (deltainfo * Math.Sqrt(DeltaX[e.Location.X, e.Location.Y])).ToString();
+                        textBox10.Text = (deltainfo * Math.Sqrt(DeltaY[e.Location.X, e.Location.Y])).ToString();
+                    }
+                }
+            }
 
             if (IsInfo == true) 
             {
@@ -4124,12 +4217,243 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                 indintersection = false;
             }
         }
-
         private void button15_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
         }
+        //remove
+        private void button16_Click(object sender, EventArgs e)
+        {
+            bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            graph = Graphics.FromImage(bmp);
+            pictureBox1.Image = bmp;
+            form.Show();
+            form.progressBar1.Value = 0;
+            for (int j = 0; j < 1000; j++)
+            {
+                for (int l = 0; l < 1000; l++)
+                {
+                    if (Z[j, l] <= 1 && Z[j, l] > 0)
+                    {
+                        pen = new Pen(Color.FromArgb(0, 0, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1 && Z[j, l] <= 1.1)
+                    {
+                        pen = new Pen(Color.FromArgb(40, 40, 220));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.1 && Z[j, l] <= 1.15)
+                    {
+                        pen = new Pen(Color.FromArgb(80, 80, 180));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.15 && Z[j, l] <= 1.2)
+                    {
+                        pen = new Pen(Color.FromArgb(40, 140, 40));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.2 && Z[j, l] <= 1.35)
+                    {
+                        pen = new Pen(Color.FromArgb(50, 200, 50));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.35 && Z[j, l] <= 1.5)
+                    {
+                        pen = new Pen(Color.FromArgb(0, 255, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.5 && Z[j, l] <= 1.65)
+                    {
+                        pen = new Pen(Color.FromArgb(130, 255, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.65 && Z[j, l] <= 1.8)
+                    {
+                        pen = new Pen(Color.FromArgb(180, 255, 50));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.8 && Z[j, l] <= 1.95)
+                    {
+                        pen = new Pen(Color.FromArgb(210, 255, 25));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1.95 && Z[j, l] <= 2.1)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.1 && Z[j, l] <= 2.25)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 220, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.25 && Z[j, l] <= 2.4)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 200, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.4 && Z[j, l] <= 2.55)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 180, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.55 && Z[j, l] <= 2.7)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 150, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.7 && Z[j, l] <= 2.85)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 130, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 2.85 && Z[j, l] <= 3)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 125, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 3 && Z[j, l] <= 5)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 120, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 5 && Z[j, l] <= 10)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 80, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 10 && Z[j, l] <= 15)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 40, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] == 0)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 15 && Z[j, l] < 1000000000)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 0, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1000000000)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    form.progressBar1.Value += 1;
+                }
+            }
 
+            for (int j = 0; j < 1000; j++)
+            {
+                for (int l = 0; l < 1000; l++)
+                {
+                    if (Z[j, l] > trackBar1.Value)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    form.progressBar1.Value += 1;
+                }
+            }
+            if (form.progressBar1.Value == 2000000)
+            {
+                form.Hide();
+            }
+            if (checkBox1.Checked == true && checkBox2.Checked == false)
+            {
+                pen = new Pen(Color.Black);
+                for (int j = 0; j < beaconqunt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                }
+                for (int j = 0; j < uglqunt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                for (int j = 0; j < walluqnt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(WallPos[0, j]) - 6, Convert.ToInt32(WallPos[1, j]) - 6, 12, 12);
+                }
+                pen.Width = 5;
+                for (int i = 0; i < uglqunt - 1; i++)
+                {
+                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                }
+                if (walluqnt != 0)
+                {
+                    for (int u = 0; u < walluqnt; u += 2)
+                        graph.DrawLine(pen, Convert.ToInt32(WallPos[0, u]), Convert.ToInt32(WallPos[1, u]), Convert.ToInt32(WallPos[0, u + 1]), Convert.ToInt32(WallPos[1, u + 1]));
+                }
+                pen.Width = 1;
+                for (int j = 0; j < uglqunt; j++)
+                {
+                    graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                if (walluqnt != 0)
+                {
+                    for (int i = 0; i < walluqnt; i++)
+                    {
+                        graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
+                    }
+                }
+            }
+            if (checkBox2.Checked == true && checkBox1.Checked == false)
+            {
+                pen = new Pen(Color.Black);
+                for (int j = 0; j < beaconqunt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillEllipse(Brush, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                }
+                for (int j = 0; j < uglqunt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                for (int j = 0; j < walluqnt; j++)
+                {
+                    Brush = new SolidBrush(Color.Black);
+                    graph.FillRectangle(Brush, Convert.ToInt32(WallPos[0, j]) - 6, Convert.ToInt32(WallPos[1, j]) - 6, 12, 12);
+                }
+                pen.Width = 5;
+                for (int i = 0; i < uglqunt - 1; i++)
+                {
+                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                }
+                if (walluqnt != 0)
+                {
+                    for (int u = 0; u < walluqnt; u += 2)
+                        graph.DrawLine(pen, Convert.ToInt32(WallPos[0, u]), Convert.ToInt32(WallPos[1, u]), Convert.ToInt32(WallPos[0, u + 1]), Convert.ToInt32(WallPos[1, u + 1]));
+                }
+                pen.Width = 1;
+                for (int j = 0; j < uglqunt; j++)
+                {
+                    graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                if (walluqnt != 0)
+                {
+                    for (int i = 0; i < walluqnt; i++)
+                    {
+                        graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
+                    }
+                }
+                int xM = Convert.ToInt32(SatPos[0, beaconqunt - 1]);
+                int yM = Convert.ToInt32(SatPos[1, beaconqunt - 1]);
+                Brush = new SolidBrush(Color.White);
+                graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
+            }
+        }
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            label21.Text = trackBar1.Value.ToString();
+        }
         private void vidimost1wall(int x, int y)
         {
             indintersection = false;
