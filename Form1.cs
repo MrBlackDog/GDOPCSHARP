@@ -37,6 +37,9 @@ namespace WindowsFormsApp1
         Graphics graph;
         Pen pen;//Перо
 
+        Bitmap bmp2;
+        Graphics gr;
+
         List<Point> beaconlist = new List<Point>();//Лист с координатами маяков
         List<Point> boxlist = new List<Point>();//Лист с координатами комнаты
         List<Point> rightpoint = new List<Point>();//Лист с массивом видимых координат
@@ -190,9 +193,19 @@ namespace WindowsFormsApp1
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.CenterToScreen();
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+          //  this.StartPosition = FormStartPosition.CenterScreen;
+          //  this.CenterToScreen();
+             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+
+          ////  int theHeight = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
+              int theWidth = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
+
+           //   this.Height = theHeight;
+          //    this.Width = theWidth;
+
+          //    this.Top = 0;
+         //    this.Left = 0;
+         groupBox3.Location = new Point(Convert.ToInt32(pictureBox1.Location.X+pictureBox1.Width+5), Convert.ToInt32(pictureBox1.Location.Y));
         }
         private void startroom()
         {
@@ -332,102 +345,102 @@ namespace WindowsFormsApp1
                     if (Z[j, l] > 1 && Z[j, l] <= 1.1)
                     {
                         pen = new Pen(Color.FromArgb(40, 40, 220));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.1 && Z[j, l] <= 1.15)
                     {
                         pen = new Pen(Color.FromArgb(80, 80, 180));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.15 && Z[j, l] <= 1.2)
                     {
                         pen = new Pen(Color.FromArgb(40, 140, 40));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.2 && Z[j, l] <= 1.35)
                     {
                         pen = new Pen(Color.FromArgb(50, 200, 50));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.35 && Z[j, l] <= 1.5)
                     {
                         pen = new Pen(Color.FromArgb(0, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.5 && Z[j, l] <= 1.65)
                     {
                         pen = new Pen(Color.FromArgb(130, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.65 && Z[j, l] <= 1.8)
                     {
                         pen = new Pen(Color.FromArgb(180, 255, 50));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.8 && Z[j, l] <= 1.95)
                     {
                         pen = new Pen(Color.FromArgb(210, 255, 25));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1.95 && Z[j, l] <= 2.1)
                     {
                         pen = new Pen(Color.FromArgb(255, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.1 && Z[j, l] <= 2.25)
                     {
                         pen = new Pen(Color.FromArgb(255, 220, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.25 && Z[j, l] <= 2.4)
                     {
                         pen = new Pen(Color.FromArgb(255, 200, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.4 && Z[j, l] <= 2.55)
                     {
                         pen = new Pen(Color.FromArgb(255, 180, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.55 && Z[j, l] <= 2.7)
                     {
                         pen = new Pen(Color.FromArgb(255, 150, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.7 && Z[j, l] <= 2.85)
                     {
                         pen = new Pen(Color.FromArgb(255, 130, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 2.85 && Z[j, l] <= 3)
                     {
                         pen = new Pen(Color.FromArgb(255, 125, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 3 && Z[j, l] <= 5)
                     {
                         pen = new Pen(Color.FromArgb(255, 120, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 5 && Z[j, l] <= 10)
                     {
                         pen = new Pen(Color.FromArgb(255, 80, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 10 && Z[j, l] <= 15)
                     {
                         pen = new Pen(Color.FromArgb(255, 40, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] == 0)
                     {
                         pen = new Pen(Color.FromArgb(255, 255, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 15 && Z[j, l] < 1000000000)
                     {
                         pen = new Pen(Color.FromArgb(255, 0, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                          graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 1000000000)
                     {
@@ -1513,6 +1526,27 @@ namespace WindowsFormsApp1
         {
             textBox3.Text = (Convert.ToDouble(e.Location.X) / Convert.ToDouble(pxX)).ToString(); 
             textBox4.Text = (Convert.ToDouble(1000 - e.Location.Y) / Convert.ToDouble(pxY)).ToString();     
+
+            if(textBox7.Visible == true)
+            {
+                bmp2 = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                gr = Graphics.FromImage(bmp2);
+                pictureBox1.BackgroundImage = bmp;
+                pen = new Pen(Color.Black);
+                string delt = textBox8.Text;
+                if (textBox8.Text != "")
+                {
+                    double n;
+                    if (double.TryParse(textBox8.Text, out n))
+                    {
+                        pen.Width = 3;
+                        if (Convert.ToSingle(Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaX[e.Location.X, e.Location.Y])) * Convert.ToDouble(delt))<(pictureBox1.Width*2) && Convert.ToSingle(Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaY[e.Location.X, e.Location.Y])) * Convert.ToDouble(delt))<(pictureBox1.Height*2))
+                        gr.DrawEllipse(pen, Convert.ToSingle(e.Location.X - (((Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaX[e.Location.X, e.Location.Y]))) * Convert.ToDouble(delt)) / 2)), Convert.ToSingle(e.Location.Y - (((Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaY[e.Location.X, e.Location.Y]))) * Convert.ToDouble(delt)) / 2)), Convert.ToSingle(Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaX[e.Location.X, e.Location.Y])) * Convert.ToDouble(delt)), Convert.ToSingle(Z[e.Location.X, e.Location.Y] * Convert.ToDouble(Math.Sqrt(DeltaY[e.Location.X, e.Location.Y])) * Convert.ToDouble(delt)));
+                        pen.Width = 1;
+                    }
+                }
+                pictureBox1.Image = bmp2;
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -1539,6 +1573,8 @@ namespace WindowsFormsApp1
                 label23.Visible = false;
                 label25.Visible = false;
                 label26.Visible = false;
+                pictureBox1.BackgroundImage = null;
+                pictureBox1.Image = bmp;
             }
             if(trackBar1.Enabled==false)
             {
@@ -1550,7 +1586,6 @@ namespace WindowsFormsApp1
         private void button3_Click(object sender, EventArgs e)//Построение(GO)
         {
             timer1.Start();
-
             if (checkBox1.Checked == true && checkBox2.Checked == false)//D
             {
                 form.Show();
@@ -1827,10 +1862,10 @@ namespace WindowsFormsApp1
                 string delt = textBox8.Text;
                 if (delt != "")
                 {
-                    int n;
-                    if (int.TryParse(textBox8.Text, out n))
+                    double n;
+                    if (double.TryParse(textBox8.Text, out n))
                     {
-                            int deltainfo = Convert.ToInt32(delt);
+                            double deltainfo = Convert.ToDouble(delt);
                         textBox9.Text = (deltainfo * Math.Sqrt(DeltaX[e.Location.X, e.Location.Y])).ToString();
                         textBox10.Text = (deltainfo * Math.Sqrt(DeltaY[e.Location.X, e.Location.Y])).ToString();
                     }
@@ -4462,6 +4497,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                 Brush = new SolidBrush(Color.White);
                 graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
             }
+            pictureBox1.BackgroundImage = bmp;
         }
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
