@@ -15,11 +15,11 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        int Xmax;//Максимальное значение по оси X см
-        int Ymax;//Максимальное значение по оси Y см
+        double Xmax;//Максимальное значение по оси X м
+        double Ymax;//Максимальное значение по оси Y м
 
-        double pxX;//Пикселей в сантиметре по оси X
-        double pxY;//Пикселей в сантиметре по оси Y
+        double pxX;//Пикселей в метре по оси X
+        double pxY;//Пикселей в метре по оси Y
 
         Bitmap image;//План помещения
 
@@ -114,7 +114,6 @@ namespace WindowsFormsApp1
             InitializeComponent();
             pictureBox1.MouseClick += pictureBox1_MouseClick;//Клики по picture box
             pictureBox1.MouseMove += pictureBox1_MouseMove;//Координаты курсора
-            Drawing();//Оси
             // Делаем обычный стиль.
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             // Убираем кнопки свернуть, развернуть, закрыть.
@@ -153,9 +152,11 @@ namespace WindowsFormsApp1
             label23.Visible = false;
             label25.Visible = false;
             label26.Visible = false;
+            label30.Visible = false;
+            label28.Visible = false;
             button16.Enabled = false;
             trackBar1.Enabled = false;
-            label7.BackColor = Color.Transparent;
+
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
@@ -164,20 +165,32 @@ namespace WindowsFormsApp1
             label4.BackColor = Color.Transparent;
             label5.BackColor = Color.Transparent;
             label6.BackColor = Color.Transparent;
+            label7.BackColor = Color.Transparent;
             label8.BackColor = Color.Transparent;
             label9.BackColor = Color.Transparent;
             label10.BackColor = Color.Transparent;
+            label11.BackColor = Color.Transparent;
             label12.BackColor = Color.Transparent;
             label13.BackColor = Color.Transparent;
             label14.BackColor = Color.Transparent;
+            label15.BackColor = Color.Transparent;
             label16.BackColor = Color.Transparent;
+            label17.BackColor = Color.Transparent;
             label18.BackColor = Color.Transparent;
+            label19.BackColor = Color.Transparent;
             label20.BackColor = Color.Transparent;
+            label21.BackColor = Color.Transparent;
             label22.BackColor = Color.Transparent;
+            label23.BackColor = Color.Transparent;
             label24.BackColor = Color.Transparent;
+            label25.BackColor = Color.Transparent;
+            label26.BackColor = Color.Transparent;
             label27.BackColor = Color.Transparent;
+            label28.BackColor = Color.Transparent;
             label29.BackColor = Color.Transparent;
+            label30.BackColor = Color.Transparent;
             label31.BackColor = Color.Transparent;
+            label32.BackColor = Color.Transparent;
             label33.BackColor = Color.Transparent;
             label35.BackColor = Color.Transparent;
             label36.BackColor = Color.Transparent;
@@ -185,49 +198,245 @@ namespace WindowsFormsApp1
             label39.BackColor = Color.Transparent;
             label42.BackColor = Color.Transparent;
             label44.BackColor = Color.Transparent;
-            label46.BackColor = Color.Transparent;
-            label11.BackColor = Color.Transparent;
-            label15.BackColor = Color.Transparent;
-            label17.BackColor = Color.Transparent;
-            startroom();
+            label46.BackColor = Color.Transparent;  
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-          //  this.StartPosition = FormStartPosition.CenterScreen;
-          //  this.CenterToScreen();
-             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 
-          ////  int theHeight = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
-              int theWidth = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
+            groupBox3.Location = new Point(Convert.ToInt32(pictureBox1.Location.X+pictureBox1.Width+5), Convert.ToInt32(pictureBox1.Location.Y));
 
-           //   this.Height = theHeight;
-          //    this.Width = theWidth;
+            Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+            this.Height = resolution.Height-100;
+            this.Width = resolution.Width-100;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.CenterToScreen();
 
-          //    this.Top = 0;
-         //    this.Left = 0;
-         groupBox3.Location = new Point(Convert.ToInt32(pictureBox1.Location.X+pictureBox1.Width+5), Convert.ToInt32(pictureBox1.Location.Y));
+            pictureBox1.Width = (resolution.Width-100)/100*50;
+            pictureBox1.Height = (resolution.Height - 100) / 100 * 90;
+
+            pictureBox1.Location = new Point(groupBox4.Width + 70, (resolution.Height - 100- pictureBox1.Height)/2);
+
+            groupBox4.Width = (resolution.Width-100) / 100 * 7;
+
+            textBox3.Width = groupBox4.Width / 2;
+            textBox3.Height = groupBox4.Height / 100 * 4;
+            textBox3.Location = new Point(groupBox4.Width / 3, groupBox4.Height / 100 * 40);
+
+            textBox4.Width = groupBox4.Width / 2;
+            textBox4.Height = groupBox4.Height / 100 * 4;
+            textBox4.Location = new Point(groupBox4.Width / 3, textBox3.Location.Y+textBox3.Height+5);
+
+            textBox7.Width = groupBox4.Width / 2;
+            textBox7.Height = groupBox4.Height / 100 * 4;
+            textBox7.Location = new Point((groupBox4.Width-textBox7.Width)/2, groupBox4.Height/2);
+
+            label7.Location = new Point((groupBox4.Width-label7.Width)/2, textBox7.Location.Y - textBox7.Height);
+
+            label38.Location = new Point(textBox3.Location.X-label38.Width-1, groupBox4.Height / 100 * 40);
+            label39.Location = new Point(textBox4.Location.X - label38.Width - 1, textBox3.Location.Y + textBox3.Height + 5);
+
+            label17.Location = new Point((groupBox4.Width-label17.Width)/2, textBox3.Location.Y-textBox3.Height);
+
+            button5.Width= groupBox4.Width - 6;
+            button5.Height = groupBox4.Height / 100 * 5; 
+            button5.Location = new Point(3, 10);
+
+            button6.Width = groupBox4.Width - 6;
+            button6.Height = groupBox4.Height / 100 * 5;
+            button6.Location = new Point(3, button5.Location.Y+5+button5.Height);
+
+            button7.Width = groupBox4.Width - 6;
+            button7.Height = groupBox4.Height / 100 * 5;
+            button7.Location = new Point(3, button6.Location.Y + 5 + button6.Height);
+
+            button8.Width = groupBox4.Width - 6;
+            button8.Height = groupBox4.Height / 100 * 5;
+            button8.Location = new Point(3, button7.Location.Y + 5 + button7.Height);
+
+            groupBox3.Width = (resolution.Width - 100) / 100 * 35;
+            groupBox3.Height = (resolution.Height - 100);
+
+            groupBox3.Location = new Point(pictureBox1.Location.X + pictureBox1.Width + 10, 0);
+
+            textBox8.Width = groupBox4.Width / 2;
+            textBox8.Height = groupBox4.Height / 100 * 4;
+            textBox8.Location = new Point((groupBox4.Width-textBox8.Width)/2, groupBox4.Height / 3*2);
+
+            label23.Location = new Point((groupBox4.Width - label23.Width) / 2, textBox8.Location.Y - textBox8.Height);
+
+            label28.Location = new Point((groupBox4.Width-label28.Width)/2, textBox8.Location.Y + textBox8.Height);
+
+            label25.Location = new Point((groupBox4.Width - label25.Width) / 2, label28.Height+label28.Location.Y+10);
+
+            textBox9.Width = groupBox4.Width / 2;
+            textBox9.Height = groupBox4.Height / 100 * 4;
+            textBox9.Location = new Point(groupBox4.Width / 3, label25.Location.Y+label25.Height+3);
+
+            textBox10.Width = groupBox4.Width / 2;
+            textBox10.Height = groupBox4.Height / 100 * 4;
+            textBox10.Location = new Point(groupBox4.Width / 3, textBox9.Location.Y+textBox9.Height+3);
+
+            label30.Location = new Point(textBox9.Location.X - label30.Width - 1, textBox9.Location.Y);
+            label26.Location = new Point(textBox10.Location.X - label26.Width - 1, textBox10.Location.Y);
+
+
+
+            label46.Location = new Point(pictureBox1.Location.X - label46.Width, pictureBox1.Location.Y);
+            label44.Location = new Point(pictureBox1.Location.X - label44.Width, pictureBox1.Location.Y+pictureBox1.Height/10);
+            label42.Location = new Point(pictureBox1.Location.X - label42.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 2);
+            label35.Location = new Point(pictureBox1.Location.X - label35.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 3);
+            label33.Location = new Point(pictureBox1.Location.X - label33.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 4);
+            label31.Location = new Point(pictureBox1.Location.X - label31.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 5);
+            label29.Location = new Point(pictureBox1.Location.X - label29.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 6);
+            label27.Location = new Point(pictureBox1.Location.X - label27.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 7);
+            label36.Location = new Point(pictureBox1.Location.X - label36.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 8);
+            label24.Location = new Point(pictureBox1.Location.X - label24.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 9);
+            label2.Location = new Point(pictureBox1.Location.X - label2.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
+            label4.Location = new Point(pictureBox1.Location.X + pictureBox1.Width/10-label4.Width/2, pictureBox1.Location.Y + pictureBox1.Height);
+            label6.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*2 - label6.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label8.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*3 - label8.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label10.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*4 - label10.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label12.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*5 - label12.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label14.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*6 - label14.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label16.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*7 - label16.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label18.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*8 - label18.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label20.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10*9 - label20.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label22.Location = new Point(pictureBox1.Location.X + pictureBox1.Width - label22.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
+
+
+            button4.Location = new Point(groupBox3.Width-button4.Width-1, 1);
+            button15.Location = new Point(groupBox3.Width - button4.Width - 3 - button15.Width, 1);
+            button9.Location = new Point(groupBox3.Width - button4.Width - 3 - button15.Width - button9.Width-3, 1);
+
+            textBox5.Width = groupBox3.Width / 100 *15;
+            textBox5.Height = groupBox3.Height / 100 * 2;
+            textBox5.Location = new Point((groupBox3.Width-textBox5.Width)/2, 1+button9.Height*2);
+
+            textBox6.Width = groupBox3.Width / 100 * 15;
+            textBox6.Height = groupBox3.Height / 100 * 2;
+            textBox6.Location = new Point((groupBox3.Width - textBox5.Width) / 2, textBox5.Location.Y+textBox5.Height+3);
+
+            label3.Location = new Point(textBox5.Location.X-label3.Width-1, 1 + button9.Height * 2);
+            label5.Location = new Point(textBox6.Location.X - label5.Width - 1, textBox5.Location.Y + textBox5.Height + 3);
+            label9.Location = new Point(textBox6.Location.X+textBox6.Width/2-label9.Width/2, textBox6.Location.Y+textBox6.Height+1);
+
+            button10.Location = new Point(textBox5.Location.X + textBox5.Width + 3, (((textBox6.Location.Y + textBox6.Height - textBox5.Location.Y) - button10.Height) / 2)+textBox5.Location.Y);
+
+            groupBox1.Location = new Point((groupBox3.Width-groupBox1.Width)/2, label9.Location.Y+label9.Height+10);
+
+            textBox1.Width = groupBox3.Width / 100 * 8;
+            textBox2.Width = groupBox3.Width / 100 * 8;
+            textBox1.Location = new Point ((groupBox2.Width-textBox1.Width)/2,label15.Location.Y+label15.Height+1);
+            textBox2.Location = new Point((groupBox2.Width - textBox2.Width) / 2, label11.Location.Y + label11.Height + 1);
+
+            button24.Location = new Point(textBox2.Location.X+textBox2.Width+3,textBox2.Location.Y-2);
+            button22.Location = new Point(textBox1.Location.X + textBox1.Width + 3, textBox1.Location.Y-2);
+
+            label11.Location = new Point(7, 15);
+            label15.Location = new Point(7, 15);
+
+            groupBox1.Size = new Size(button24.Location.X + button24.Width - label11.Location.X + 10, button14.Location.Y + button14.Height - label11.Location.Y + 20);
+
+            button27.Location = new Point((groupBox1.Width-(button27.Width+5+button25.Width+5+button14.Width))/2,button24.Location.Y+button24.Height+3);
+            button25.Location = new Point(button27.Location.X+button27.Width+5, button24.Location.Y + button24.Height + 3);
+            button14.Location = new Point(button25.Location.X + button25.Width + 5, button24.Location.Y + button24.Height + 3);
+
+            groupBox1.Size = new Size(button24.Location.X + button24.Width - label11.Location.X + 10, button14.Location.Y + button14.Height - label11.Location.Y + 20);
+
+            groupBox2.Location = new Point((groupBox3.Width - groupBox2.Width) / 2, groupBox1.Location.Y + groupBox1.Height + 10);
+
+            groupBox2.Size = new Size(button22.Location.X + button22.Width - label15.Location.X+10, button23.Location.Y + button23.Height - label15.Location.Y + 20);
+
+            button26.Location = new Point((groupBox2.Width - (button26.Width + 5 + button23.Width)) / 2, button22.Location.Y + button22.Height + 3);
+            button23.Location = new Point(button26.Location.X+button26.Width+5, button22.Location.Y + button22.Height + 3);
+
+            groupBox2.Size = new Size(button22.Location.X + button22.Width - label15.Location.X + 10, button23.Location.Y + button23.Height - label15.Location.Y + 20);
+
+            checkBox1.Location = new Point((groupBox3.Width-checkBox1.Width)/2, groupBox2.Location.Y + groupBox2.Height+10);
+            checkBox2.Location = new Point((groupBox3.Width - checkBox1.Width) / 2, checkBox1.Height+checkBox1.Location.Y+3);
+
+            button1.Location = new Point((groupBox3.Width-(button1.Width+5+button3.Width+5+button2.Width))/2, checkBox2.Location.Y+checkBox2.Height+10);
+            button3.Location = new Point(button1.Location.X+button1.Width+5, checkBox2.Location.Y + checkBox2.Height + 10);
+            button2.Location = new Point(button3.Location.X + button3.Width + 5, checkBox2.Location.Y + checkBox2.Height + 10);
+
+            trackBar1.Size = new Size(groupBox3.Width/100*30,groupBox3.Height/100*3);
+            trackBar1.Location = new Point((groupBox3.Width-trackBar1.Width)/2, button2.Location.Y+button2.Height+10);
+
+            button16.Location = new Point(trackBar1.Location.X+trackBar1.Width+3,trackBar1.Location.Y);
+
+            label19.Location = new Point(trackBar1.Location.X+(trackBar1.Width/2)-label19.Width/2,trackBar1.Location.Y+trackBar1.Height+3);
+            label21.Location = new Point(label19.Location.X+label19.Width+3,label19.Location.Y);
+
+            listBox1.Size = new Size(groupBox3.Width/100*30,groupBox3.Height/100*25);
+            listBox2.Size = new Size(groupBox3.Width / 100 * 30, groupBox3.Height / 100 * 25);
+
+            /* label32.Location = new Point((groupBox3.Width-label32.Width)/2,label21.Location.Y+label21.Height+50);
+
+             listBox1.Location = new Point((groupBox3.Width-(listBox1.Width+20+listBox2.Width))/2, label32.Location.Y+label32.Height*3);
+             listBox2.Location = new Point(listBox1.Location.X+listBox1.Width+20, listBox1.Location.Y);
+
+             label1.Location = new Point(listBox1.Location.X+(listBox1.Width/2)-label1.Width/2,label32.Location.Y+label32.Height+3);
+             label13.Location = new Point(listBox2.Location.X + (listBox2.Width / 2) - label13.Width / 2, label32.Location.Y + label32.Height+3);
+
+             button29.Location = new Point(listBox2.Location.X,listBox2.Location.Y+listBox2.Height+3);
+             button11.Location = new Point(button29.Location.X+button29.Width+5,button29.Location.Y);
+
+             button12.Location = new Point(listBox1.Location.X+listBox1.Width-button12.Width, listBox1.Location.Y + listBox1.Height + 3);
+             button28.Location = new Point(button12.Location.X-5-button28.Width, listBox1.Location.Y + listBox1.Height + 3);
+
+             button30.Location = new Point((groupBox3.Width-(button30.Width+5+button13.Width))/2,button28.Location.Y+button28.Height+10);
+             button13.Location = new Point(button30.Location.X+button30.Width+5,button30.Location.Y);
+ */       
+            button30.Location = new Point((groupBox3.Width - (button30.Width + 5 + button13.Width)) / 2, groupBox3.Height-1-button30.Height);
+            button13.Location = new Point(button30.Location.X + button30.Width + 5, groupBox3.Height - 1 - button13.Height);
+
+            listBox1.Location = new Point((groupBox3.Width - (listBox1.Width + 20 + listBox2.Width)) / 2, button30.Location.Y-button30.Height-6-listBox1.Height);
+            listBox2.Location = new Point(listBox1.Location.X + listBox1.Width + 20, button30.Location.Y - button30.Height- 6 - listBox2.Height);
+
+            button29.Location = new Point(listBox2.Location.X, listBox2.Location.Y + listBox2.Height + 3);
+            button11.Location = new Point(listBox2.Location.X+listBox2.Width-button11.Width, button29.Location.Y);
+
+            button12.Location = new Point(listBox1.Location.X + listBox1.Width - button12.Width, listBox1.Location.Y + listBox1.Height + 3);
+            button28.Location = new Point(listBox1.Location.X, listBox1.Location.Y + listBox1.Height + 3);
+
+            label1.Location = new Point(listBox1.Location.X + (listBox1.Width / 2) - label1.Width / 2, listBox1.Location.Y-label1.Height-1);
+            label13.Location = new Point(listBox2.Location.X + (listBox2.Width / 2) - label13.Width / 2, listBox2.Location.Y - label13.Height - 1);
+
+            label32.Location = new Point((groupBox3.Width - label32.Width) / 2, label1.Location.Y-label32.Height-1);
+
+            form.progressBar1.Maximum = (pictureBox1.Width*pictureBox1.Height) * 2;
+
+            Drawing();//Оси
+            startroom();
         }
         private void startroom()
         {
             uglqunt = 6;
             pictureBox1.Enabled = false;
+
             BoxPos = new double[2, 6];
-            BoxPos[0, 0] = 400;
-            BoxPos[0, 1] = 100;
-            BoxPos[0, 2] = 100;
-            BoxPos[0, 3] = 900;
-            BoxPos[1, 0] = 100;
-            BoxPos[1, 1] = 100;
-            BoxPos[1, 2] = 900;
-            BoxPos[1, 3] = 900;
-            BoxPos[0, 4] = 900;
-            BoxPos[1, 4] = 100;
-            BoxPos[0, 5] = 600;
-            BoxPos[1, 5] = 100;
+
+            BoxPos[0, 0] = pictureBox1.Width*0.4;
+            BoxPos[0, 1] = pictureBox1.Width / 10;
+            BoxPos[0, 2] = pictureBox1.Width / 10;
+            BoxPos[0, 3] = pictureBox1.Width * 0.9;
+            BoxPos[1, 0] = pictureBox1.Height / 10;
+            BoxPos[1, 1] = pictureBox1.Height / 10;
+            BoxPos[1, 2] = pictureBox1.Height * 0.9;
+            BoxPos[1, 3] = pictureBox1.Height * 0.9;
+            BoxPos[0, 4] = pictureBox1.Width * 0.9;
+            BoxPos[1, 4] = pictureBox1.Height / 10;
+            BoxPos[0, 5] = pictureBox1.Width * 0.6;
+            BoxPos[1, 5] = pictureBox1.Height / 10;
+
             Xmax = 1000;
             Ymax = 1000;
-            pxX = 1;
-            pxY = 1;
+            pxX = (double)(pictureBox1.Width/Xmax);
+            pxY = (double)(pictureBox1.Height/ Ymax);
+
             label22.Text = Convert.ToString(Xmax);
             label20.Text = Convert.ToString(Xmax * 0.9);
             label18.Text = Convert.ToString(Xmax * 0.8);
@@ -248,11 +457,39 @@ namespace WindowsFormsApp1
             label27.Text = Convert.ToString(Ymax * 0.3);
             label36.Text = Convert.ToString(Ymax * 0.2);
             label24.Text = Convert.ToString(Ymax * 0.1);
+
+            Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+            pictureBox1.Location = new Point(groupBox4.Width +  label46.Width+10, (resolution.Height - 100 - pictureBox1.Height) / 2);
+
+            label46.Location = new Point(pictureBox1.Location.X - label46.Width, pictureBox1.Location.Y);
+            label44.Location = new Point(pictureBox1.Location.X - label44.Width, pictureBox1.Location.Y + pictureBox1.Height / 10);
+            label42.Location = new Point(pictureBox1.Location.X - label42.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 2);
+            label35.Location = new Point(pictureBox1.Location.X - label35.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 3);
+            label33.Location = new Point(pictureBox1.Location.X - label33.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 4);
+            label31.Location = new Point(pictureBox1.Location.X - label31.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 5);
+            label29.Location = new Point(pictureBox1.Location.X - label29.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 6);
+            label27.Location = new Point(pictureBox1.Location.X - label27.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 7);
+            label36.Location = new Point(pictureBox1.Location.X - label36.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 8);
+            label24.Location = new Point(pictureBox1.Location.X - label24.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 9);
+            label2.Location = new Point(pictureBox1.Location.X - label2.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
+            label4.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 - label4.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label6.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 2 - label6.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label8.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 3 - label8.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label10.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 4 - label10.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label12.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 5 - label12.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label14.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 6 - label14.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label16.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 7 - label16.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label18.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 8 - label18.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label20.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 9 - label20.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            label22.Location = new Point(pictureBox1.Location.X + pictureBox1.Width - label22.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
             for (int j = 0; j < uglqunt; j++)
             {
-                listBox2.Items.Add((j + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX) + "," + "Y:" + (Convert.ToDouble(1000 - BoxPos[1, j]) / Convert.ToDouble(pxY)));
+                listBox2.Items.Add((j + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round(((Convert.ToDouble(pictureBox1.Height - BoxPos[1, j]) / Convert.ToDouble(pxY))),2));
                 boxlist.Add(new Point() { X = Convert.ToInt32(BoxPos[0, j]), Y = Convert.ToInt32(BoxPos[1, j]) });
             }
+
             labelbox = new Label[uglqunt];
             roompaint();
             labalbox();
@@ -280,64 +517,76 @@ namespace WindowsFormsApp1
             pen = new Pen(Color.Black);
             pictureBox1.Image = bmp;
 
-            graph.DrawLine(pen, 0, 100, 5, 100);
-            graph.DrawLine(pen, 0, 200, 5, 200);
-            graph.DrawLine(pen, 0, 300, 5, 300);
-            graph.DrawLine(pen, 0, 400, 5, 400);
-            graph.DrawLine(pen, 0, 500, 5, 500);
+            graph.DrawLine(pen, 0, pictureBox1.Height/10, 5, pictureBox1.Height / 10);
+            graph.DrawLine(pen, 0, pictureBox1.Height / 5, 5, pictureBox1.Height / 5);
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.3), 5, Convert.ToSingle(pictureBox1.Height * 0.3));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.4), 5, Convert.ToSingle(pictureBox1.Height * 0.4));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.5), 5, Convert.ToSingle(pictureBox1.Height * 0.5));
             graph.DrawLine(pen, 0, 1, 5, 1);
-            graph.DrawLine(pen, 0, 50, 5, 50);
-            graph.DrawLine(pen, 0, 150, 5, 150);
-            graph.DrawLine(pen, 0, 250, 5, 250);
-            graph.DrawLine(pen, 0, 350, 5, 350);
-            graph.DrawLine(pen, 0, 450, 5, 450);
-            graph.DrawLine(pen, 0, 550, 5, 550);
-            graph.DrawLine(pen, 0, 600, 5, 600);
-            graph.DrawLine(pen, 0, 650, 5, 650);
-            graph.DrawLine(pen, 0, 700, 5, 700);
-            graph.DrawLine(pen, 0, 750, 5, 750);
-            graph.DrawLine(pen, 0, 800, 5, 800);
-            graph.DrawLine(pen, 0, 850, 5, 850);
-            graph.DrawLine(pen, 0, 900, 5, 900);
-            graph.DrawLine(pen, 0, 950, 5, 950);
-            graph.DrawLine(pen, 0, 1000, 5, 1000);
+            graph.DrawLine(pen, 0, pictureBox1.Height / 20, 5, pictureBox1.Height / 20);
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.15), 5, Convert.ToSingle(pictureBox1.Height * 0.15));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.25), 5, Convert.ToSingle(pictureBox1.Height * 0.25));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.35), 5, Convert.ToSingle(pictureBox1.Height * 0.35));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.45), 5, Convert.ToSingle(pictureBox1.Height * 0.45));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.55), 5, Convert.ToSingle(pictureBox1.Height * 0.55));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.6), 5, Convert.ToSingle(pictureBox1.Height * 0.6));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.65), 5, Convert.ToSingle(pictureBox1.Height * 0.65));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.7), 5, Convert.ToSingle(pictureBox1.Height * 0.7));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.75), 5, Convert.ToSingle(pictureBox1.Height * 0.75));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.8), 5, Convert.ToSingle(pictureBox1.Height * 0.8));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.85), 5, Convert.ToSingle(pictureBox1.Height * 0.85));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.9), 5, Convert.ToSingle(pictureBox1.Height * 0.9));
+            graph.DrawLine(pen, 0, Convert.ToSingle(pictureBox1.Height * 0.95), 5, Convert.ToSingle(pictureBox1.Height * 0.95));
+            graph.DrawLine(pen, 0, pictureBox1.Height-1, 5, pictureBox1.Height-1);
 
-            graph.DrawLine(pen, 100, 1000, 100, 995);
-            graph.DrawLine(pen, 200, 1000, 200, 995);
-            graph.DrawLine(pen, 300, 1000, 300, 995);
-            graph.DrawLine(pen, 400, 1000, 400, 995);
-            graph.DrawLine(pen, 500, 1000, 500, 995);
-            graph.DrawLine(pen, 1, 1000, 1, 995);
-            graph.DrawLine(pen, 50, 1000, 50, 995);
-            graph.DrawLine(pen, 150, 1000, 150, 995);
-            graph.DrawLine(pen, 250, 1000, 250, 995);
-            graph.DrawLine(pen, 350, 1000, 350, 995);
-            graph.DrawLine(pen, 450, 1000, 450, 995);
-            graph.DrawLine(pen, 550, 1000, 550, 995);
-            graph.DrawLine(pen, 600, 1000, 600, 995);
-            graph.DrawLine(pen, 650, 1000, 650, 995);
-            graph.DrawLine(pen, 700, 1000, 700, 995);
-            graph.DrawLine(pen, 750, 1000, 750, 995);
-            graph.DrawLine(pen, 800, 1000, 800, 995);
-            graph.DrawLine(pen, 850, 1000, 850, 995);
-            graph.DrawLine(pen, 900, 1000, 900, 995);
-            graph.DrawLine(pen, 950, 1000, 950, 995);
-            graph.DrawLine(pen, 1000, 1000, 1000, 995);
+            graph.DrawLine(pen, pictureBox1.Width/10, pictureBox1.Height, pictureBox1.Width / 10, pictureBox1.Height-6);
+            graph.DrawLine(pen, pictureBox1.Width / 5, pictureBox1.Height, pictureBox1.Width / 5, pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.3), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.3), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.4), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.4), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.5), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.5), pictureBox1.Height - 6);
+            graph.DrawLine(pen, 1, pictureBox1.Height, 1, pictureBox1.Height - 6);
+            graph.DrawLine(pen, pictureBox1.Width/20, pictureBox1.Height, pictureBox1.Width/20, pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.15), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.15), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.25), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.25), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.35), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.35), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.45), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.45), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.55), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.55), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.6), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.6), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.65), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.65), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.7), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.7), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.75), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.75), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.8), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.8), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.85), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.85), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.9), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.9), pictureBox1.Height - 6);
+            graph.DrawLine(pen, Convert.ToSingle(pictureBox1.Width * 0.95), pictureBox1.Height, Convert.ToSingle(pictureBox1.Width * 0.95), pictureBox1.Height - 6);
+            graph.DrawLine(pen, pictureBox1.Width-1, pictureBox1.Height-1, pictureBox1.Width-1, pictureBox1.Height - 6);
         }
         private void Surf()//Построение поверхности
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             graph = Graphics.FromImage(bmp);
             pictureBox1.Image = bmp;
+
             button5.Visible = true;
             button6.Visible = true;
             button7.Visible = true;
             button8.Visible = true;
-            for (int j = 0; j < 1000; j++)
+
+            for (int j = 0; j < pictureBox1.Width; j++)
             {
-                for (int l = 0; l < 1000; l++)
+                for (int l = 0; l < pictureBox1.Height; l++)
                 {
-                    if (Z[j, l] <= 1 && Z[j, l] > 0)
+                    if (Z[j, l] <= 0.7 && Z[j, l] > 0)
+                    {
+                        pen = new Pen(Color.FromArgb(60, 150, 235));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 0.7 && Z[j, l] <= 0.85)
+                    {
+                        pen = new Pen(Color.FromArgb(30, 144, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 0.85 && Z[j, l] <= 1)
                     {
                         pen = new Pen(Color.FromArgb(0, 0, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
@@ -437,21 +686,39 @@ namespace WindowsFormsApp1
                         pen = new Pen(Color.FromArgb(255, 255, 255));
                            graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-                    if (Z[j, l] > 15 && Z[j, l] < 1000000000)
+                    if (Z[j, l] > 15 && Z[j, l] <= 20)
                     {
                         pen = new Pen(Color.FromArgb(255, 0, 0));
                           graph.DrawEllipse(pen, j, l, 1, 1);
                     }
+                    if (Z[j, l] > 20 && Z[j, l] <= 30)
+                    {
+                        pen = new Pen(Color.FromArgb(225, 40, 25));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 30 && Z[j, l] <= 50)
+                    {
+                        pen = new Pen(Color.FromArgb(178, 34, 34));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 50 && Z[j, l] < 1000000000)
+                    {
+                        pen = new Pen(Color.FromArgb(139, 0, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
                     if (Z[j, l] > 1000000000)
                     {
-                        pen = new Pen(Color.FromArgb(255, 255, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                        if (Z[j + 1, l] == 0 && Z[j - 1, l] == 0 && Z[j, l + 1] == 0 && Z[j, l - 1] == 0)
+                        {
+                            pen = new Pen(Color.FromArgb(255, 255, 255));
+                            graph.DrawEllipse(pen, j, l, 1, 1);
+                        }
                     }
                     form.progressBar1.Value += 1;
                 }
             }
                     button2.Enabled = true;
-            if (form.progressBar1.Value == 2000000)
+            if (form.progressBar1.Value == form.progressBar1.Maximum)
             {
                 textBox7.Visible = true;
                 label7.Visible = true;
@@ -571,13 +838,15 @@ namespace WindowsFormsApp1
                 BoxClone[0, h] = BoxPos[0, h];
                 BoxClone[1, h] = BoxPos[1, h];
             }
-            Z = new double[1000, 1000];
-            DeltaX = new double[1000, 1000];
-            DeltaY = new double[1000, 1000];
+
+            Z = new double[pictureBox1.Width, pictureBox1.Height];
+            DeltaX = new double[pictureBox1.Width, pictureBox1.Height];
+            DeltaY = new double[pictureBox1.Width, pictureBox1.Height];
+
             int i = 0;
-            for (int x = 0; x < 1000; x++)
+            for (int x = 0; x < pictureBox1.Width; x++)
             {
-                for (int y = 0; y < 1000; y++)
+                for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     if (walluqnt == 0)
                         vidimost(x, y);
@@ -603,12 +872,14 @@ namespace WindowsFormsApp1
                     }
                     i = 0;
                     kol1 = beaconqunt;
+
                     SatPos = new double[2, beaconqunt + 1];
                     for (int h = 0; h < beaconqunt; h++)
                     {
                         SatPos[0, h] = SatClone[0, h];
                         SatPos[1, h] = SatClone[1, h];
                     }
+
                     rightpoint.Clear();
                     form.progressBar1.Value += 1;
                 }
@@ -628,13 +899,15 @@ namespace WindowsFormsApp1
                 BoxClone[0, h] = BoxPos[0, h];
                 BoxClone[1, h] = BoxPos[1, h];
             }
-            Z = new double[1000, 1000];
-            DeltaX = new double[1000, 1000];
-            DeltaY = new double[1000, 1000];
+
+            Z = new double[pictureBox1.Width, pictureBox1.Height];
+            DeltaX = new double[pictureBox1.Width, pictureBox1.Height];
+            DeltaY = new double[pictureBox1.Width, pictureBox1.Height];
+
             int i = 0;
-            for (int x = 0; x < 1000; x++)
+            for (int x = 0; x < pictureBox1.Width; x++)
             {
-                for (int y = 0; y < 1000; y++)
+                for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     if (walluqnt == 0)
                         lish();
@@ -668,12 +941,14 @@ namespace WindowsFormsApp1
                     i = 0;
                     kol1 = beaconqunt;
                     form.progressBar1.Value += 1;
+
                     SatPos = new double[2, beaconqunt + 1];
                     for (int h = 0; h < beaconqunt; h++)
                     {
                         SatPos[0, h] = SatClone[0, h];
                         SatPos[1, h] = SatClone[1, h];
                     }
+
                     needpoint.Clear();
                     rightpoint.Clear();
                 }
@@ -772,7 +1047,7 @@ namespace WindowsFormsApp1
                             int pole1 = 1;
                             foreach (Point l in beaconlist)
                             {
-                                listBox1.Items.Add(pole1 + ")" + "X:" + Convert.ToDouble(l.X)/Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y)/Convert.ToDouble(pxY));//Вывод координат маяков на экран
+                                listBox1.Items.Add(pole1 + ")" + "X:" + Math.Round((Convert.ToDouble(l.X)/Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y)/Convert.ToDouble(pxY)),2));//Вывод координат маяков на экран
                                 pole1 += 1;
                             }
                             beaconnumbers = beaconnumbers + 1;
@@ -791,7 +1066,7 @@ namespace WindowsFormsApp1
                         int pole = 1;
                         foreach (Point l in beaconlist)
                         {
-                            listBox1.Items.Add(pole + ")" + "X:" + Convert.ToDouble(l.X) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y) / Convert.ToDouble(pxY));//Вывод координат маяков на экран
+                            listBox1.Items.Add(pole + ")" + "X:" + Math.Round((Convert.ToDouble(l.X) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y) / Convert.ToDouble(pxY)),2));//Вывод координат маяков на экран
                             pole += 1;
                         }
                         beaconnumbers = beaconnumbers + 1;
@@ -934,7 +1209,7 @@ namespace WindowsFormsApp1
                                     int pole = 1;
                                     foreach (Point l in boxlist)
                                     {
-                                        listBox2.Items.Add(pole + ")" + "X:" + Convert.ToDouble(l.X) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y) / Convert.ToDouble(pxY));//Вывод координат комнаты на экран
+                                        listBox2.Items.Add(pole + ")" + "X:" + Math.Round((Convert.ToDouble(l.X) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y) / Convert.ToDouble(pxY)),2));//Вывод координат комнаты на экран
                                         pole += 1;
                                     }
                                     uglnumbers += 1;
@@ -998,7 +1273,7 @@ namespace WindowsFormsApp1
                                     int pole = 1;
                                     foreach (Point l in boxlist)
                                     {
-                                        listBox2.Items.Add(pole + ")" + "X:" + Convert.ToDouble(l.X) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y) / Convert.ToDouble(pxY));//Вывод координат комнаты на экран
+                                        listBox2.Items.Add(pole + ")" + "X:" + Math.Round((Convert.ToDouble(l.X) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y) / Convert.ToDouble(pxY)),2));//Вывод координат комнаты на экран
                                         pole += 1;
                                     }
                                     uglnumbers += 1;
@@ -1028,7 +1303,7 @@ namespace WindowsFormsApp1
                                 int pole = 1;
                                 foreach (Point l in boxlist)
                                 {
-                                    listBox2.Items.Add(pole + ")" + "X:" + Convert.ToDouble(l.X) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y) / Convert.ToDouble(pxY));//Вывод координат комнаты на экран
+                                    listBox2.Items.Add(pole + ")" + "X:" + Math.Round((Convert.ToDouble(l.X) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y) / Convert.ToDouble(pxY)),2));//Вывод координат комнаты на экран
                                     pole += 1;
                                 }
                                 uglnumbers += 1;
@@ -1038,6 +1313,7 @@ namespace WindowsFormsApp1
                                 graph = Graphics.FromImage(image);
                                 pen = new Pen(Color.Black);
                                 pictureBox1.Image = image;
+
                                 boxlist.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
                                 foreach (Point p in boxlist)
                                 {
@@ -1056,7 +1332,7 @@ namespace WindowsFormsApp1
                                 int pole = 1;
                                 foreach (Point l in boxlist)
                                 {
-                                    listBox2.Items.Add(pole + ")" + "X:" + Convert.ToDouble(l.X) / Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - l.Y) / Convert.ToDouble(pxY));//Вывод координат комнаты на экран
+                                    listBox2.Items.Add(pole + ")" + "X:" + Math.Round((Convert.ToDouble(l.X) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - l.Y) / Convert.ToDouble(pxY)),2));//Вывод координат комнаты на экран
                                     pole += 1;
                                 }
                                 uglnumbers += 1;
@@ -1179,7 +1455,7 @@ namespace WindowsFormsApp1
                             listBox2.Items.Clear();//Очистка листа перед новым заполненим 
                             for (int j = 0; j < uglqunt; j++)
                             {
-                                listBox2.Items.Add((j + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX) + "," + "Y:" + (Convert.ToDouble(1000 - BoxPos[1, j]) / Convert.ToDouble(pxY)));
+                                listBox2.Items.Add((j + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - BoxPos[1, j]) / Convert.ToDouble(pxY)),2));
                             }
                             labalbeacon();
                             labalbox();
@@ -1256,10 +1532,12 @@ namespace WindowsFormsApp1
                                 {
                                     WallPos[0, wallnumbers] = p.X;
                                     WallPos[1, wallnumbers] = p.Y;
+
                                     bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                                     graph = Graphics.FromImage(bmp);
                                     pen = new Pen(Color.Black);
                                     pictureBox1.Image = bmp;
+
                                     graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, wallnumbers] - 6), Convert.ToInt32(WallPos[1, wallnumbers] - 6), 12, 12);
                                     for (int j = 0; j < beaconqunt; j++)
                                     {
@@ -1302,10 +1580,12 @@ namespace WindowsFormsApp1
                             {
                                 WallPos[0, wallnumbers] = x;
                                 WallPos[1, wallnumbers] = y;
+
                                 bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                                 graph = Graphics.FromImage(bmp);
                                 pen = new Pen(Color.Black);
                                 pictureBox1.Image = bmp;
+
                                 graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, wallnumbers] - 6), Convert.ToInt32(WallPos[1, wallnumbers] - 6), 12, 12);
                                 for (int j = 0; j < beaconqunt; j++)
                                 {
@@ -1337,6 +1617,7 @@ namespace WindowsFormsApp1
                         graph = Graphics.FromImage(bmp);
                         pen = new Pen(Color.Black);
                         pictureBox1.Image = bmp;
+
                         for(int i=0;i<walluqnt;i++)
                         {
                             graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i]-6), Convert.ToInt32(WallPos[1, i]-6), 12, 12);
@@ -1479,7 +1760,7 @@ namespace WindowsFormsApp1
             listBox1.Items.Clear();
             for (int i = 0; i < beaconqunt; i++)
             {
-                listBox1.Items.Add((i + 1) + ")" + "X:" + Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - SatPos[1, i])/Convert.ToDouble(pxY));
+                listBox1.Items.Add((i + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - SatPos[1, i])/Convert.ToDouble(pxY)),2));
             }
             labalbeacon();
             button2.PerformClick();
@@ -1516,7 +1797,7 @@ namespace WindowsFormsApp1
             listBox2.Items.Clear();
             for (int i = 0; i < uglqunt; i++)
             {
-                listBox2.Items.Add((i + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - BoxPos[1, i])/Convert.ToDouble(pxY));
+                listBox2.Items.Add((i + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - BoxPos[1, i])/Convert.ToDouble(pxY)),2));
             }
             labalbox();
             button2.PerformClick();
@@ -1524,8 +1805,8 @@ namespace WindowsFormsApp1
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)//Вывод координат курсора на экран
         {
-            textBox3.Text = (Convert.ToDouble(e.Location.X) / Convert.ToDouble(pxX)).ToString(); 
-            textBox4.Text = (Convert.ToDouble(1000 - e.Location.Y) / Convert.ToDouble(pxY)).ToString();     
+            textBox3.Text = (Math.Round((Convert.ToDouble(e.Location.X) / Convert.ToDouble(pxX)),2)).ToString(); 
+            textBox4.Text = (Math.Round(((Convert.ToDouble(pictureBox1.Height - e.Location.Y)) / Convert.ToDouble(pxY)),2)).ToString();     
 
             if(textBox7.Visible == true)
             {
@@ -1561,7 +1842,8 @@ namespace WindowsFormsApp1
                 label23.Visible = true;
                 label25.Visible = true;
                 label26.Visible = true;
-
+                label30.Visible = true;
+                label28.Visible = true;
             }
             if (textBox7.Visible == false)
             {
@@ -1573,6 +1855,8 @@ namespace WindowsFormsApp1
                 label23.Visible = false;
                 label25.Visible = false;
                 label26.Visible = false;
+                label30.Visible = false;
+                label28.Visible = false;
                 pictureBox1.BackgroundImage = null;
                 pictureBox1.Image = bmp;
             }
@@ -1855,9 +2139,9 @@ namespace WindowsFormsApp1
         }
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)//Отслеживание движения мыши
         {
-            if (textBox7.Visible == true && e.Location.X>=0 && e.Location.X<1000 && e.Location.Y>=0 && e.Location.Y<1000)
+            if (textBox7.Visible == true && e.Location.X>=0 && e.Location.X< pictureBox1.Width && e.Location.Y>=0 && e.Location.Y< pictureBox1.Height)
                 textBox7.Text = Z[e.Location.X, e.Location.Y].ToString();
-            if (textBox7.Visible == true && e.Location.X >= 0 && e.Location.X < 1000 && e.Location.Y >= 0 && e.Location.Y < 1000)
+            if (textBox7.Visible == true && e.Location.X >= 0 && e.Location.X < pictureBox1.Width && e.Location.Y >= 0 && e.Location.Y < pictureBox1.Height)
             {
                 string delt = textBox8.Text;
                 if (delt != "")
@@ -1880,16 +2164,19 @@ namespace WindowsFormsApp1
                 }
                 else
                 {
-                    if (e.Location.X < 0 || e.Location.Y < 0 || e.Location.X > 1000 || e.Location.Y > 1000)
+                    if (e.Location.X < 0 || e.Location.Y < 0 || e.Location.X > pictureBox1.Width || e.Location.Y > pictureBox1.Height)
                     {
                         labelInfo.Dispose();
                         IsInfo = false;
+
                         bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                         graph = Graphics.FromImage(bmp);
                         pen = new Pen(Color.Black);
                         pictureBox1.Image = bmp;
+
                         Drawing();
                         roompaint();
+
                         for (int j = 0; j < beaconqunt; j++)
                         {
                             graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -1922,17 +2209,17 @@ namespace WindowsFormsApp1
                     {
                         beacontraf.X = 0;
                     }
-                    if (beacontraf.X > 984)
+                    if (beacontraf.X > pictureBox1.Width-16)
                     {
-                        beacontraf.X = 984;
+                        beacontraf.X = pictureBox1.Width - 16;
                     }
                     if (beacontraf.Y < 0)
                     {
                         beacontraf.Y = 0;
                     }
-                    if (beacontraf.Y > 984)
+                    if (beacontraf.Y > pictureBox1.Height - 16)
                     {
-                        beacontraf.Y = 984;
+                        beacontraf.Y = pictureBox1.Height - 16;
                     }
                     for (int i = 0; i < uglqunt; i++)
                     {
@@ -2133,6 +2420,7 @@ namespace WindowsFormsApp1
                     roompaint();
                 }
             }
+
             //Комната
             if (uglnumbers >= uglqunt)
             { 
@@ -2144,17 +2432,17 @@ namespace WindowsFormsApp1
                     {
                         boxtraf.X = 0;
                     }
-                    if (boxtraf.X > 988)
+                    if (boxtraf.X > pictureBox1.Width - 12)
                     {
-                        boxtraf.X = 988;
+                        boxtraf.X = pictureBox1.Width - 12;
                     }
                     if (boxtraf.Y < 0)
                     {
                         boxtraf.Y = 0;
                     }
-                    if (boxtraf.Y > 988)
+                    if (boxtraf.Y > pictureBox1.Height - 12)
                     {
-                        boxtraf.Y = 988;
+                        boxtraf.Y = pictureBox1.Height - 12;
                     }
                     for (int i = 0; i < beaconqunt; i++)
                     {
@@ -2355,6 +2643,7 @@ namespace WindowsFormsApp1
                     roompaint();
                 }
             }
+
             if (wallnumbers >= walluqnt)
             {
                 if (IsClicked3 == true && IsClicked == false && IsClicked2 == false)
@@ -2365,17 +2654,17 @@ namespace WindowsFormsApp1
                     {
                         boxtraf.X = 0;
                     }
-                    if (boxtraf.X > 988)
+                    if (boxtraf.X > pictureBox1.Width - 12)
                     {
-                        boxtraf.X = 988;
+                        boxtraf.X = pictureBox1.Width - 12;
                     }
                     if (boxtraf.Y < 0)
                     {
                         boxtraf.Y = 0;
                     }
-                    if (boxtraf.Y > 988)
+                    if (boxtraf.Y > pictureBox1.Height - 12)
                     {
-                        boxtraf.Y = 988;
+                        boxtraf.Y = pictureBox1.Height - 12;
                     }
                     for (int i = 0; i < beaconqunt; i++)
                     {
@@ -2471,6 +2760,7 @@ namespace WindowsFormsApp1
                             }
                         }
                     }
+
                     //wall
                     for (int i = 0; i < schet; i++)
                     {
@@ -2533,6 +2823,7 @@ namespace WindowsFormsApp1
                     roompaint();
                 }
             }
+
             if (IsClicked == false && IsClicked2 == true && IsClicked3 == true)
             {
                 boxtraf.X = e.X - deltax;
@@ -2541,17 +2832,17 @@ namespace WindowsFormsApp1
                 {
                     boxtraf.X = 0;
                 }
-                if (boxtraf.X > 988)
+                if (boxtraf.X > pictureBox1.Width - 12)
                 {
-                    boxtraf.X = 988;
+                    boxtraf.X = pictureBox1.Width - 12;
                 }
                 if (boxtraf.Y < 0)
                 {
                     boxtraf.Y = 0;
                 }
-                if (boxtraf.Y > 988)
+                if (boxtraf.Y > pictureBox1.Height - 12)
                 {
-                    boxtraf.Y = 988;
+                    boxtraf.Y = pictureBox1.Height - 12;
                 }
                 for (int i = 0; i < beaconqunt; i++)
                 {
@@ -2795,10 +3086,12 @@ namespace WindowsFormsApp1
                     else
                         nextnum = uglqunt - 3;
                 }
+
                 bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                 graph = Graphics.FromImage(bmp);
                 pen = new Pen(Color.Black);
                 pictureBox1.Image = bmp;
+
                 Drawing();
                 for (int j = 0; j < uglqunt-1; j++)
                 {
@@ -2853,7 +3146,7 @@ namespace WindowsFormsApp1
             listBox1.Items.Clear();
             for (int i = 0; i < beaconqunt; i++)
             {
-                listBox1.Items.Add((i + 1) + ")" + "X:" + Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - SatPos[1, i])/Convert.ToDouble(pxY));
+                listBox1.Items.Add((i + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - SatPos[1, i])/Convert.ToDouble(pxY)),2));
             }
             labalbeacon();
             labalbox();
@@ -2879,7 +3172,7 @@ namespace WindowsFormsApp1
             listBox2.Items.Clear();
             for (int i = 0; i < uglqunt; i++)
             {
-                listBox2.Items.Add((i + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX) + "," + "Y:" + Convert.ToDouble(1000 - BoxPos[1, i])/Convert.ToDouble(pxY));
+                listBox2.Items.Add((i + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round((Convert.ToDouble(pictureBox1.Height - BoxPos[1, i])/Convert.ToDouble(pxY)),2));
             }
             labalbeacon();
             labalbox();
@@ -2926,8 +3219,10 @@ namespace WindowsFormsApp1
                     graph = Graphics.FromImage(bmp);
                     pen = new Pen(Color.Black);
                     pictureBox1.Image = bmp;
+
                     Drawing();
                     roompaint();
+
                     for (int j = 0; j < beaconqunt; j++)
                     {
                         graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
@@ -3041,6 +3336,7 @@ namespace WindowsFormsApp1
             {
                 labelbox[k].Dispose();
             }
+
             textBox1.Text = (beaconqunt + 1).ToString();
             beaconqunt += 1;
             beaconnumbers = beaconqunt - 1;
@@ -3075,6 +3371,7 @@ namespace WindowsFormsApp1
             {
                 labelbox[k].Dispose();
             }
+
             textBox2.Text = (uglqunt + 1).ToString();
             uglqunt += 1;
             uglnumbers = uglqunt - 1;
@@ -3183,6 +3480,7 @@ namespace WindowsFormsApp1
                 double[,] Tran;
                 double[,] Umn;
                 double[,] BoxPos;
+
                 beaconflag = 0;
                 boxflag = 0;
                 deltax = 0;
@@ -3193,6 +3491,7 @@ namespace WindowsFormsApp1
                 uglqunt = 0;
                 addugl = 0;
                 indclearroom = 0;
+
                 textBox1.Enabled = false;
                 textBox2.Enabled = true;
                 form.progressBar1.Value = 0;
@@ -3234,6 +3533,7 @@ namespace WindowsFormsApp1
                 textBox1.Text = "";
                 Drawing();
                 roompaint();
+
                 double[,] SatPos;
                 SatPos = null;
                 double[,] Grad;
@@ -3242,6 +3542,7 @@ namespace WindowsFormsApp1
                 double[,] DeltaY;
                 double[,] Tran;
                 double[,] Umn;
+
                 beaconflag = 0;
                 beacontraf = new Rectangle();
                 beaconqunt = 0;
@@ -3303,6 +3604,7 @@ namespace WindowsFormsApp1
                 double[,] Tran;
                 double[,] Umn;
                 double[,] BoxPos;
+
                 beaconflag = 0;
                 boxflag = 0;
                 deltax = 0;
@@ -3313,6 +3615,7 @@ namespace WindowsFormsApp1
                 uglqunt = 0;
                 addugl = 0;
                 indclearroom = 0;
+
                 textBox1.Enabled = false;
                 textBox2.Enabled = true;
                 form.progressBar1.Value = 0;
@@ -3357,6 +3660,7 @@ namespace WindowsFormsApp1
                 uglqunt = 0;
                 addugl = 0;
                 indclearroom = 1;
+
                 button3.Enabled = false;
                 button2.Enabled = false;
                 pictureBox1.Enabled = false;
@@ -3378,6 +3682,7 @@ namespace WindowsFormsApp1
                 textBox7.Visible = false;
                 label7.Visible = false;
                 button14.Enabled = false;
+
                 double[,] Block;
                 walluqnt = 0;
                 wallnumbers = 0;
@@ -3400,12 +3705,12 @@ namespace WindowsFormsApp1
                 using (StreamWriter beacon = new StreamWriter(savebeacon.FileName, true))
                 {
                     for (int i = 0; i < beaconqunt; i++)
-                        beacon.Write(Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX) + " " + Convert.ToDouble(1000 - SatPos[1, i])/Convert.ToDouble(pxY) + '\n');
+                        beacon.Write(Math.Round((Convert.ToDouble(SatPos[0, i])/Convert.ToDouble(pxX)),2) + " " + Math.Round((Convert.ToDouble(pictureBox1.Height - SatPos[1, i])/Convert.ToDouble(pxY)),2) + '\n');
                 }
             }
         }
 
-        private void button29_Click(object sender, EventArgs e)
+        private void button29_Click(object sender, EventArgs e)//save room
         {
             SaveFileDialog saveroom = new SaveFileDialog();
             saveroom.DefaultExt = ".txt";
@@ -3415,7 +3720,7 @@ namespace WindowsFormsApp1
                 using (StreamWriter beacon = new StreamWriter(saveroom.FileName, true))
                 {
                     for (int i = 0; i < uglqunt; i++)
-                        beacon.Write(Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX) + " " + Convert.ToDouble(1000 - BoxPos[1, i])/Convert.ToDouble(pxY) + '\n');
+                        beacon.Write(Math.Round((Convert.ToDouble(BoxPos[0, i])/Convert.ToDouble(pxX)),2) + " " + Math.Round((Convert.ToDouble(pictureBox1.Height - BoxPos[1, i])/Convert.ToDouble(pxY)),2) + '\n');
                 }
             }
         }
@@ -3453,6 +3758,7 @@ namespace WindowsFormsApp1
             double[,] Tran;
             double[,] Umn;
             double[,] BoxPos;
+
             beaconflag = 0;
             boxflag = 0;
             deltax = 0;
@@ -3463,6 +3769,7 @@ namespace WindowsFormsApp1
             uglqunt = 0;
             addugl = 0;
             indclearroom = 0;
+
             textBox1.Enabled = false;
             textBox2.Enabled = true;
             form.progressBar1.Value = 0;
@@ -3488,6 +3795,7 @@ namespace WindowsFormsApp1
             textBox2.Enabled = false;
             button24.Enabled = false;
             button11.Enabled = true;
+
             textBox5.Text = "";
             textBox6.Text = "";
             label22.Text = Convert.ToString("");
@@ -3510,10 +3818,12 @@ namespace WindowsFormsApp1
             label27.Text = Convert.ToString("");
             label36.Text = Convert.ToString("");
             label24.Text = Convert.ToString("");
+
             Xmax=0;
             Ymax=0;
             pxX=0;
             pxY=0;
+
             pictureBox1.Enabled = false;
             button12.Enabled = false;
             textBox7.Visible = false;
@@ -3787,9 +4097,9 @@ namespace WindowsFormsApp1
 1.Изначально Вам доступна стандартная комната. Вы можете использовать ее или стереть(кнопка clear room) и нарисоват/загрузить свою.
 2.Если используете стандартную комнату следущий шаг - ввести количество маяков и поставить их на местность;
 3.Если используете свою комнату - ввести количество углов помещения, в котором вы собираетесь определить значение геометрического фактора;
-4.После нажатия на кпоку build установить углы на местности(для удобства имеется координатная ось, а также слева отображаются координаты курсора на поле в данный момент);
+4.После нажатия на кпоку build on the plot установить углы на местности(для удобства имеется координатная ось, а также слева отображаются координаты курсора на поле в данный момент);
 5.Ввести количество маяков;
-6.После нажатия на кнопку set утановить маяки на местности.
+6.После нажатия на кнопку set on the plot утановить маяки на местности.
 7.После этого вы уже можете расчитать значение геометричесукого фактора по дальномерному методу или разностно - дальномерному методу(главный маяк(мастер) будет последним поставленным на местности), для этого выберите метод и нажмите кнопку GO;
 8.Также у вас есть возможность добавлять по 1 маяку на местность и 1 углу комнаты. Для этого необходимо нажать на кнопку add 1 рядом с введенным значением маяков или углов комнаты(Красные линии подскажут будущее расположение стен команты);
 9.У вас есть возможность перемещать маяки по местности или углы комнаты, при этом все расчеты будут проводится относительно новых параметров.
@@ -3798,43 +4108,48 @@ namespace WindowsFormsApp1
 12.Также при переносе маяков или углов комнаты вы не можете перетащить их в другой маяк или угол.
 13.Вы можете полностью удалить комнату с местности, нажав кнопку clear room;
 14.Вы можете полностью удалить маяки с местности, нажав кнопку clear beacons;
-15.Очистить все полностью - кнопка clear.
-16.При нажатии кнопки clear увас есть возможность указать размер местности(в саниметрах);
-17.У Вас есть воможность сохранять координаты маяков и углов комнаты(кнопки SAVE ROOM, SAVE BEACONS);
-18.У Вас есть возможность загружать координты комнаты и маяков(кнопки LOAD ROOM, LOAD BEACONS).Проследите за тем,чтобы координты были записаны в 2 столбика без пробелом в конце строки;
+15.Очистить все полностью - кнопка clear all.
+16.При нажатии кнопки clear all у вас есть возможность указать размер местности(в саниметрах);
+17.У Вас есть воможность сохранять координаты маяков и углов комнаты(кнопки SAVE);
+18.У Вас есть возможность загружать координты комнаты и маяков(кнопки LOAD).Проследите за тем,чтобы координты были записаны в 2 столбика;
 19.У Вас есть возможесть сохранять картинку(кнопка SAVE IMAGE);
 20.При наведении мыши на область градиента, Вы можеет посмотреть значение геометрического фактора в данной точке в специальном окне слева от градинта;
 21.При нажатии левой кнопки мыши на точку местности и ведя мышь в произвольном направлении, Вы можете измерить расстояние от точки нажатие до настощей точки курсора;
 22.У вас есть возможность загрузить план помещения. Для этого нажмите кнопку LOAD PLAN и выберите нужный файл. Далее введите количество углов этого помещения и постройте стены,используя план в качестве трафарета;
-23.При возникновении ошибки рекомендовано перезагрузить программу.
+23.После построения поверхности появятся окна с погрешностям. Сначала введите коэффицинт погрешности в доступное окно слева, затем при наведении курсора на точку метсности, в двух окнах ниже выводятся погрешности по двух осям;
+24.После ввода погрешности вокруг куросра будет риссоваться эллипс,показывающий погрешности на расстоянии он курсора;
+25.При возникновении ошибки рекомендовано перезагрузить программу.
 О значениях градиента геометрического фактора:
 Синий цвет - хорошая видимость;Зеленый цвет - средняя видимость;Красный цвет - плохая видимость;Белый цвет - видимости нет;
+
 GDOP is a program that helps determine the value of a geometric factor.
 1. Initially, a standard room is available to you. You can use it or erase (clear room button) and draw / load your own.
-2. If you are using a standard room, the next step is to enter the number of beacons and put them on the ground;
+2. If you are using a standard room, the next step is to enter the number of lighthouses and put them on the ground;
 3. If you use your room - enter the number of corners of the room in which you are going to determine the value of the geometric factor;
-4. After clicking on the build button, set the angles on the ground (for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left);
+4. After clicking on the build on the plot button, set the angles on the terrain (for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left);
 5. Enter the number of beacons;
-6. After pressing the set button, set the beacons on the ground.
-7. After this, you can already calculate the value of the geometric factor by the rangefinder method or the difference - rangefinder method (the main beacon (master) will be the last set on the ground), to do this, select the method and press the GO button;
-8. Also you have the opportunity to add 1 beacons to the terrain and 1 corner of the room. To do this, click on the add 1 button next to the entered value of the beacons or the corners of the room (Red lines tell you the future location of the walls of the room)
-9. You have the opportunity to move the beacons in the area or the corners of the room, while all the calculations will be carried out with respect to the new parameters.
-10. When you right-click on a beacon or commando corner, this beacon (corner) will be removed from the terrain.
+6.After pressing the set on the plot button, set the beacons on the ground.
+7. After that, you can already calculate the value of the geometric factor by the rangefinder method or the difference-rangefinder method (the main beacon (master) will be the last set on the ground), for this select the method and press the GO button;
+8. Also you have the opportunity to add 1 lighthouse to the terrain and 1 corner of the room. To do this, click on the add 1 button next to the entered value of the beacons or the corners of the room (Red lines will tell you the future location of the walls of the room);
+9. You have the opportunity to move the beacons in the area or the corners of the room, while all calculations will be carried out with respect to the new parameters.
+10. When you right-click on a lighthouse or commando corner, this lighthouse (corner) will be removed from the terrain.
 11. You cannot set several beacons or corners of a room at 1 point.
-12. Also, when moving beacons or corners of a room, you cannot drag them to another beacon or corner.
+12. Also, when moving beacons or room corners, you cannot drag them to another beacon or corner.
 13. You can completely remove the room from the area by pressing the clear room button;
 14. You can completely remove the beacons from the area by clicking the clear beacons button;
-15. Clear everything completely - the clear button.
-16. When you press the clear uvs button, it is possible to indicate the size of the terrain (in centimeters);
-17. You have the ability to save the coordinates of the beacons and the corners of the room (SAVE ROOM, SAVE BEACONS buttons);
-18. You have the ability to load the coordinates of the room and beacons (LOAD ROOM, LOAD BEACONS buttons). Make sure that the coordinates are written in 2 columns with no space at the end of the line;
+15. Clear all completely - clear all button.
+16. When you click the clear all button, you have the opportunity to indicate the size of the terrain (in centimeters);
+17. You have the ability to save the coordinates of the beacons and the corners of the room (SAVE buttons);
+18. You have the ability to load the coordinates of the room and beacons (LOAD buttons). Make sure that the coordinates are written in 2 columns;
 19. You have the opportunity to save the picture (SAVE IMAGE button);
 20. When you hover over the gradient area, you can see the value of the geometric factor at a given point in a special window to the left of the gradient;
 21. When you click the left mouse button on a terrain point and moving the mouse in an arbitrary direction, you can measure the distance from the point by pressing to the current cursor point;
 22. You have the opportunity to download the floor plan. To do this, press the LOAD PLAN button and select the desired file. Next, enter the number of corners of this room and build the walls using the plan as a stencil;
-23. If an error occurs, it is recommended to restart the program.
+23.After building the surface, windows with errors will appear. First, enter the error coefficient in the available window on the left, then when you hover the cursor on the mixed point, the errors in the two axes are displayed in the two windows below;
+24. After entering the error, an ellipse will be drawn around the kurosra, showing the error at the distance of the cursor;
+25. If an error occurs, it is recommended to restart the program.
 About the values ​​of the gradient of the geometric factor:
-Blue color - good visibility;Green color - medium visibility;Red - poor visibility;White color - no visibility");
+Blue color - good visibility; Green color - medium visibility; Red color - poor visibility; White color - no visibility;");
         }
         private void button10_Click(object sender, EventArgs e)
         {
@@ -3871,14 +4186,41 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                         label27.Text = Convert.ToString(Ymax * 0.3);
                         label36.Text = Convert.ToString(Ymax * 0.2);
                         label24.Text = Convert.ToString(Ymax * 0.1);
+
+                        Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+                        pictureBox1.Location = new Point(groupBox4.Width + label46.Width + 10, (resolution.Height - 100 - pictureBox1.Height) / 2);
+
+                        label46.Location = new Point(pictureBox1.Location.X - label46.Width, pictureBox1.Location.Y);
+                        label44.Location = new Point(pictureBox1.Location.X - label44.Width, pictureBox1.Location.Y + pictureBox1.Height / 10);
+                        label42.Location = new Point(pictureBox1.Location.X - label42.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 2);
+                        label35.Location = new Point(pictureBox1.Location.X - label35.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 3);
+                        label33.Location = new Point(pictureBox1.Location.X - label33.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 4);
+                        label31.Location = new Point(pictureBox1.Location.X - label31.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 5);
+                        label29.Location = new Point(pictureBox1.Location.X - label29.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 6);
+                        label27.Location = new Point(pictureBox1.Location.X - label27.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 7);
+                        label36.Location = new Point(pictureBox1.Location.X - label36.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 8);
+                        label24.Location = new Point(pictureBox1.Location.X - label24.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 9);
+                        label2.Location = new Point(pictureBox1.Location.X - label2.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
+                        label4.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 - label4.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label6.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 2 - label6.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label8.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 3 - label8.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label10.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 4 - label10.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label12.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 5 - label12.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label14.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 6 - label14.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label16.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 7 - label16.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label18.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 8 - label18.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label20.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 9 - label20.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                        label22.Location = new Point(pictureBox1.Location.X + pictureBox1.Width - label22.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
                         textBox2.Enabled = true;
                         button24.Enabled = true;
                         textBox5.Enabled = false;
                         textBox6.Enabled = false;
                         button10.Enabled = false;
                         button1.Enabled = true;
-                        pxX = 1000 / Convert.ToDouble(Xmax);
-                        pxY = 1000 / Convert.ToDouble(Ymax);
+                        pxX = (double)(pictureBox1.Width / Convert.ToDouble(Xmax));
+                        pxY = (double)(pictureBox1.Height / Convert.ToDouble(Ymax));
                     }
                     else
                         MessageBox.Show("Input correct number");
@@ -3913,23 +4255,25 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     }
                     Xmax = Convert.ToInt32(100 + maxXX);
                     Ymax = Convert.ToInt32(100 + maxYY);
-                    pxX = 1000 / Convert.ToDouble(Xmax);
-                    pxY = 1000 / Convert.ToDouble(Ymax);
+                    pxX = (double)(pictureBox1.Width / Convert.ToDouble(Xmax));
+                    pxY = (double)(pictureBox1.Height / Convert.ToDouble(Ymax));
                     for (int i = 0; i < uglqunt; i++)
                     {
                         BoxPos[0, i] = Convert.ToDouble(BoxPos[0, i]) * Convert.ToDouble(pxX);
-                        BoxPos[1, i] = 1000 - (Convert.ToDouble(BoxPos[1, i]) * Convert.ToDouble(pxY));
+                        BoxPos[1, i] = pictureBox1.Height - (Convert.ToDouble(BoxPos[1, i]) * Convert.ToDouble(pxY));
                     }
                     boxlist.Clear();
                     for (int j = 0; j < uglqunt; j++)
                     {
-                        listBox2.Items.Add((j + 1) + ")" + "X:" + Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX) + "," + "Y:" + (Convert.ToDouble(1000 - BoxPos[1, j]) / Convert.ToDouble(pxY)));
+                        listBox2.Items.Add((j + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(BoxPos[0, j]) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round(((Convert.ToDouble(pictureBox1.Height - BoxPos[1, j]) / Convert.ToDouble(pxY))),2));
                         boxlist.Add(new Point() { X = Convert.ToInt32(BoxPos[0, j]), Y = Convert.ToInt32(BoxPos[1, j]) });
                     }
+
                     bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                     graph = Graphics.FromImage(bmp);
                     pen = new Pen(Color.Black);
                     pictureBox1.Image = bmp;
+
                     label22.Text = Convert.ToString(Xmax);
                     label20.Text = Convert.ToString(Xmax * 0.9);
                     label18.Text = Convert.ToString(Xmax * 0.8);
@@ -3950,6 +4294,30 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     label27.Text = Convert.ToString(Ymax * 0.3);
                     label36.Text = Convert.ToString(Ymax * 0.2);
                     label24.Text = Convert.ToString(Ymax * 0.1);
+
+                    label46.Location = new Point(pictureBox1.Location.X - label46.Width, pictureBox1.Location.Y);
+                    label44.Location = new Point(pictureBox1.Location.X - label44.Width, pictureBox1.Location.Y + pictureBox1.Height / 10);
+                    label42.Location = new Point(pictureBox1.Location.X - label42.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 2);
+                    label35.Location = new Point(pictureBox1.Location.X - label35.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 3);
+                    label33.Location = new Point(pictureBox1.Location.X - label33.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 4);
+                    label31.Location = new Point(pictureBox1.Location.X - label31.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 5);
+                    label29.Location = new Point(pictureBox1.Location.X - label29.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 6);
+                    label27.Location = new Point(pictureBox1.Location.X - label27.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 7);
+                    label36.Location = new Point(pictureBox1.Location.X - label36.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 8);
+                    label24.Location = new Point(pictureBox1.Location.X - label24.Width, pictureBox1.Location.Y + pictureBox1.Height / 10 * 9);
+                    label2.Location = new Point(pictureBox1.Location.X - label2.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
+                    label4.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 - label4.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label6.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 2 - label6.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label8.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 3 - label8.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label10.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 4 - label10.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label12.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 5 - label12.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label14.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 6 - label14.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label16.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 7 - label16.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label18.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 8 - label18.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label20.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 10 * 9 - label20.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+                    label22.Location = new Point(pictureBox1.Location.X + pictureBox1.Width - label22.Width, pictureBox1.Location.Y + pictureBox1.Height);
+
                     roompaint();
                     labelbox = new Label[uglqunt + 1];
                     labalbox();
@@ -4092,22 +4460,25 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                         for (int i = 0; i < beaconqunt; i++)
                         {
                             SatPos[0, i] = Convert.ToDouble(SatPos[0, i]) * Convert.ToDouble(pxX);
-                            SatPos[1, i] = 1000 - (Convert.ToDouble(SatPos[1, i]) * Convert.ToDouble(pxY));
+                            SatPos[1, i] = pictureBox1.Height - (Convert.ToDouble(SatPos[1, i]) * Convert.ToDouble(pxY));
                         }
                         beaconlist.Clear();
                         for (int j = 0; j < beaconqunt; j++)
                         {
-                            listBox1.Items.Add((j + 1) + ")" + "X:" + Convert.ToDouble(SatPos[0, j]) / Convert.ToDouble(pxX) + "," + "Y:" + (Convert.ToDouble(1000 - SatPos[1, j]) / Convert.ToDouble(pxY)));
+                            listBox1.Items.Add((j + 1) + ")" + "X:" + Math.Round((Convert.ToDouble(SatPos[0, j]) / Convert.ToDouble(pxX)),2) + "," + "Y:" + Math.Round(((Convert.ToDouble(pictureBox1.Height - SatPos[1, j]) / Convert.ToDouble(pxY))),2));
                             beaconlist.Add(new Point() { X = Convert.ToInt32(SatPos[0, j]), Y = Convert.ToInt32(SatPos[1, j]) });
                         }
+
                         bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
                         graph = Graphics.FromImage(bmp);
                         pen = new Pen(Color.Black);
                         pictureBox1.Image = bmp;
+
                         for (int j = 0; j < beaconqunt; j++)
                         {
                             graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                         }
+
                         beaconnumbers = beaconqunt;
                         textBox1.Text = beaconqunt.ToString();
                         labelbeacon = new Label[beaconqunt + 1];
@@ -4275,13 +4646,25 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             graph = Graphics.FromImage(bmp);
             pictureBox1.Image = bmp;
+
             form.Show();
             form.progressBar1.Value = 0;
-            for (int j = 0; j < 1000; j++)
+
+            for (int j = 0; j < pictureBox1.Width; j++)
             {
-                for (int l = 0; l < 1000; l++)
+                for (int l = 0; l < pictureBox1.Height; l++)
                 {
-                    if (Z[j, l] <= 1 && Z[j, l] > 0)
+                    if (Z[j, l] <= 0.7 && Z[j, l] > 0)
+                    {
+                        pen = new Pen(Color.FromArgb(60, 150, 235));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 0.7 && Z[j, l] <= 0.85)
+                    {
+                        pen = new Pen(Color.FromArgb(30, 144, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 0.85 && Z[j, l] <= 1)
                     {
                         pen = new Pen(Color.FromArgb(0, 0, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
@@ -4381,23 +4764,41 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                         pen = new Pen(Color.FromArgb(255, 255, 255));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-                    if (Z[j, l] > 15 && Z[j, l] < 1000000000)
+                    if (Z[j, l] > 15 && Z[j, l] <= 20)
                     {
                         pen = new Pen(Color.FromArgb(255, 0, 0));
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
+                    if (Z[j, l] > 20 && Z[j, l] <= 30)
+                    {
+                        pen = new Pen(Color.FromArgb(225, 40, 25));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 30 && Z[j, l] <= 50)
+                    {
+                        pen = new Pen(Color.FromArgb(178, 34, 34));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 50 && Z[j, l] < 1000000000)
+                    {
+                        pen = new Pen(Color.FromArgb(139, 0, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
                     if (Z[j, l] > 1000000000)
                     {
-                        pen = new Pen(Color.FromArgb(255, 255, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
+                        if (Z[j + 1, l] == 0 && Z[j - 1, l] == 0 && Z[j, l + 1] == 0 && Z[j, l - 1] == 0)
+                        {
+                            pen = new Pen(Color.FromArgb(255, 255, 255));
+                            graph.DrawEllipse(pen, j, l, 1, 1);
+                        }
                     }
                     form.progressBar1.Value += 1;
                 }
             }
 
-            for (int j = 0; j < 1000; j++)
+            for (int j = 0; j < pictureBox1.Width; j++)
             {
-                for (int l = 0; l < 1000; l++)
+                for (int l = 0; l < pictureBox1.Height; l++)
                 {
                     if (Z[j, l] > trackBar1.Value)
                     {
@@ -4407,7 +4808,7 @@ Blue color - good visibility;Green color - medium visibility;Red - poor visibili
                     form.progressBar1.Value += 1;
                 }
             }
-            if (form.progressBar1.Value == 2000000)
+            if (form.progressBar1.Value == form.progressBar1.Maximum)
             {
                 form.Hide();
             }
