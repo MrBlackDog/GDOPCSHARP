@@ -44,8 +44,10 @@ namespace WindowsFormsApp1
         List<Point> boxlist = new List<Point>();//Лист с координатами комнаты
         List<Point> rightpoint = new List<Point>();//Лист с массивом видимых координат
         List<Point> needpoint = new List<Point>();//Лист маяков видимых мастеру
+        List<Point> radiuscoordbeacons = new List<Point>();//Лист с координатами маяков в радиусе
         List<int> wallreplace = new List<int>();
         List<int> wallin = new List<int>();
+        List<int> radiusbeacon = new List<int>();//Лист видимых в радиусе маяков
 
         SolidBrush Brush;//Параметр заливки маяка
 
@@ -55,6 +57,7 @@ namespace WindowsFormsApp1
         int beaconqunt;//Количество маяков
         int minway;
         int nextway;
+        int quntbeaconsradius;
 
         double[,] SatPos;//Массив с координатами маяков вида [x1, x2, ... , xn]
                          //                                  [y1, y2, ... , yn]
@@ -218,7 +221,7 @@ namespace WindowsFormsApp1
             pictureBox1.Location = new Point(groupBox4.Width + 70, (resolution.Height - 100- pictureBox1.Height)/2);
 
             groupBox4.Width = (resolution.Width-100) / 100 * 7;
-
+            
             textBox3.Width = groupBox4.Width / 2;
             textBox3.Height = groupBox4.Height / 100 * 4;
             textBox3.Location = new Point(groupBox4.Width / 3, groupBox4.Height / 100 * 40);
@@ -408,6 +411,13 @@ namespace WindowsFormsApp1
             label32.Location = new Point((groupBox3.Width - label32.Width) / 2, label1.Location.Y-label32.Height-1);
 
             form.progressBar1.Maximum = (pictureBox1.Width*pictureBox1.Height) * 2;
+
+            checkBox3.Location = new Point(textBox2.Location.X - checkBox3.Width - 3, textBox2.Location.Y);
+
+            textBox11.Width = groupBox3.Width / 100 * 8; ;
+            textBox11.Location = new Point(label15.Location.X, button26.Location.Y-textBox11.Height-3);
+
+            label34.Location = new Point(textBox11.Location.X + textBox11.Width+1,textBox11.Location.Y+3);
 
             Drawing();//Оси
             startroom();
@@ -848,11 +858,19 @@ namespace WindowsFormsApp1
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    if (walluqnt == 0)
-                        vidimost(x, y);
-                    else
-                        vidimostwall(x, y);
-                    kol1 = kolich;
+                    if (checkBox3.Checked == false)
+                    {
+                        if (walluqnt == 0)
+                            vidimost(x, y);
+                        else
+                            vidimostwall(x, y);
+                        kol1 = kolich;
+                    }
+                    if (textBox11.Text != "")
+                    {
+                        radius(kol1, x, y);
+                        kol1 = quntbeaconsradius;
+                    }
                     if (kol1 < 2)
                         Z[x, y] = 0;
                     else
@@ -909,16 +927,24 @@ namespace WindowsFormsApp1
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    if (walluqnt == 0)
-                        lish();
-                    else
-                        lishwall();
-                    if (walluqnt == 0)
-                        vidimost1(x, y);
-                    else
-                        vidimost1wall(x, y);
-                    kol1 = kolich+1;
-                      if (kol1 < 3)
+                    if (checkBox3.Checked == false)
+                    {
+                        if (walluqnt == 0)
+                            lish();
+                        else
+                            lishwall();
+                        if (walluqnt == 0)
+                            vidimost1(x, y);
+                        else
+                            vidimost1wall(x, y);
+                        kol1 = kolich + 1;
+                    }
+                    if (textBox11.Text != "")
+                    {
+                        radius(kol1, x, y);
+                        kol1 = quntbeaconsradius;
+                    }
+                    if (kol1 < 3)
                       {
                           Z[x, y] = 0;
                       }
@@ -954,6 +980,46 @@ namespace WindowsFormsApp1
                 }
             }
         }
+
+        private void radius(int kol,int x, int y)
+        {
+            string radius = textBox11.Text;
+            if (textBox11.Text != "")//Проверка на пустоту
+            {
+                double n;
+                if (double.TryParse(textBox11.Text, out n))
+                {
+                    int beacs=0;
+                    double rad = Convert.ToDouble(radius);
+                    for(int i=0;i<kol;i++)
+                    {
+                        double way = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(x - SatPos[0, i])) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(y - SatPos[1, i]) / Convert.ToDouble(pxY))), 2));
+                        if (way < rad)
+                        {
+                            radiusbeacon.Add(i);
+                            beacs++;
+                        }          
+                    }
+                    quntbeaconsradius = beacs;
+                    foreach (int pp in radiusbeacon)
+                    {
+                        radiuscoordbeacons.Add(new Point() { X = (Convert.ToInt32(SatPos[0,pp])), Y = (Convert.ToInt32(SatPos[1,pp])) });
+                    }
+                    SatPos = new double[2, beacs + 1];
+                    beacs = 0;
+                    foreach (Point p in radiuscoordbeacons)
+                    {
+                        SatPos[0, beacs] = p.X;
+                        SatPos[1, beacs] = p.Y;
+                        beacs++;
+                    }
+                    beacs = 0;
+                    radiusbeacon.Clear();
+                    radiuscoordbeacons.Clear();
+                }
+            }
+        }
+
         private void labalbeacon()//Нумерация маяков
         {
             for (int b = 0; b < beaconqunt; b++)
@@ -1915,6 +1981,16 @@ namespace WindowsFormsApp1
                         graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
                     }
                 }
+                pen.Width = 2;
+                if (textBox11.Text!="")
+                {
+                    double radius = Convert.ToDouble(textBox11.Text);
+                    for(int i =0;i< beaconqunt;i++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                    }
+                }
+                pen.Width = 1;
             }
             if (checkBox2.Checked == true && checkBox1.Checked == false)//RD
             {
@@ -1967,6 +2043,16 @@ namespace WindowsFormsApp1
                             graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
                         }
                     }
+                    pen.Width = 2;
+                    if (textBox11.Text != "")
+                    {
+                        double radius = Convert.ToDouble(textBox11.Text);
+                        for (int i = 0; i < beaconqunt; i++)
+                        {
+                            graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                        }
+                    }
+                    pen.Width = 1;
                     int xM = Convert.ToInt32(SatPos[0, beaconqunt - 1]);
                     int yM = Convert.ToInt32(SatPos[1, beaconqunt - 1]);
                     Brush = new SolidBrush(Color.White);
@@ -4852,6 +4938,16 @@ Blue color - good visibility; Green color - medium visibility; Red color - poor 
                         graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
                     }
                 }
+                pen.Width = 2;
+                if (textBox11.Text != "")
+                {
+                    double radius = Convert.ToDouble(textBox11.Text);
+                    for (int i = 0; i < beaconqunt; i++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                    }
+                }
+                pen.Width = 1;
             }
             if (checkBox2.Checked == true && checkBox1.Checked == false)
             {
@@ -4893,6 +4989,16 @@ Blue color - good visibility; Green color - medium visibility; Red color - poor 
                         graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
                     }
                 }
+                pen.Width = 2;
+                if (textBox11.Text != "")
+                {
+                    double radius = Convert.ToDouble(textBox11.Text);
+                    for (int i = 0; i < beaconqunt; i++)
+                    {
+                        graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                    }
+                }
+                pen.Width = 1;
                 int xM = Convert.ToInt32(SatPos[0, beaconqunt - 1]);
                 int yM = Convert.ToInt32(SatPos[1, beaconqunt - 1]);
                 Brush = new SolidBrush(Color.White);

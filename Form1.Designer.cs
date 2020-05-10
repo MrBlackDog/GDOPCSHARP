@@ -83,6 +83,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.button14 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -116,6 +117,8 @@
             this.label44 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.label34 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -787,6 +790,7 @@
             // groupBox1
             // 
             this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.checkBox3);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.button14);
             this.groupBox1.Controls.Add(this.button27);
@@ -799,6 +803,17 @@
             this.groupBox1.TabIndex = 105;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ROOM";
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.854546F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBox3.Location = new System.Drawing.Point(3, 30);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(127, 20);
+            this.checkBox3.TabIndex = 84;
+            this.checkBox3.Text = "transparent walls";
+            this.checkBox3.UseVisualStyleBackColor = true;
             // 
             // label11
             // 
@@ -813,6 +828,8 @@
             // 
             this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox2.BackColor = System.Drawing.Color.Silver;
+            this.groupBox2.Controls.Add(this.label34);
+            this.groupBox2.Controls.Add(this.textBox11);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.button26);
             this.groupBox2.Controls.Add(this.button23);
@@ -1222,6 +1239,22 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "0";
             // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(15, 39);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(41, 20);
+            this.textBox11.TabIndex = 84;
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(62, 41);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(57, 13);
+            this.label34.TabIndex = 85;
+            this.label34.Text = "<-RADIUS";
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1362,6 +1395,9 @@
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox textBox11;
     }
 }
 
