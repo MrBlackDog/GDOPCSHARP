@@ -162,6 +162,7 @@ namespace WindowsFormsApp1
 
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
+            checkBox3.BackColor = Color.Transparent;
             label1.BackColor = Color.Transparent;
             label2.BackColor = Color.Transparent;
             label3.BackColor = Color.Transparent;
@@ -197,6 +198,7 @@ namespace WindowsFormsApp1
             label33.BackColor = Color.Transparent;
             label35.BackColor = Color.Transparent;
             label36.BackColor = Color.Transparent;
+            label37.BackColor = Color.Transparent;
             label38.BackColor = Color.Transparent;
             label39.BackColor = Color.Transparent;
             label42.BackColor = Color.Transparent;
@@ -353,8 +355,8 @@ namespace WindowsFormsApp1
 
             groupBox2.Size = new Size(button22.Location.X + button22.Width - label15.Location.X+10, button23.Location.Y + button23.Height - label15.Location.Y + 20);
 
-            button26.Location = new Point((groupBox2.Width - (button26.Width + 5 + button23.Width)) / 2, button22.Location.Y + button22.Height + 3);
-            button23.Location = new Point(button26.Location.X+button26.Width+5, button22.Location.Y + button22.Height + 3);
+            button23.Location = new Point(button22.Location.X+button22.Width-button23.Width, button22.Location.Y + button22.Height + 3);
+            button26.Location = new Point(button23.Location.X - 5 - button26.Width, button22.Location.Y + button22.Height + 3);
 
             groupBox2.Size = new Size(button22.Location.X + button22.Width - label15.Location.X + 10, button23.Location.Y + button23.Height - label15.Location.Y + 20);
 
@@ -416,6 +418,8 @@ namespace WindowsFormsApp1
 
             textBox11.Width = groupBox3.Width / 100 * 8; ;
             textBox11.Location = new Point(label15.Location.X, button26.Location.Y-textBox11.Height-3);
+
+            label37.Location = new Point(textBox11.Location.X,textBox11.Location.Y+textBox11.Height+1);
 
             label34.Location = new Point(textBox11.Location.X + textBox11.Width+1,textBox11.Location.Y+3);
 

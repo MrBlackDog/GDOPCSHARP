@@ -87,6 +87,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.textBox11 = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.button15 = new System.Windows.Forms.Button();
@@ -117,8 +119,7 @@
             this.label44 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.label34 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -447,7 +448,7 @@
             this.button23.AutoSize = true;
             this.button23.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.button23.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button23.Location = new System.Drawing.Point(134, 66);
+            this.button23.Location = new System.Drawing.Point(217, 66);
             this.button23.Name = "button23";
             this.button23.Size = new System.Drawing.Size(96, 23);
             this.button23.TabIndex = 77;
@@ -508,7 +509,7 @@
             // 
             this.button26.AutoSize = true;
             this.button26.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button26.Location = new System.Drawing.Point(22, 66);
+            this.button26.Location = new System.Drawing.Point(104, 66);
             this.button26.Name = "button26";
             this.button26.Size = new System.Drawing.Size(106, 23);
             this.button26.TabIndex = 82;
@@ -828,6 +829,7 @@
             // 
             this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox2.BackColor = System.Drawing.Color.Silver;
+            this.groupBox2.Controls.Add(this.label37);
             this.groupBox2.Controls.Add(this.label34);
             this.groupBox2.Controls.Add(this.textBox11);
             this.groupBox2.Controls.Add(this.label15);
@@ -842,6 +844,22 @@
             this.groupBox2.TabIndex = 106;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "BEACONS";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(62, 41);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(57, 13);
+            this.label34.TabIndex = 85;
+            this.label34.Text = "<-RADIUS";
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(15, 39);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(41, 20);
+            this.textBox11.TabIndex = 84;
             // 
             // label15
             // 
@@ -1239,21 +1257,14 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "0";
             // 
-            // textBox11
+            // label37
             // 
-            this.textBox11.Location = new System.Drawing.Point(15, 39);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(41, 20);
-            this.textBox11.TabIndex = 84;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(62, 41);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(57, 13);
-            this.label34.TabIndex = 85;
-            this.label34.Text = "<-RADIUS";
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(15, 76);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(52, 13);
+            this.label37.TabIndex = 86;
+            this.label37.Text = "METRES";
             // 
             // Form1
             // 
@@ -1398,6 +1409,7 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.Label label37;
     }
 }
 
