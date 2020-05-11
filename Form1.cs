@@ -941,7 +941,7 @@ namespace WindowsFormsApp1
                     }
                     if (textBox11.Text != "")
                     {
-                        radius(kol1, x, y);
+                        radiusRD(kol1, x, y);
                         kol1 = quntbeaconsradius;
                     }
                     if (kol1 < 3)
@@ -1016,6 +1016,85 @@ namespace WindowsFormsApp1
                     beacs = 0;
                     radiusbeacon.Clear();
                     radiuscoordbeacons.Clear();
+                }
+            }
+        }
+
+        private void radiusRD(int kol, int x, int y)
+        {
+            string radius = textBox11.Text;
+            if (textBox11.Text != "")//Проверка на пустоту
+            {
+                double n;
+                if (double.TryParse(textBox11.Text, out n))
+                {
+                    int beacs = 0;
+                    double rad = Convert.ToDouble(radius);
+                    double way = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(x - SatPos[0, kol-1])) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(y - SatPos[1, kol-1]) / Convert.ToDouble(pxY))), 2));
+                    if (way > rad)
+                    {
+                        quntbeaconsradius = 0;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < kol; i++)
+                        {
+                            way = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(x - SatPos[0, i])) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(y - SatPos[1, i]) / Convert.ToDouble(pxY))), 2));
+                            if (way < rad)
+                            {
+                                radiusbeacon.Add(i);
+                                beacs++;
+                            }
+                        }
+
+                        quntbeaconsradius = beacs;
+                        foreach (int pp in radiusbeacon)
+                        {
+                            radiuscoordbeacons.Add(new Point() { X = (Convert.ToInt32(SatPos[0, pp])), Y = (Convert.ToInt32(SatPos[1, pp])) });
+                        }
+                        SatPos = new double[2, beacs + 1];
+                        beacs = 0;
+                        foreach (Point p in radiuscoordbeacons)
+                        {
+                            SatPos[0, beacs] = p.X;
+                            SatPos[1, beacs] = p.Y;
+                            beacs++;
+                        }
+                        beacs = 0;
+                        radiusbeacon.Clear();
+                        radiuscoordbeacons.Clear();
+
+                        if (quntbeaconsradius >= 3)
+                        {
+                            for (int i = 0; i < quntbeaconsradius - 1; i++)
+                            {
+                                way = Math.Sqrt(Math.Pow((Math.Abs((Convert.ToDouble(SatPos[0, i] - SatPos[0, quntbeaconsradius - 1])) / Convert.ToDouble(pxX))), 2) + Math.Pow((Math.Abs(Convert.ToDouble(SatPos[1, i] - SatPos[1, quntbeaconsradius - 1]) / Convert.ToDouble(pxY))), 2));
+                                if (way < rad)
+                                {
+                                    radiusbeacon.Add(i);
+                                    beacs++;
+                                }
+                            }
+                            foreach (int pp in radiusbeacon)
+                            {
+                                radiuscoordbeacons.Add(new Point() { X = (Convert.ToInt32(SatPos[0, pp])), Y = (Convert.ToInt32(SatPos[1, pp])) });
+                            }
+                            radiuscoordbeacons.Add(new Point() { X = (Convert.ToInt32(SatPos[0, quntbeaconsradius - 1])), Y = (Convert.ToInt32(SatPos[1, quntbeaconsradius - 1])) });
+                            quntbeaconsradius = beacs + 1;
+
+                            SatPos = new double[2, beacs + 2];
+                            beacs = 0;
+                            foreach (Point p in radiuscoordbeacons)
+                            {
+                                SatPos[0, beacs] = p.X;
+                                SatPos[1, beacs] = p.Y;
+                                beacs++;
+                            }
+                            beacs = 0;
+                            radiusbeacon.Clear();
+                            radiuscoordbeacons.Clear();
+                        }
+                    }   
                 }
             }
         }
