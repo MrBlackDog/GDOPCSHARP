@@ -4287,10 +4287,9 @@ namespace WindowsFormsApp1
 22.У вас есть возможность загрузить план помещения. Для этого нажмите кнопку LOAD PLAN и выберите нужный файл. Далее введите количество углов этого помещения и постройте стены,используя план в качестве трафарета;
 23.После построения поверхности появятся окна с погрешностям. Сначала введите коэффицинт погрешности в доступное окно слева, затем при наведении курсора на точку метсности, в двух окнах ниже выводятся погрешности по двух осям;
 24.После ввода погрешности вокруг куросра будет риссоваться эллипс,показывающий погрешности на расстоянии он курсора;
-25.При возникновении ошибки рекомендовано перезагрузить программу.
+25.В графу радиус введите радиус действия маяка(расстояние, после которого маяк совсем теряет видимость).
 О значениях градиента геометрического фактора:
 Синий цвет - хорошая видимость;Зеленый цвет - средняя видимость;Красный цвет - плохая видимость;Белый цвет - видимости нет;
-
 GDOP is a program that helps determine the value of a geometric factor.
 1. Initially, a standard room is available to you. You can use it or erase (clear room button) and draw / load your own.
 2. If you are using a standard room, the next step is to enter the number of lighthouses and put them on the ground;
@@ -4316,7 +4315,7 @@ GDOP is a program that helps determine the value of a geometric factor.
 22. You have the opportunity to download the floor plan. To do this, press the LOAD PLAN button and select the desired file. Next, enter the number of corners of this room and build the walls using the plan as a stencil;
 23.After building the surface, windows with errors will appear. First, enter the error coefficient in the available window on the left, then when you hover the cursor on the mixed point, the errors in the two axes are displayed in the two windows below;
 24. After entering the error, an ellipse will be drawn around the kurosra, showing the error at the distance of the cursor;
-25. If an error occurs, it is recommended to restart the program.
+25. In the radius column, enter the radius of the beacon (the distance after which the beacon completely loses visibility).
 About the values ​​of the gradient of the geometric factor:
 Blue color - good visibility; Green color - medium visibility; Red color - poor visibility; White color - no visibility;");
         }
@@ -4424,6 +4423,8 @@ Blue color - good visibility; Green color - medium visibility; Red color - poor 
                     }
                     Xmax = Convert.ToInt32(100 + maxXX);
                     Ymax = Convert.ToInt32(100 + maxYY);
+                    textBox5.Text = Xmax.ToString();
+                    textBox6.Text = Ymax.ToString();
                     pxX = (double)(pictureBox1.Width / Convert.ToDouble(Xmax));
                     pxY = (double)(pictureBox1.Height / Convert.ToDouble(Ymax));
                     for (int i = 0; i < uglqunt; i++)
@@ -4463,6 +4464,9 @@ Blue color - good visibility; Green color - medium visibility; Red color - poor 
                     label27.Text = Convert.ToString(Ymax * 0.3);
                     label36.Text = Convert.ToString(Ymax * 0.2);
                     label24.Text = Convert.ToString(Ymax * 0.1);
+
+                    Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+                    pictureBox1.Location = new Point(groupBox4.Width + label46.Width + 10, (resolution.Height - 100 - pictureBox1.Height) / 2);
 
                     label46.Location = new Point(pictureBox1.Location.X - label46.Width, pictureBox1.Location.Y);
                     label44.Location = new Point(pictureBox1.Location.X - label44.Width, pictureBox1.Location.Y + pictureBox1.Height / 10);
