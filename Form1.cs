@@ -382,11 +382,6 @@ namespace WindowsFormsApp1
             label19.Location = new Point(trackBar1.Location.X+(trackBar1.Width/2)-label19.Width/2,trackBar1.Location.Y+trackBar1.Height+3);
             label21.Location = new Point(label19.Location.X+label19.Width+3,label19.Location.Y);
 
-           // if (listBox1.Height > 300)
-           //     listBox1.Height = 300;
-          //  if (listBox2.Height > 300)
-          //      listBox2.Height = 300;
-
             /* label32.Location = new Point((groupBox3.Width-label32.Width)/2,label21.Location.Y+label21.Height+50);
 
              listBox1.Location = new Point((groupBox3.Width-(listBox1.Width+20+listBox2.Width))/2, label32.Location.Y+label32.Height*3);
@@ -409,6 +404,13 @@ namespace WindowsFormsApp1
 
             listBox1.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height-15);
             listBox2.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height - 15);
+
+
+            if (listBox1.Height > 300)
+                listBox1.Height = 300;
+            if (listBox2.Height > 300)
+                listBox2.Height = 300;
+
 
             listBox1.Location = new Point((groupBox3.Width - (listBox1.Width + 20 + listBox2.Width)) / 2, button30.Location.Y-button30.Height-6-listBox1.Height);
             listBox2.Location = new Point(listBox1.Location.X + listBox1.Width + 20, button30.Location.Y - button30.Height- 6 - listBox2.Height);
