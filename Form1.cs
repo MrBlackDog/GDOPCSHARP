@@ -40,6 +40,10 @@ namespace WindowsFormsApp1
         Bitmap bmp2;
         Graphics gr;
 
+        Image photokard;
+
+        Bitmap newImage;
+
         List<Point> beaconlist = new List<Point>();//Лист с координатами маяков
         List<Point> boxlist = new List<Point>();//Лист с координатами комнаты
         List<Point> rightpoint = new List<Point>();//Лист с массивом видимых координат
@@ -123,6 +127,8 @@ namespace WindowsFormsApp1
             this.ControlBox = false;
             // Убираем заголовок.
             this.Text = "";
+
+            timer2.Start();
 
             button3.Enabled = false;
             button2.Enabled = false;
@@ -315,6 +321,7 @@ namespace WindowsFormsApp1
             button4.Location = new Point(groupBox3.Width-button4.Width-1, 1);
             button15.Location = new Point(groupBox3.Width - button4.Width - 3 - button15.Width, 1);
             button9.Location = new Point(groupBox3.Width - button4.Width - 3 - button15.Width - button9.Width-3, 1);
+            button17.Location = new Point(button9.Location.X - 3 - button17.Width, 1);
 
             textBox5.Width = groupBox3.Width / 100 *15;
             textBox5.Height = groupBox3.Height / 100 * 2;
@@ -375,8 +382,10 @@ namespace WindowsFormsApp1
             label19.Location = new Point(trackBar1.Location.X+(trackBar1.Width/2)-label19.Width/2,trackBar1.Location.Y+trackBar1.Height+3);
             label21.Location = new Point(label19.Location.X+label19.Width+3,label19.Location.Y);
 
-            listBox1.Size = new Size(groupBox3.Width/100*30,groupBox3.Height/100*25);
-            listBox2.Size = new Size(groupBox3.Width / 100 * 30, groupBox3.Height / 100 * 25);
+           // if (listBox1.Height > 300)
+           //     listBox1.Height = 300;
+          //  if (listBox2.Height > 300)
+          //      listBox2.Height = 300;
 
             /* label32.Location = new Point((groupBox3.Width-label32.Width)/2,label21.Location.Y+label21.Height+50);
 
@@ -394,9 +403,12 @@ namespace WindowsFormsApp1
 
              button30.Location = new Point((groupBox3.Width-(button30.Width+5+button13.Width))/2,button28.Location.Y+button28.Height+10);
              button13.Location = new Point(button30.Location.X+button30.Width+5,button30.Location.Y);
- */       
+ */
             button30.Location = new Point((groupBox3.Width - (button30.Width + 5 + button13.Width)) / 2, groupBox3.Height-1-button30.Height);
             button13.Location = new Point(button30.Location.X + button30.Width + 5, groupBox3.Height - 1 - button13.Height);
+
+            listBox1.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height-15);
+            listBox2.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height - 15);
 
             listBox1.Location = new Point((groupBox3.Width - (listBox1.Width + 20 + listBox2.Width)) / 2, button30.Location.Y-button30.Height-6-listBox1.Height);
             listBox2.Location = new Point(listBox1.Location.X + listBox1.Width + 20, button30.Location.Y - button30.Height- 6 - listBox2.Height);
@@ -1365,9 +1377,10 @@ namespace WindowsFormsApp1
                                 }
                                 else
                                 {
-                                    graph = Graphics.FromImage(image);
+                                    graph = Graphics.FromImage(bmp);
                                     pen = new Pen(Color.Black);
-                                    pictureBox1.Image = image;
+                                    
+                                    pictureBox1.Image = bmp;
                                     boxlist.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
                                     foreach (Point p in boxlist)
                                     {
@@ -1389,6 +1402,7 @@ namespace WindowsFormsApp1
                                     }
                                     if (uglnumbers == uglqunt - 1)
                                     {
+                                        pictureBox1.BackgroundImage = null;
                                         Drawing();
                                         foreach (Point p in boxlist)
                                         {
@@ -1461,7 +1475,8 @@ namespace WindowsFormsApp1
                             {
                                 graph = Graphics.FromImage(image);
                                 pen = new Pen(Color.Black);
-                                pictureBox1.Image = image;
+                                pictureBox1.BackgroundImage = photokard;
+                                pictureBox1.Image = bmp;
 
                                 boxlist.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
                                 foreach (Point p in boxlist)
@@ -2008,6 +2023,7 @@ namespace WindowsFormsApp1
                 label28.Visible = false;
                 pictureBox1.BackgroundImage = null;
                 pictureBox1.Image = bmp;
+                timer1.Stop();
             }
             if(trackBar1.Enabled==false)
             {
@@ -4014,7 +4030,17 @@ namespace WindowsFormsApp1
                 try
                 {
                     image = new Bitmap(open_dialog.FileName);
-                    pictureBox1.Image = image;
+                    newImage = new Bitmap(image.Width, image.Height);
+                    using (Graphics gr = Graphics.FromImage(newImage))
+                    {
+                        gr.SmoothingMode = SmoothingMode.HighQuality;
+                        gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        gr.DrawImage(image, new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height));
+                    }
+                    pictureBox1.Image = newImage;
+                    photokard = pictureBox1.Image;
+                    pictureBox1.BackgroundImage = photokard;
                     pictureBox1.Invalidate();
                 }
                 catch
@@ -4269,7 +4295,7 @@ namespace WindowsFormsApp1
 4.После нажатия на кпоку build on the plot установить углы на местности(для удобства имеется координатная ось, а также слева отображаются координаты курсора на поле в данный момент);
 5.Ввести количество маяков;
 6.После нажатия на кнопку set on the plot утановить маяки на местности.
-7.После этого вы уже можете расчитать значение геометричесукого фактора по дальномерному методу или разностно - дальномерному методу(главный маяк(мастер) будет последним поставленным на местности), для этого выберите метод и нажмите кнопку GO;
+7.После этого вы уже можете расчитать значение геометричесукого фактора по дальномерному методу или разностно - дальномерному методу(главный маяк(мастер) будет последним поставленным на местности), для этого выберите метод и нажмите кнопку plot a graph;
 8.Также у вас есть возможность добавлять по 1 маяку на местность и 1 углу комнаты. Для этого необходимо нажать на кнопку add 1 рядом с введенным значением маяков или углов комнаты(Красные линии подскажут будущее расположение стен команты);
 9.У вас есть возможность перемещать маяки по местности или углы комнаты, при этом все расчеты будут проводится относительно новых параметров.
 10.При нажатии правой кнопки мыши на маяк или угол команты данный маяк(угол) удалится с местности.
@@ -4289,36 +4315,41 @@ namespace WindowsFormsApp1
 24.После ввода погрешности вокруг куросра будет риссоваться эллипс,показывающий погрешности на расстоянии он курсора;
 25.В графу радиус введите радиус действия маяка(расстояние, после которого маяк совсем теряет видимость).
 О значениях градиента геометрического фактора:
-Синий цвет - хорошая видимость;Зеленый цвет - средняя видимость;Красный цвет - плохая видимость;Белый цвет - видимости нет;
-GDOP is a program that helps determine the value of a geometric factor.
-1. Initially, a standard room is available to you. You can use it or erase (clear room button) and draw / load your own.
-2. If you are using a standard room, the next step is to enter the number of lighthouses and put them on the ground;
-3. If you use your room - enter the number of corners of the room in which you are going to determine the value of the geometric factor;
-4. After clicking on the build on the plot button, set the angles on the terrain (for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left);
-5. Enter the number of beacons;
-6.After pressing the set on the plot button, set the beacons on the ground.
-7. After that, you can already calculate the value of the geometric factor by the rangefinder method or the difference-rangefinder method (the main beacon (master) will be the last set on the ground), for this select the method and press the GO button;
-8. Also you have the opportunity to add 1 lighthouse to the terrain and 1 corner of the room. To do this, click on the add 1 button next to the entered value of the beacons or the corners of the room (Red lines will tell you the future location of the walls of the room);
-9. You have the opportunity to move the beacons in the area or the corners of the room, while all calculations will be carried out with respect to the new parameters.
-10. When you right-click on a lighthouse or commando corner, this lighthouse (corner) will be removed from the terrain.
-11. You cannot set several beacons or corners of a room at 1 point.
-12. Also, when moving beacons or room corners, you cannot drag them to another beacon or corner.
-13. You can completely remove the room from the area by pressing the clear room button;
-14. You can completely remove the beacons from the area by clicking the clear beacons button;
-15. Clear all completely - clear all button.
-16. When you click the clear all button, you have the opportunity to indicate the size of the terrain (in centimeters);
-17. You have the ability to save the coordinates of the beacons and the corners of the room (SAVE buttons);
-18. You have the ability to load the coordinates of the room and beacons (LOAD buttons). Make sure that the coordinates are written in 2 columns;
-19. You have the opportunity to save the picture (SAVE IMAGE button);
-20. When you hover over the gradient area, you can see the value of the geometric factor at a given point in a special window to the left of the gradient;
-21. When you click the left mouse button on a terrain point and moving the mouse in an arbitrary direction, you can measure the distance from the point by pressing to the current cursor point;
-22. You have the opportunity to download the floor plan. To do this, press the LOAD PLAN button and select the desired file. Next, enter the number of corners of this room and build the walls using the plan as a stencil;
-23.After building the surface, windows with errors will appear. First, enter the error coefficient in the available window on the left, then when you hover the cursor on the mixed point, the errors in the two axes are displayed in the two windows below;
-24. After entering the error, an ellipse will be drawn around the kurosra, showing the error at the distance of the cursor;
-25. In the radius column, enter the radius of the beacon (the distance after which the beacon completely loses visibility).
-About the values ​​of the gradient of the geometric factor:
-Blue color - good visibility; Green color - medium visibility; Red color - poor visibility; White color - no visibility;");
+Синий цвет - хорошая видимость;Зеленый цвет - средняя видимость;Красный цвет - плохая видимость;Белый цвет - видимости нет.");
         }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"GDOP is a program that helps determine the value of a geometric factor.
+1.Initially, a standard room is available to you.You can use it or erase(clear room button) and draw / load your own.
+2.If you are using a standard room, the next step is to enter the number of lighthouses and put them on the ground;
+3.If you use your room -enter the number of corners of the room in which you are going to determine the value of the geometric factor;
+4.After clicking on the build on the plot button, set the angles on the terrain(for convenience, there is a coordinate axis, and the coordinates of the cursor on the field at the moment are also displayed on the left) ;
+5.Enter the number of beacons;
+6.After pressing the set on the plot button, set the beacons on the ground.
+7.After that, you can already calculate the value of the geometric factor by the rangefinder method or the difference - rangefinder method(the main beacon(master) will be the last set on the ground), for this select the method and press the GO button;
+8.Also you have the opportunity to add 1 lighthouse to the terrain and 1 corner of the room.To do this, click on the add 1 button next to the entered value of the beacons or the corners of the room(Red lines will tell you the future location of the walls of the room);
+9.You have the opportunity to move the beacons in the area or the corners of the room, while all calculations will be carried out with respect to the new parameters.
+10.When you right-click on a lighthouse or commando corner, this lighthouse(corner) will be removed from the terrain.
+11.You cannot set several beacons or corners of a room at 1 point.
+12.Also, when moving beacons or room corners, you cannot drag them to another beacon or corner.
+13.You can completely remove the room from the area by pressing the clear room button;
+14.You can completely remove the beacons from the area by clicking the clear beacons button;
+15.Clear all completely -clear all button.
+16.When you click the clear all button, you have the opportunity to indicate the size of the terrain(in centimeters);
+17.You have the ability to save the coordinates of the beacons and the corners of the room(SAVE buttons);
+18.You have the ability to load the coordinates of the room and beacons(LOAD buttons). Make sure that the coordinates are written in 2 columns;
+19.You have the opportunity to save the picture(SAVE IMAGE button);
+20.When you hover over the gradient area, you can see the value of the geometric factor at a given point in a special window to the left of the gradient;
+21.When you click the left mouse button on a terrain point and moving the mouse in an arbitrary direction, you can measure the distance from the point by pressing to the current cursor point;
+22.You have the opportunity to download the floor plan. To do this, press the LOAD PLAN button and select the desired file. Next, enter the number of corners of this room and build the walls using the plan as a stencil;
+23.After building the surface, windows with errors will appear.First, enter the error coefficient in the available window on the left, then when you hover the cursor on the mixed point, the errors in the two axes are displayed in the two windows below;
+24.After entering the error, an ellipse will be drawn around the kurosra, showing the error at the distance of the cursor;
+25.In the radius column, enter the radius of the beacon(the distance after which the beacon completely loses visibility).
+About the values ​​of the gradient of the geometric factor:
+Blue color -good visibility; Green color -medium visibility; Red color -poor visibility; White color -no visibility.");
+        }
+
         private void button10_Click(object sender, EventArgs e)
         {
             string xMax = textBox5.Text;
@@ -5097,6 +5128,21 @@ Blue color - good visibility; Green color - medium visibility; Red color - poor 
         {
             label21.Text = trackBar1.Value.ToString();
         }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            string text1 = textBox1.Text;
+            string text2 = textBox2.Text;
+            if (text1=="" && text2=="")
+            {
+                button30.Enabled = true;
+            }
+            else
+            {
+                button30.Enabled = false;
+            }
+        }
+
         private void vidimost1wall(int x, int y)
         {
             indintersection = false;

@@ -87,6 +87,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label37 = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.textBox11 = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -104,6 +105,7 @@
             this.label25 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button17 = new System.Windows.Forms.Button();
             this.label32 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
@@ -119,7 +121,7 @@
             this.label44 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -150,9 +152,9 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.HorizontalScrollbar = true;
             this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(43, 619);
+            this.listBox1.Location = new System.Drawing.Point(58, 628);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(144, 229);
+            this.listBox1.Size = new System.Drawing.Size(112, 199);
             this.listBox1.TabIndex = 3;
             // 
             // button1
@@ -465,7 +467,7 @@
             this.listBox2.ItemHeight = 15;
             this.listBox2.Location = new System.Drawing.Point(288, 619);
             this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(145, 229);
+            this.listBox2.Size = new System.Drawing.Size(114, 229);
             this.listBox2.TabIndex = 78;
             // 
             // button24
@@ -620,11 +622,13 @@
             // 
             // button9
             // 
+            this.button9.AutoSize = true;
+            this.button9.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.button9.Location = new System.Drawing.Point(498, 11);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(63, 32);
+            this.button9.Size = new System.Drawing.Size(74, 23);
             this.button9.TabIndex = 91;
-            this.button9.Text = "HELP";
+            this.button9.Text = "HELP(RUS)";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
@@ -845,6 +849,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "BEACONS";
             // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(15, 76);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(52, 13);
+            this.label37.TabIndex = 86;
+            this.label37.Text = "METRES";
+            // 
             // label34
             // 
             this.label34.AutoSize = true;
@@ -1003,6 +1016,7 @@
             // groupBox3
             // 
             this.groupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox3.Controls.Add(this.button17);
             this.groupBox3.Controls.Add(this.label32);
             this.groupBox3.Controls.Add(this.label21);
             this.groupBox3.Controls.Add(this.label19);
@@ -1041,6 +1055,18 @@
             this.groupBox3.TabIndex = 119;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "OPTIONS";
+            // 
+            // button17
+            // 
+            this.button17.AutoSize = true;
+            this.button17.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button17.Location = new System.Drawing.Point(417, 27);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(66, 23);
+            this.button17.TabIndex = 114;
+            this.button17.Text = "HELP(US)";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
             // 
             // label32
             // 
@@ -1257,14 +1283,9 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "0";
             // 
-            // label37
+            // timer2
             // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(15, 76);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(52, 13);
-            this.label37.TabIndex = 86;
-            this.label37.Text = "METRES";
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // Form1
             // 
@@ -1410,6 +1431,8 @@
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.TextBox textBox11;
         private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 
