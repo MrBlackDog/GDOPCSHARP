@@ -122,12 +122,16 @@
             this.label46 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.pic1 = new System.Windows.Forms.PictureBox();
+            this.pic2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -1287,12 +1291,33 @@
             // 
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // pic1
+            // 
+            this.pic1.BackColor = System.Drawing.Color.Silver;
+            this.pic1.Location = new System.Drawing.Point(131, 41);
+            this.pic1.Name = "pic1";
+            this.pic1.Size = new System.Drawing.Size(36, 23);
+            this.pic1.TabIndex = 123;
+            this.pic1.TabStop = false;
+            this.pic1.Visible = false;
+            // 
+            // pic2
+            // 
+            this.pic2.Location = new System.Drawing.Point(131, 70);
+            this.pic2.Name = "pic2";
+            this.pic2.Size = new System.Drawing.Size(32, 30);
+            this.pic2.TabIndex = 124;
+            this.pic2.TabStop = false;
+            this.pic2.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1833, 1030);
+            this.Controls.Add(this.pic2);
+            this.Controls.Add(this.pic1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.pictureBox1);
@@ -1333,6 +1358,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1433,6 +1460,8 @@
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Button button17;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.PictureBox pic1;
+        private System.Windows.Forms.PictureBox pic2;
     }
 }
 

@@ -23,6 +23,11 @@ namespace WindowsFormsApp1
 
         Bitmap image;//План помещения
 
+        Graphics r;
+        Bitmap n;
+        Graphics rr;
+        Bitmap nn;
+
         bool IsClicked = false;//Индикатор зажатия ЛКМ для маяка
         bool IsClicked2 = false;//Индикатор зажатия ЛКМ для угла
         bool IsClicked3 = false;//Индикатор зажатия ЛКМ на стене
@@ -214,7 +219,6 @@ namespace WindowsFormsApp1
         private void Form1_Load(object sender, EventArgs e)
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-
             groupBox3.Location = new Point(Convert.ToInt32(pictureBox1.Location.X+pictureBox1.Width+5), Convert.ToInt32(pictureBox1.Location.Y));
 
             Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
@@ -1281,6 +1285,7 @@ namespace WindowsFormsApp1
                                     beacontraf = new Rectangle(1, 1, 1, 1);//Убираем с карты образ маяка, создавшийся при перетаскивании
                                     graph.DrawRectangle(pen, beacontraf);
                                     beaconqunt -= 1;
+                                    beaconnumbers = beaconqunt;
                                     textBox1.Text = beaconqunt.ToString();
                                     clone = new double[2, beaconqunt + 1];
                                     Grad = new double[beaconqunt + 1, 2];
@@ -1995,7 +2000,6 @@ namespace WindowsFormsApp1
                 pictureBox1.Image = bmp2;
             }
         }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (textBox7.Visible == true)
@@ -2036,6 +2040,37 @@ namespace WindowsFormsApp1
 
         private void button3_Click(object sender, EventArgs e)//Построение(GO)
         {
+            pic1.Size = new Size(201, 50);
+            pic1.Location = new Point(pictureBox1.Location.X, pictureBox1.Location.Y - 3 - pic1.Height);
+            n = new Bitmap(pic1.Width, pic1.Height);
+            pic1.Image = n;
+            r = Graphics.FromImage(n);
+
+            pic2.Size = new Size(301, 50);
+            pic2.Location = new Point(pic1.Location.X+pic1.Width+1, pictureBox1.Location.Y - 3 - pic1.Height);
+            nn = new Bitmap(pic2.Width, pic2.Height);
+            pic2.Image = nn;
+            rr = Graphics.FromImage(nn);
+
+            Rectangle rec1 = new Rectangle();
+            rec1.Size = new Size(pic1.Width, pic1.Height);
+            LinearGradientBrush br = new LinearGradientBrush(rec1, Color.Black, Color.Black, 0, false);
+            ColorBlend cb = new ColorBlend();
+            cb.Positions = new[] { 0, 1 / 6f, 2 / 6f, 3 / 6f, 4 / 6f, 5 / 6f, 1 };
+            cb.Colors = new[] { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.RoyalBlue, Color.CornflowerBlue };
+            br.InterpolationColors = cb;
+            r.FillRectangle(br, rec1);
+
+            Rectangle rec2 = new Rectangle();
+            rec2.Size = new Size(pic2.Width, pic2.Height);
+            LinearGradientBrush brr = new LinearGradientBrush(rec2, Color.Black, Color.Black, 0, false);
+            ColorBlend cbb = new ColorBlend();
+            cbb.Positions = new[] { 0, 1 / 2f, 1 };
+            cbb.Colors = new[] { Color.Red, Color.Brown, Color.Maroon };
+            brr.InterpolationColors = cbb;
+            rr.FillRectangle(brr, rec2);
+
+            pictureBox1.BackgroundImage = null;
             timer1.Start();
             if (checkBox1.Checked == true && checkBox2.Checked == false)//D
             {
@@ -2043,7 +2078,8 @@ namespace WindowsFormsApp1
                 button2.PerformClick();
                 form.progressBar1.Value = 0;
                 D(beaconqunt);
-                Surf();
+                // Surf();
+                color();
                 pen = new Pen(Color.Black);
                 for (int j = 0; j < beaconqunt; j++)
                 {
@@ -2105,7 +2141,8 @@ namespace WindowsFormsApp1
                     button2.PerformClick();
                     form.progressBar1.Value = 0;
                     RD(beaconqunt);
-                    Surf();
+                    // Surf();
+                    color();
                     pen = new Pen(Color.Black);
                     for (int j = 0; j < beaconqunt; j++)
                     {
@@ -2368,6 +2405,18 @@ namespace WindowsFormsApp1
                         {
                             graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
                         }
+                        if (textBox11.Text != "")
+                        {
+                            double n;
+                            if (double.TryParse(textBox11.Text, out n))
+                            {
+                                double radius = Convert.ToDouble(textBox11.Text);
+                                for (int i = 0; i < beaconqunt; i++)
+                                {
+                                    graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                                }
+                            }
+                        }
 
                     }
                     else
@@ -2378,6 +2427,18 @@ namespace WindowsFormsApp1
                         for (int j = 0; j < beaconqunt; j++)
                         {
                             graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, j]) - 8, Convert.ToInt32(SatPos[1, j]) - 8, 16, 16);
+                        }
+                        if (textBox11.Text != "")
+                        {
+                            double n;
+                            if (double.TryParse(textBox11.Text, out n))
+                            {
+                                double radius = Convert.ToDouble(textBox11.Text);
+                                for (int i = 0; i < beaconqunt; i++)
+                                {
+                                    graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                                }
+                            }
                         }
                         pen = new Pen(Color.Red);
                         graph.DrawLine(pen, Convert.ToSingle(StartInfoX), Convert.ToSingle(StartInfoY), e.Location.X, e.Location.Y);
@@ -4714,7 +4775,11 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
 
         private void button13_Click(object sender, EventArgs e)
         {
-            Bitmap bmpe = new Bitmap(pictureBox1.Image);
+            Bitmap bmpe;
+            if (pictureBox1.BackgroundImage != null)
+                bmpe = new Bitmap(pictureBox1.BackgroundImage);
+            else
+                bmpe = new Bitmap(bmp);
             if (pictureBox1.Image != null) //если в pictureBox есть изображение
             {
                 //создание диалогового окна "Сохранить как..", для сохранения изображения
@@ -4860,129 +4925,34 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
             {
                 for (int l = 0; l < pictureBox1.Height; l++)
                 {
-                    if (Z[j, l] <= 0.7 && Z[j, l] > 0)
+                    if (Z[j, l] > 0 && Z[j, l] <= 20)
                     {
-                        pen = new Pen(Color.FromArgb(60, 150, 235));
+                        int test = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
+                        var pixelColor = new Color();
+                        if (201 - test > 0 && 201 - test <= nn.Width)
+                            pixelColor = n.GetPixel(201 - test, 1);
+                        pen.Color = pixelColor;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+
+                    }
+                    if (Z[j, l] > 20 && Z[j, l] <= 50)
+                    {
+                        int test2 = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
+                        var pixelColor1 = new Color();
+                        if (test2 - 201 > 0 && test2 - 201 <= nn.Width)
+                            pixelColor1 = nn.GetPixel((test2 - 201), 1);
+                        pen.Color = pixelColor1;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+
+                    }
+                    if (Z[j, l] > 20 && Z[j, l] < 21)
+                    {
+                        pen.Color = Color.Red;
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
-                    if (Z[j, l] > 0.7 && Z[j, l] <= 0.85)
+                    if (Z[j, l] == 50)
                     {
-                        pen = new Pen(Color.FromArgb(30, 144, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 0.85 && Z[j, l] <= 1)
-                    {
-                        pen = new Pen(Color.FromArgb(0, 0, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1 && Z[j, l] <= 1.1)
-                    {
-                        pen = new Pen(Color.FromArgb(40, 40, 220));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.1 && Z[j, l] <= 1.15)
-                    {
-                        pen = new Pen(Color.FromArgb(80, 80, 180));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.15 && Z[j, l] <= 1.2)
-                    {
-                        pen = new Pen(Color.FromArgb(40, 140, 40));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.2 && Z[j, l] <= 1.35)
-                    {
-                        pen = new Pen(Color.FromArgb(50, 200, 50));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.35 && Z[j, l] <= 1.5)
-                    {
-                        pen = new Pen(Color.FromArgb(0, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.5 && Z[j, l] <= 1.65)
-                    {
-                        pen = new Pen(Color.FromArgb(130, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.65 && Z[j, l] <= 1.8)
-                    {
-                        pen = new Pen(Color.FromArgb(180, 255, 50));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.8 && Z[j, l] <= 1.95)
-                    {
-                        pen = new Pen(Color.FromArgb(210, 255, 25));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 1.95 && Z[j, l] <= 2.1)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 255, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.1 && Z[j, l] <= 2.25)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 220, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.25 && Z[j, l] <= 2.4)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 200, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.4 && Z[j, l] <= 2.55)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 180, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.55 && Z[j, l] <= 2.7)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 150, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.7 && Z[j, l] <= 2.85)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 130, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 2.85 && Z[j, l] <= 3)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 125, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 3 && Z[j, l] <= 5)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 120, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 5 && Z[j, l] <= 10)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 80, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 10 && Z[j, l] <= 15)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 40, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] == 0)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 255, 255));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 15 && Z[j, l] <= 20)
-                    {
-                        pen = new Pen(Color.FromArgb(255, 0, 0));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 20 && Z[j, l] <= 30)
-                    {
-                        pen = new Pen(Color.FromArgb(225, 40, 25));
-                        graph.DrawEllipse(pen, j, l, 1, 1);
-                    }
-                    if (Z[j, l] > 30 && Z[j, l] <= 50)
-                    {
-                        pen = new Pen(Color.FromArgb(178, 34, 34));
+                        pen.Color = Color.Maroon;
                         graph.DrawEllipse(pen, j, l, 1, 1);
                     }
                     if (Z[j, l] > 50 && Z[j, l] < 1000000000)
@@ -5135,13 +5105,74 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
         {
             string text1 = textBox1.Text;
             string text2 = textBox2.Text;
-            if (text1=="" && text2=="")
+            string text3 = textBox5.Text;
+            string text4 = textBox6.Text;
+            if (text1=="" && text2==""&& text3!=""&&text4!=""&&textBox5.Enabled==false)
             {
                 button30.Enabled = true;
             }
             else
             {
                 button30.Enabled = false;
+            }
+
+            string textrad = textBox11.Text;
+            if(textrad!=""&& label7.Visible==false&&beaconnumbers==beaconqunt&&IsClicked==false)
+            {
+                bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                graph = Graphics.FromImage(bmp);
+                pictureBox1.Image = bmp;
+                pen = new Pen(Color.Black);
+                Drawing();
+                for (int i = 0; i < uglqunt - 1; i++)
+                {
+                    graph.DrawLine(pen, Convert.ToInt32(BoxPos[0, i]), Convert.ToInt32(BoxPos[1, i]), Convert.ToInt32(BoxPos[0, i + 1]), Convert.ToInt32(BoxPos[1, i + 1]));
+                }
+                if (walluqnt != 0 && wallnumbers % 2==0)
+                {
+                    for (int u = 0; u < walluqnt; u += 2)
+                        graph.DrawLine(pen, Convert.ToInt32(WallPos[0, u]), Convert.ToInt32(WallPos[1, u]), Convert.ToInt32(WallPos[0, u + 1]), Convert.ToInt32(WallPos[1, u + 1]));
+                }
+                if(walluqnt > 2 && wallnumbers % 2 != 0)
+                {
+                    for (int u = 0; u < walluqnt-2; u += 2)
+                        graph.DrawLine(pen, Convert.ToInt32(WallPos[0, u]), Convert.ToInt32(WallPos[1, u]), Convert.ToInt32(WallPos[0, u + 1]), Convert.ToInt32(WallPos[1, u + 1]));
+                }
+                for (int j = 0; j < uglqunt; j++)
+                {
+                    graph.DrawRectangle(pen, Convert.ToInt32(BoxPos[0, j]) - 6, Convert.ToInt32(BoxPos[1, j]) - 6, 12, 12);
+                }
+                if (walluqnt != 0)
+                {
+                    for (int i = 0; i < walluqnt; i++)
+                    {
+                        graph.DrawRectangle(pen, Convert.ToInt32(WallPos[0, i] - 6), Convert.ToInt32(WallPos[1, i] - 6), 12, 12);
+                    }
+                }
+                for (int i = 0; i < beaconqunt; i++)
+                {
+                    graph.DrawEllipse(pen, Convert.ToInt32(SatPos[0, i]) - 8, Convert.ToInt32(SatPos[1, i]) - 8, 16, 16);
+                }
+                if (textBox11.Text != "")
+                {
+                    double n;
+                    if (double.TryParse(textBox11.Text, out n))
+                    {
+                        double radius = Convert.ToDouble(textBox11.Text);
+                        for (int i = 0; i < beaconqunt; i++)
+                        {
+                            graph.DrawEllipse(pen, Convert.ToSingle(SatPos[0, i] - (radius * pxX)), Convert.ToSingle(SatPos[1, i] - (radius * pxY)), Convert.ToSingle(radius * Convert.ToDouble(pxX)) * 2, Convert.ToSingle(radius * Convert.ToDouble(pxY)) * 2);
+                        }
+                    }
+                }
+                if(IsInfo==true)
+                {
+                    Point p = pictureBox1.PointToClient(System.Windows.Forms.Cursor.Position);
+                    pen = new Pen(Color.Red);
+                    graph.DrawLine(pen, Convert.ToSingle(StartInfoX), Convert.ToSingle(StartInfoY), p.X, p.Y);
+                    pen = new Pen(Color.Black);
+                }
+                pictureBox1.Refresh();
             }
         }
 
@@ -5254,6 +5285,78 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
                 SatPos[1, kolich] = SatClone[1, beaconqunt - 1];
                 indintersection = false;
             }
+        }
+
+        private void color()
+        {
+            bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            graph = Graphics.FromImage(bmp);
+            pictureBox1.Image = bmp;
+
+            button5.Visible = true;
+            button6.Visible = true;
+            button7.Visible = true;
+            button8.Visible = true;
+
+            for (int j = 0; j < pictureBox1.Width; j++)
+            {
+                for (int l = 0; l < pictureBox1.Height; l++)
+                {                 
+                    if (Z[j, l] > 0 && Z[j, l] <= 20)
+                    {
+                        int test = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
+                        var pixelColor = new Color();
+                        if (201-test > 0 && 201-test <= nn.Width)
+                            pixelColor = n.GetPixel(201 - test, 1);
+                        pen.Color = pixelColor;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+
+                    }
+                    if (Z[j, l] > 20 && Z[j, l] <= 50)
+                    {
+                        int test2 = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
+                        var pixelColor1 = new Color();
+                        if (test2 - 201 > 0 && test2 - 201 <= nn.Width)
+                            pixelColor1 = nn.GetPixel((test2 - 201), 1);
+                        pen.Color = pixelColor1;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+
+                    }
+                    if (Z[j, l] > 20 && Z[j, l] < 21)
+                    {
+                        pen.Color = Color.Red;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] == 50)
+                    {
+                        pen.Color = Color.Maroon;
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 50 && Z[j, l] < 1000000000)
+                    {
+                        pen = new Pen(Color.FromArgb(139, 0, 0));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
+                    if (Z[j, l] > 1000000000)
+                    {
+                        if (Z[j + 1, l] == 0 && Z[j - 1, l] == 0 && Z[j, l + 1] == 0 && Z[j, l - 1] == 0)
+                        {
+                            pen = new Pen(Color.FromArgb(255, 255, 255));
+                            graph.DrawEllipse(pen, j, l, 1, 1);
+                        }
+                    }
+
+                    form.progressBar1.Value += 1;
+                }
+            }
+            button2.Enabled = true;
+            if (form.progressBar1.Value == form.progressBar1.Maximum)
+            {
+                textBox7.Visible = true;
+                label7.Visible = true;
+                form.Hide();
+            }
+
         }
     }
 }
