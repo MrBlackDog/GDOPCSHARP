@@ -170,6 +170,7 @@ namespace WindowsFormsApp1
             label28.Visible = false;
             button16.Enabled = false;
             trackBar1.Enabled = false;
+            button18.Enabled = false;
 
             checkBox1.BackColor = Color.Transparent;//Прозрачный фон
             checkBox2.BackColor = Color.Transparent;
@@ -405,6 +406,8 @@ namespace WindowsFormsApp1
  */
             button30.Location = new Point((groupBox3.Width - (button30.Width + 5 + button13.Width)) / 2, groupBox3.Height-1-button30.Height);
             button13.Location = new Point(button30.Location.X + button30.Width + 5, groupBox3.Height - 1 - button13.Height);
+
+            button18.Location = new Point(button30.Location.X - button18.Width - 5, button30.Location.Y);
 
             listBox1.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height-15);
             listBox2.Size = new Size(groupBox3.Width / 100 * 30, button30.Location.Y - label19.Location.Y - label19.Height - label1.Height - label32.Height - button28.Height - 15);
@@ -757,21 +760,21 @@ namespace WindowsFormsApp1
                 form.Hide();
             }
         }
-        private void Transp(int N)//Транспонированная матрица
+        private void Transp(int N, int n)//Транспонированная матрица
         {
             for (int i = 0; i < N; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < n; j++)
                 {
                     Tran[j, i] = Grad[i, j];
                 }
             }
         }
-        private void multi(int kol)//Перемножение матриц
+        private void multi(int kol,int n)//Перемножение матриц
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < n; j++)
                 {
                     Multi[i, j] = 0;
                     for (int k = 0; k < kol; k++)
@@ -897,14 +900,17 @@ namespace WindowsFormsApp1
                         Z[x, y] = 0;
                     else
                     {
+                        Grad = new double[kol1 + 1, 2];
+                        Tran = new double[2, kol1 + 1];
+                        Multi = new double[2, 2];
                         while (i < kol1)
                         {
                             Grad[i, 0] = (x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
                             Grad[i, 1] = (y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
                             i += 1;
                         }
-                        Transp(kol1);
-                        multi(kol1);
+                        Transp(kol1,2);
+                        multi(kol1,2);
                         inversionMatrix(2);
                         DeltaX[x, y] = pogreshnostX();
                         DeltaY[x, y] = pogreshnostY();
@@ -925,7 +931,8 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        private void RD(int kol1)//Решение для разностно-дальномерного метода
+
+        private void RD(int kol1)//Решение для псевдо разностно-дальномерного метода
         {
             SatClone = new double[2, beaconqunt + 1];
             for (int h = 0; h < beaconqunt; h++)
@@ -943,7 +950,7 @@ namespace WindowsFormsApp1
             Z = new double[pictureBox1.Width, pictureBox1.Height];
             DeltaX = new double[pictureBox1.Width, pictureBox1.Height];
             DeltaY = new double[pictureBox1.Width, pictureBox1.Height];
-
+           
             int i = 0;
             for (int x = 0; x < pictureBox1.Width; x++)
             {
@@ -952,43 +959,39 @@ namespace WindowsFormsApp1
                     if (checkBox3.Checked == false)
                     {
                         if (walluqnt == 0)
-                            lish();
+                            vidimost(x, y);
                         else
-                            lishwall();
-                        if (walluqnt == 0)
-                            vidimost1(x, y);
-                        else
-                            vidimost1wall(x, y);
-                        kol1 = kolich + 1;
+                            vidimostwall(x, y);
+                        kol1 = kolich;
                     }
                     if (textBox11.Text != "")
                     {
-                        radiusRD(kol1, x, y);
+                        radius(kol1, x, y);
                         kol1 = quntbeaconsradius;
                     }
                     if (kol1 < 3)
-                      {
-                          Z[x, y] = 0;
-                      }
-                      else
-                      {
-                          while (i < kol1)
-                          {
-                              Grad[i, 0] = ((x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)))) - ((x - SatPos[0, kol1 - 1]) / (Math.Sqrt(Math.Pow((x - SatPos[0, kol1 - 1]), 2) + Math.Pow((y - SatPos[1, kol1 - 1]), 2))));
-                              Grad[i, 1] = ((y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)))) - ((y - SatPos[1, kol1 - 1]) / (Math.Sqrt(Math.Pow((x - SatPos[0, kol1 - 1]), 2) + Math.Pow((y - SatPos[1, kol1 - 1]), 2))));
-                              i += 1;
-                          }
-
-                          Transp(kol1);
-                          multi(kol1);
-                          inversionMatrix(2);
+                        Z[x, y] = 0;
+                    else
+                    {
+                        Grad = new double[kol1+1, 3];
+                        Tran = new double[3, kol1+1];
+                        Multi = new double[3, 3];
+                        while (i < kol1)
+                        {
+                            Grad[i, 0] = (x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
+                            Grad[i, 1] = (y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)));
+                            Grad[i, 2] = 1;
+                            i += 1;
+                        }
+                        Transp(kol1,3);
+                        multi(kol1,3);
+                        inversionMatrix(3);
                         DeltaX[x, y] = pogreshnostX();
                         DeltaY[x, y] = pogreshnostY();
-                        Z[x, y] = trace(2);
-                      }                   
+                        Z[x, y] = trace(3);
+                    }
                     i = 0;
                     kol1 = beaconqunt;
-                    form.progressBar1.Value += 1;
 
                     SatPos = new double[2, beaconqunt + 1];
                     for (int h = 0; h < beaconqunt; h++)
@@ -997,12 +1000,89 @@ namespace WindowsFormsApp1
                         SatPos[1, h] = SatClone[1, h];
                     }
 
-                    needpoint.Clear();
                     rightpoint.Clear();
+                    form.progressBar1.Value += 1;
                 }
             }
         }
+        /*  private void RD(int kol1)//Решение для разностно-дальномерного метода
+          {
+              SatClone = new double[2, beaconqunt + 1];
+              for (int h = 0; h < beaconqunt; h++)
+              {
+                  SatClone[0, h] = SatPos[0, h];
+                  SatClone[1, h] = SatPos[1, h];
+              }
+              BoxClone = new double[2, uglqunt + 1];
+              for (int h = 0; h < uglqunt; h++)
+              {
+                  BoxClone[0, h] = BoxPos[0, h];
+                  BoxClone[1, h] = BoxPos[1, h];
+              }
 
+              Z = new double[pictureBox1.Width, pictureBox1.Height];
+              DeltaX = new double[pictureBox1.Width, pictureBox1.Height];
+              DeltaY = new double[pictureBox1.Width, pictureBox1.Height];
+
+              int i = 0;
+              for (int x = 0; x < pictureBox1.Width; x++)
+              {
+                  for (int y = 0; y < pictureBox1.Height; y++)
+                  {
+                      if (checkBox3.Checked == false)
+                      {
+                          if (walluqnt == 0)
+                              lish();
+                          else
+                              lishwall();
+                          if (walluqnt == 0)
+                              vidimost1(x, y);
+                          else
+                              vidimost1wall(x, y);
+                          kol1 = kolich + 1;
+                      }
+                      if (textBox11.Text != "")
+                      {
+                          radiusRD(kol1, x, y);
+                          kol1 = quntbeaconsradius;
+                      }
+                      if (kol1 < 3)
+                        {
+                            Z[x, y] = 0;
+                        }
+                        else
+                        {
+                            while (i < kol1)
+                            {
+                                Grad[i, 0] = ((x - SatPos[0, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)))) - ((x - SatPos[0, kol1 - 1]) / (Math.Sqrt(Math.Pow((x - SatPos[0, kol1 - 1]), 2) + Math.Pow((y - SatPos[1, kol1 - 1]), 2))));
+                                Grad[i, 1] = ((y - SatPos[1, i]) / (Math.Sqrt(Math.Pow((x - SatPos[0, i]), 2) + Math.Pow((y - SatPos[1, i]), 2)))) - ((y - SatPos[1, kol1 - 1]) / (Math.Sqrt(Math.Pow((x - SatPos[0, kol1 - 1]), 2) + Math.Pow((y - SatPos[1, kol1 - 1]), 2))));
+                                i += 1;
+                            }
+
+                            Transp(kol1);
+                            multi(kol1);
+                            inversionMatrix(2);
+                          DeltaX[x, y] = pogreshnostX();
+                          DeltaY[x, y] = pogreshnostY();
+                          Z[x, y] = trace(2);
+                        }                   
+                      i = 0;
+                      kol1 = beaconqunt;
+                      form.progressBar1.Value += 1;
+
+                      SatPos = new double[2, beaconqunt + 1];
+                      for (int h = 0; h < beaconqunt; h++)
+                      {
+                          SatPos[0, h] = SatClone[0, h];
+                          SatPos[1, h] = SatClone[1, h];
+                      }
+
+                      needpoint.Clear();
+                      rightpoint.Clear();
+                  }
+              }
+          }
+          */
         private void radius(int kol,int x, int y)
         {
             string radius = textBox11.Text;
@@ -1287,10 +1367,10 @@ namespace WindowsFormsApp1
                                     beaconqunt -= 1;
                                     beaconnumbers = beaconqunt;
                                     textBox1.Text = beaconqunt.ToString();
-                                    clone = new double[2, beaconqunt + 1];
-                                    Grad = new double[beaconqunt + 1, 2];
-                                    Tran = new double[2, beaconqunt + 1];
-                                    Multi = new double[2, 2];
+                                    clone = new double[3, beaconqunt + 1];
+                                    Grad = new double[beaconqunt + 1, 3];
+                                    Tran = new double[3, beaconqunt + 1];
+                                    Multi = new double[3, 3];
                                     labelbeacon = new Label[beaconqunt + 1];
                                     deletebeacons(beaconflag);
                                     break;
@@ -1409,7 +1489,7 @@ namespace WindowsFormsApp1
                                     }
                                     if (uglnumbers == uglqunt - 1)
                                     {
-                                        pictureBox1.BackgroundImage = null;
+                                       // pictureBox1.BackgroundImage = null;
                                         Drawing();
                                         foreach (Point p in boxlist)
                                         {
@@ -1480,14 +1560,15 @@ namespace WindowsFormsApp1
                             }
                             else
                             {
-                                graph = Graphics.FromImage(image);
-                                pen = new Pen(Color.Black);
                                 pictureBox1.BackgroundImage = photokard;
+                                graph = Graphics.FromImage(bmp);
+                                pen = new Pen(Color.Black);
                                 pictureBox1.Image = bmp;
 
                                 boxlist.Add(new Point() { X = x, Y = y });//Заполнение листа с координатами комнаты
                                 foreach (Point p in boxlist)
                                 {
+                                    listBox1.Items.Add("_");
                                     graph.DrawRectangle(pen, p.X - 6, p.Y - 6, 12, 12);//Прорисовка углов
                                 }
                                 if (indclearroom == 1)
@@ -2040,6 +2121,11 @@ namespace WindowsFormsApp1
 
         private void button3_Click(object sender, EventArgs e)//Построение(GO)
         {
+            pictureBox1.BackgroundImage = null;
+            indphoto = false;
+            newImage = null;
+            photokard = null;
+
             pic1.Size = new Size(201, 50);
             pic1.Location = new Point(pictureBox1.Location.X, pictureBox1.Location.Y - 3 - pic1.Height);
             n = new Bitmap(pic1.Width, pic1.Height);
@@ -2191,10 +2277,10 @@ namespace WindowsFormsApp1
                         }
                     }
                     pen.Width = 1;
-                    int xM = Convert.ToInt32(SatPos[0, beaconqunt - 1]);
-                    int yM = Convert.ToInt32(SatPos[1, beaconqunt - 1]);
-                    Brush = new SolidBrush(Color.White);
-                    graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
+                 //   int xM = Convert.ToInt32(SatPos[0, beaconqunt - 1]);
+                 //   int yM = Convert.ToInt32(SatPos[1, beaconqunt - 1]);
+                 //   Brush = new SolidBrush(Color.White);
+                 //   graph.FillEllipse(Brush, xM - 6, yM - 6, 12, 12);
                 }
             }
             if (checkBox2.Checked == true && checkBox1.Checked == true)//Проверка на незаполнение
@@ -4105,6 +4191,7 @@ namespace WindowsFormsApp1
                     photokard = pictureBox1.Image;
                     pictureBox1.BackgroundImage = photokard;
                     pictureBox1.Invalidate();
+                    button18.Enabled = true;
                 }
                 catch
                 {
@@ -4615,6 +4702,7 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
                         button23.Enabled = true;
                         button25.Enabled = true;
                         button22.Enabled = false;
+                        button14.Enabled = true;
                         button3.Enabled = true;
                         button12.Enabled = false;
                     }
@@ -4761,6 +4849,7 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
                         pictureBox1.Enabled = true;
                         button26.Enabled = true;
                         button23.Enabled = true;
+                        button14.Enabled = true;
                         button25.Enabled = true;
                         button28.Enabled = true;
                     }
@@ -4925,6 +5014,11 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
             {
                 for (int l = 0; l < pictureBox1.Height; l++)
                 {
+                    if (Z[j, l] == 0)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
                     if (Z[j, l] > 0 && Z[j, l] <= 20)
                     {
                         int test = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
@@ -5287,6 +5381,17 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
             }
         }
 
+        private void button18_Click(object sender, EventArgs e)
+        {
+            button18.Enabled = false;
+            pictureBox1.BackgroundImage = null;
+            pictureBox1.Refresh();
+            pictureBox1.Image = bmp;
+            photokard = null;
+            newImage = null;
+            indphoto = false;
+        }
+
         private void color()
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -5301,7 +5406,12 @@ Blue color -good visibility; Green color -medium visibility; Red color -poor vis
             for (int j = 0; j < pictureBox1.Width; j++)
             {
                 for (int l = 0; l < pictureBox1.Height; l++)
-                {                 
+                {
+                    if (Z[j, l] == 0)
+                    {
+                        pen = new Pen(Color.FromArgb(255, 255, 255));
+                        graph.DrawEllipse(pen, j, l, 1, 1);
+                    }
                     if (Z[j, l] > 0 && Z[j, l] <= 20)
                     {
                         int test = Convert.ToInt32(Math.Round(Z[j, l], 1) * 10);
