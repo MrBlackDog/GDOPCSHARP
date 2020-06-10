@@ -124,6 +124,7 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.pic1 = new System.Windows.Forms.PictureBox();
             this.pic2 = new System.Windows.Forms.PictureBox();
+            this.button18 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1020,6 +1021,7 @@
             // groupBox3
             // 
             this.groupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox3.Controls.Add(this.button18);
             this.groupBox3.Controls.Add(this.button17);
             this.groupBox3.Controls.Add(this.label32);
             this.groupBox3.Controls.Add(this.label21);
@@ -1310,6 +1312,18 @@
             this.pic2.TabStop = false;
             this.pic2.Visible = false;
             // 
+            // button18
+            // 
+            this.button18.AutoSize = true;
+            this.button18.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button18.Location = new System.Drawing.Point(87, 949);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(90, 23);
+            this.button18.TabIndex = 115;
+            this.button18.Text = "DELETE PLAN";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1462,6 +1476,7 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.PictureBox pic1;
         private System.Windows.Forms.PictureBox pic2;
+        private System.Windows.Forms.Button button18;
     }
 }
 
